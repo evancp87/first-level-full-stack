@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import PacmanLoader from "react-spinners/PacmanLoader";
-import "../dist/output.css";
+import "./dist/output.css";
 import { Routes, Route } from "react-router-dom";
 import Search from "./features/Dashboard/Search";
 import Dashboard from "./features/Dashboard/Dashboard";

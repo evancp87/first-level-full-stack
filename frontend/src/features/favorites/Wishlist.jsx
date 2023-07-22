@@ -1,31 +1,41 @@
-import React from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
+import { useParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import BackBtn from "../../components/BackBtn";
 import GameCard from "../Game/GameCard";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCartPlus } from "@fortawesome/free-solid-svg-icons";
 import { useHandleLikes } from "../../utils/hooks/localStorage.jsx";
 import gsap from "gsap";
 import { Transition } from "react-transition-group";
 import {Link} from "react-router-dom"
 
-const Favorites = () => {
-  const { likes, handleLikes } = useHandleLikes();
-  // const [isTransitioning, setIsTransitioning] = useState(false);
-  // const wishlists = useSelector(selectWishLists)
 
-  // TODO: not currently working- the idea being to animate out a game card on being removed from favorites
-  const onLikeExit = (node) => {
-    gsap.to(node, {
-      x: -100,
-      delay: 0.2,
-      ease: "power3",
-      opacity: 0,
-      stagger: {
-        amount: 0.2,
-      },
-    });
+
+const Wishlist = () => {
+
+  // unpacks slug from the url to dispatch the store and fetch game detail from api
+  const { id } = useParams();
+
+  // handles both adding to the cart and scroll to top
+
+
+  // Object of game detail sent to the shopping cart
+
+  const gameDetails = {
+    name,
+    background_image,
+    id,
+    price,
   };
 
+
+ 
   return (
-    <div>
-      <ul>
+    <section >
+     <h3>Name of list</h3>
+
+     <ul>
         {(likes.length === 0 && (
           <p className="mt-8 flex items-center justify-center text-xl">
             Nothing here. Like games to add to this section
@@ -60,8 +70,8 @@ const Favorites = () => {
             // 
           ))}
       </ul>
-    </div>
+    </section>
   );
 };
 
-export default Favorites;
+export default Wishlist;

@@ -4,13 +4,17 @@ import { useHandleLikes } from "../../utils/hooks/localStorage.jsx";
 import gsap from "gsap";
 import { Transition } from "react-transition-group";
 import {Link} from "react-router-dom"
+import Wishlist from "./Wishlist";
 
-const Favorites = () => {
+import WishlistPreview from "./WishlistPreview";
+import {Link} from "react-router-dom"
+
+const WishlistList = () => {
   const { likes, handleLikes } = useHandleLikes();
   // const [isTransitioning, setIsTransitioning] = useState(false);
   // const wishlists = useSelector(selectWishLists)
 
-  // TODO: not currently working- the idea being to animate out a game card on being removed from favorites
+  // TODO: not currently working- the idea being to animate out a game card on being removed from wishlist
   const onLikeExit = (node) => {
     gsap.to(node, {
       x: -100,
@@ -43,11 +47,13 @@ const Favorites = () => {
               unmountOnExit
             >
               <li key={game.id}>
-                <GameCard
+                <Link to={`wishlist/${id}`}>
+                <WishlistPreview
                   game={game}
                   liked={game.liked}
                   handleLikes={handleLikes}
-                />
+                  />
+                  </Link>
               </li>
             </Transition>
 
@@ -64,4 +70,4 @@ const Favorites = () => {
   );
 };
 
-export default Favorites;
+export default WishlistList;
