@@ -5,7 +5,7 @@ const connection = mysql.createConnection({
   password: "",
   host: "localhost",
   port: 3306,
-  database: "ch14-demo-1",
+  database: "games-db",
 });
 
 function asyncMySQL(query) {
