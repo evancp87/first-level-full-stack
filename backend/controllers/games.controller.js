@@ -34,16 +34,20 @@ async function getGameOnWishList(req, res) {
   console.log("game route ran");
   const slug = req.params.slug;
 
+  if (!slug || typeof slug !== "string") {
+    res.status(404).send("No game slug was provided");
+    return;
+  }
   const results = await asyncMySQL(`SELECT id, slug, name, rating
                                         FROM games 
                                           WHERE slug LIKE '${slug}';`);
 
   if (results.length > 0) {
-    res.send({ status: 200, results });
+    res.status(200).send(results);
     return;
   }
 
-  res.send({ status: 404, reason: "game not found with that slug" });
+  res.status(404).send("game not found with that slug");
 }
 
 async function getGameOnWishList(req, res) {
@@ -64,16 +68,13 @@ async function getGameOnWishList(req, res) {
   try {
     const results = await asyncMySQL(query);
     if (results.length > 0) {
-      res.send({ status: 200, results });
+      res.status(200).send(results);
     } else {
-      res.send({
-        status: 404,
-        reason: "No games found for the specified customer_id",
-      });
+      res.status(404).send("No games found for the specified customer_id");
     }
   } catch (error) {
     console.error("Error:", error);
-    res.status(500).send({ status: 500, reason: "Internal Server Error" });
+    res.status(500).send("Internal Server Error");
   }
 }
 
@@ -85,6 +86,7 @@ const getPlatforms = async (req, res) => {
     if (results.length > 0) {
       res.status(200).json(results);
     }
+    res.status(404).json("no results found");
   } catch (error) {
     console.log("error:", error);
     res.status(500).json("internal server error");
@@ -99,6 +101,7 @@ const getGenres = async (req, res) => {
     if (results.length > 0) {
       res.status(200).json(results);
     }
+    res.status(404).json("no results found");
   } catch (error) {
     console.log("error:", error);
     res.status(500).json("internal server error");
@@ -109,6 +112,10 @@ const getGenres = async (req, res) => {
 const getScreenshots = async (req, res) => {
   try {
     const game_pk = req.params.game_pk;
+
+    if (!game_pk || typeof game_pk !== "string") {
+      res.status(404).send("game slug not provided");
+    }
     const { data } = await axios.get(
       `https://api.rawg.io/api/games/${game_pk}/screenshots?key=${apiKey}`
     );
@@ -130,6 +137,15 @@ const getGamesByDate = async (req, res) => {
   try {
     const startDate = req.query.startDate;
     const endDate = req.query.endDate;
+
+    // if (
+    //   !startDate ||
+    //   typeof startDate !== "string" ||
+    //   !endDate ||
+    //   typeof endDate !== "string"
+    // ) {
+    //   res.status(404).send("incorrect dates supplied");
+    // }
 
     const { data } = await axios.get(
       `https://api.rawg.io/api/games?dates=${startDate},${endDate}&key=${apiKey}`
@@ -177,12 +193,17 @@ const getGameDetail = async (req, res) => {
 const getGameTrailers = async (req, res) => {
   try {
     const slug = req.params.slug;
+
+    if (!slug || typeof slug !== "string") {
+      res.status(404).send("game slug not provided");
+    }
+
     const { data } = await axios.get(
       `https://api.rawg.io/api/games/${slug}/movies?key=${apiKey}`
     );
     // const results = data.results;
-    return data;
-    res.status(200).send(results);
+    res.status(200).send(data);
+    // return data;
   } catch (error) {
     console.log("error:", error);
     res.status(500).send("internal server error");

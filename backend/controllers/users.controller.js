@@ -20,8 +20,11 @@ async function loginUser(req, res) {
     return;
   }
 
+  const userId = await asyncMySQL(`SELECT user_id FROM users
+                                      WHERE email = '${email}';`);
+
   try {
-    const results = await asyncMySQL(`SELECT  password, user_id
+    const results = await asyncMySQL(`SELECT password, user_id
       FROM users
       WHERE email = '${email}';`);
 
@@ -34,12 +37,13 @@ async function loginUser(req, res) {
 
     const matchedPassword = await bcrypt.compare(password, hashedPassword);
     if (!matchedPassword) {
-      res.send({ status: 404, message: "Incorrect password supplied" });
+      res.status(404).send("Incorrect password supplied");
       return;
     }
 
+    // TODO: use something better than email, userId
     const token = jwt.sign(
-      { email },
+      { userId },
       process.env.TOKEN_KEY,
       {
         expiresIn: "2h",
@@ -48,13 +52,13 @@ async function loginUser(req, res) {
         if (err) {
           console.log(err);
         }
-        res.send(token);
+        res.status(404);
       }
     );
     // Creating session for user
     req.session.user_id = results[0].user_id;
     console.log("success!");
-    res.send({ status: 200, results, token });
+    res.status(200).send({ results, token });
   } catch (error) {
     console.log("The error is:", error);
   }
@@ -67,42 +71,54 @@ async function registerUser(req, res) {
   const { name, email, password } = req.body;
 
   console.log("register route ran");
-  if (!name || !email || !password) {
-    res.send("couldn't create your account");
+  if (
+    !name ||
+    typeof name !== "string" ||
+    !email ||
+    typeof email !== "string" ||
+    !password ||
+    typeof password !== "string"
+  ) {
+    res.status(404).send("couldn't create your account");
     return;
   }
+
   const encryptedPassword = await bcrypt.hash(password, saltRounds);
-  const token = jwt.sign(
-    { email },
-    process.env.TOKEN_KEY,
-    {
-      expiresIn: "2h",
-    },
-    (err, token) => {
-      if (err) {
-        console.log(err);
-      }
-      res.send(token);
-    }
-  );
 
   try {
     await asyncMySQL(`INSERT INTO users 
-                                        (name, email, password)
-                                            VALUES
-                                                ('${name}', '${email}', '${encryptedPassword}')`);
+    (name, email, password)
+    VALUES
+    ('${name}', '${email}', '${encryptedPassword}')`);
+
+    const user = await asyncMySQL(`SELECT user_id FROM users
+                                         WHERE email = '${email}';`);
+
+    const userId = user[0].id;
+
     // res.send(token);
+    const token = jwt.sign(
+      { userId },
+      process.env.TOKEN_KEY,
+      {
+        expiresIn: "2h",
+      },
+      (err, token) => {
+        if (err) {
+          console.log(err);
+        }
+        res.status(200).send(token);
+      }
+    );
   } catch (error) {
     console.log("error:", error);
-    res.send({
-      status: 500,
-      reason: "There was an issue creating your account",
-    });
+    res.status(500).send("There was an issue creating your account");
   }
 }
 
 async function logout(req, res) {
   try {
+    // closes express session
     req.session.destroy((err) => {
       if (err) {
         res.sendStatus(500).json("couldn't log out");
@@ -111,6 +127,7 @@ async function logout(req, res) {
         res.redirect("/");
       }
     });
+    // clears json web token
     res.clearCookie("jwtToken");
   } catch (error) {
     console.log("There was an error:", error);
