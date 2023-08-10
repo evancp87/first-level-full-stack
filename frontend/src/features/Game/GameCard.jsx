@@ -6,18 +6,19 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart } from "@fortawesome/free-solid-svg-icons";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
+import WishlistModal from "../wishlist/WishlistModal";
 
-const GameCard = ({ game, handleLikes }) => {
+const GameCard = ({ game, handleLikes, index }) => {
   const { released, name, background_image, slug, rating, platforms, liked } =
     game;
 
-  const platformNames =
-    platforms && platforms.map((console) => console.platform.name).join(", ");
+  // const platformNames =
+  //   platforms && platforms.map((console) => console.platform.name).join(", ");
 
   return (
     <>
       <SkeletonTheme color="#f3f3f3" highlightColor="#e0e0e0">
-        <article className="mx-w-full card-bordered card card-side m-6 flex-row flex-wrap items-center bg-base-100 shadow-xl">
+        <article className="mx-w-full card card-bordered card-side m-6 flex-row flex-wrap items-center bg-base-100 shadow-xl">
           <picture className="rounded-sm sm:max-w-[100%] lg:max-w-[20%]">
             <Link to={`/game/${slug}`}>
               {background_image ? (
@@ -32,9 +33,9 @@ const GameCard = ({ game, handleLikes }) => {
             <div className="flex flex-col gap-4 ">
               <h2 className="card-title ">{name}</h2>
               <p>{game ? `Released ${released}` : <Skeleton count={1} />}</p>
-              <p className="text-sm">
+              {/* <p className="text-sm">
                 {game ? platformNames : <Skeleton count={1} />}
-              </p>
+              </p> */}
             </div>
             <div className="flex items-center">
               {/* handles liked state of heart when clicked, saves to localStorage and favorites page */}
@@ -50,6 +51,7 @@ const GameCard = ({ game, handleLikes }) => {
                   handleLikes(game.id, game);
                 }}
               />
+              <WishlistModal name={name} slug={slug} />
               <p className="card-actions justify-end">
                 {game ? `Rating: ${rating}` : <Skeleton count={1} />}{" "}
               </p>

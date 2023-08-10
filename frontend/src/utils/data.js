@@ -1,58 +1,34 @@
-import { getCachedGames, cacheGames } from "./helpers";
-
-const api = "b27a148777114f578b36079d29688b34";
+// import { getCachedGames, cacheGames } from "./helpers";
 
 import axios from "axios";
-// game data
-
 export const getGames = async () => {
   try {
-    // caching api call so doesn't have to be repeated if games are in cache
-    const cachedGames = getCachedGames();
-
-    if (
-      cachedGames !== null &&
-      cachedGames !== undefined &&
-      cachedGames.length > 0
-    ) {
-      console.log("Fetching games from cache...");
-      return cachedGames;
-    } else {
-      let results = [];
-      // ierates over paginated games data
-      for (let i = 0; i < 30; i++) {
-        const { data } = await axios.get(
-          ` https://api.rawg.io/api/games?key=${api}&page=${i + 1}`
-        );
-
-        results = [...results, ...data.results];
-      }
-      results = results.map((element, index) => ({
-        ...element,
-        // sets liked property on each game
-        liked: false,
-      }));
-      console.log("Fetching games from API...");
-      cacheGames(results);
-      return results;
-    }
+    const { data } = await axios.get("http://localhost:6001/games/");
+    return data;
   } catch (error) {
-    console.log("error:", error);
+    console.log("There was an error", error);
   }
 };
+
+console.log(getGames());
 
 export const getGamesByDate = async (startDate, endDate) => {
   try {
     // Will take a start date and end date at point of dispatch to the store
     const { data } = await axios.get(
-      `https://api.rawg.io/api/games?dates=${startDate},${endDate}&key=${api}`
+      // `http://localhost:6001/games/dates}`
+      // `https://api.rawg.io/api/games?dates=${startDate},${endDate}&key=${apiKey}`
+      `http://localhost:6001/games/dates?startDate=${startDate}&endDate=${endDate}`
     );
+
+    console.log("the data os", data);
     // gets games within date range that have rating of over 3.5. I found 4 and 4.5 too narrow
-    const filteredResults = data.results.filter((game) => {
-      return game.rating >= 3.5;
-    });
-    const results = filteredResults.slice(0, 10);
-    return results;
+    // const filteredResults = data.results.filter((game) => {
+    //   return game.rating >= 3.5;
+    // });
+    // const results = filteredResults.slice(0, 10);
+    // return results;
+    return data;
   } catch (error) {
     console.log("error:", error);
   }
@@ -61,10 +37,9 @@ export const getGamesByDate = async (startDate, endDate) => {
 // genres
 export const getGenres = async () => {
   try {
-    const { data } = await axios.get(
-      `https://api.rawg.io/api/genres?key=${api}`
-    );
-    return data.results;
+    const { data } = await axios.get(`http://localhost:6001/games/genres`);
+    // return data.results;
+    return data;
   } catch (error) {
     console.log("error:", error);
   }
@@ -73,10 +48,8 @@ export const getGenres = async () => {
 // platform names
 export const getPlatforms = async () => {
   try {
-    const { data } = await axios.get(
-      `https://api.rawg.io/api/platforms?key=${api}`
-    );
-    return data.results;
+    const { data } = await axios.get(`http://localhost:6001/games/platforms`);
+    return data;
   } catch (error) {
     console.log("error:", error);
   }
@@ -85,9 +58,10 @@ export const getPlatforms = async () => {
 export const getScreenshots = async (game_pk) => {
   try {
     const { data } = await axios.get(
-      `https://api.rawg.io/api/games/${game_pk}/screenshots?key=${api}`
+      `http://localhost:6001/games/screenshots/${game_pk}`
     );
-    return data.results;
+    console.log("the data is:", data);
+    return data;
   } catch (error) {
     console.log("error:", error);
   }
@@ -97,9 +71,9 @@ export const getScreenshots = async (game_pk) => {
 
 export const getGameDetail = async (slug) => {
   try {
-    const { data } = await axios.get(
-      `https://api.rawg.io/api/games/${slug}?key=${api}`
-    );
+    const { data } = await axios.get(`http://localhost:6001/games/${slug}`);
+    // `https://api.rawg.io/api/games/${slug}?key=${api}`
+
     return data;
   } catch (error) {
     console.log("error:", error);
@@ -111,10 +85,205 @@ export const getGameDetail = async (slug) => {
 export const getGameTrailers = async (slug) => {
   try {
     const { data } = await axios.get(
-      `https://api.rawg.io/api/games/${slug}/movies?key=${api}`
+      `http://localhost:6001/games/trailers/${slug}`
+    );
+
+    console.log();
+    return data;
+  } catch (error) {
+    console.log("error:", error);
+  }
+};
+
+// cart api calls
+
+export const getCartItems = async () => {
+  try {
+    const { data } = await axios.get(`http://localhost:6001/cart/`);
+    return data.results;
+  } catch (error) {
+    console.log("error:", error);
+  }
+};
+
+export const addToCart = async () => {
+  try {
+    const { data } = await axios.post(`http://localhost:6001/cart/`);
+    return data.results;
+  } catch (error) {
+    console.log("error:", error);
+  }
+};
+
+export const clearCart = async (cartId) => {
+  try {
+    const { data } = await axios.delete(`http://localhost:6001/cart/${cartId}`);
+    return data.results;
+  } catch (error) {
+    console.log("error:", error);
+  }
+};
+
+export const removeFromCart = async (cartId, gameId) => {
+  try {
+    const { data } = await axios.delete(
+      `http://localhost:6001/cart/${gameId}/${cartId}`
     );
     return data.results;
   } catch (error) {
     console.log("error:", error);
+  }
+};
+
+export const incrementItemQuantity = async (gameId) => {
+  try {
+    const { data } = await axios.patch(`http://localhost:6001/cart/${gameId}`);
+    return data.results;
+  } catch (error) {
+    console.log("error:", error);
+  }
+};
+
+// login api calls
+
+export const loginUser = async (credentials) => {
+  try {
+    const { data } = await axios.post(
+      "http://localhost:6001/users/login",
+      credentials
+    );
+    console.log("the data is:", data);
+    localStorage.setItem("token", data.token);
+    return data;
+  } catch (error) {
+    console.log("error:", error);
+  }
+};
+export const register = async (credentials) => {
+  try {
+    const response = await axios.post(
+      "http://localhost:6001/users/register/",
+      credentials,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.log("error:", error);
+  }
+};
+
+export const logout = async () => {
+  try {
+    await axios.post("http://localhost:6001/users/logout/");
+  } catch (error) {
+    console.log("There was an error logging out", error);
+  }
+};
+
+// wishlist api calls
+// TODO: remove game from wishlist
+export const wishlists = async (customerId, token) => {
+  try {
+    const data = await axios.get(
+      // `http://localhost:6001/wishlists?customerId=${userId}`
+      `http://localhost:6001/wishlists?customerId=${customerId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    console.log("the data for the wishlists is:", data);
+    return data;
+  } catch (error) {
+    console.log("There was an error:", error);
+  }
+};
+export const singleWishlist = async (id) => {
+  try {
+    const { data } = await axios.get(`http://localhost:6001/wishlist/${id}`);
+    return data;
+  } catch (error) {
+    console.log("There was an error:", error);
+  }
+};
+export const createWishlist = async (
+  // customerId,
+  // token,
+  // wishlistName,
+  // gameSlug
+  credentials
+) => {
+  console.log("the credentials id are:", credentials);
+  try {
+    // const wishlist = {
+    //   name: name,
+    //   customerId: customerId,
+    //   game: game
+    // }
+    console.log(credentials);
+    const data = await axios.post(
+      `http://localhost:6001/wishlists/?customerId=${credentials.userId}`,
+      {
+        name: credentials.wishlistWithGame.name,
+        slug: credentials.wishlistWithGame.slug,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${credentials.token}`,
+        },
+      }
+    );
+
+    return data;
+  } catch (error) {
+    console.log("There was an error:", error);
+  }
+};
+export const deleteWishlist = async (id) => {
+  try {
+    const data = await axios.delete(`http://localhost:6001/wishlist/${id}`);
+    return data;
+  } catch (error) {
+    console.log("There was an error:", error);
+  }
+};
+export const updateWishlist = async () => {
+  try {
+    const { data } = await axios.patch("http://localhost:6001/wishlist");
+    return data;
+  } catch (error) {
+    console.log("There was an error:", error);
+  }
+};
+export const addGamesOnWishlist = async (
+  // userId,
+  // wishlistId,
+  // gameSlug,
+  // token
+
+  gameToAdd
+) => {
+  console.log(gameToAdd);
+  try {
+    const { data } = await axios.post(
+      `http://localhost:6001/wishlists/add?userId=${gameToAdd.userId}&wishlistId=${gameToAdd.wishlistId}`,
+
+      {
+        slug: gameToAdd.slug,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${gameToAdd.token}`,
+        },
+      }
+    );
+    return data;
+  } catch (error) {
+    console.log("There was an error:", error);
   }
 };
