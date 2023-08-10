@@ -12,7 +12,7 @@ async function getWishlists(req, res) {
   const results = await asyncMySQL(`SELECT *
                                         FROM wishlists
                                             WHERE customer_id = ${customerId};`);
-
+  console.log(results);
   if (results.length > 0) {
     res.status(200).send(results);
     return;
@@ -48,7 +48,7 @@ async function getWishlist(req, res) {
 async function createWishlist(req, res) {
   // note the functionality is that the user creates a wishlist first, and then adds games to it.
   console.log("add wishlist route ran");
-  // TODO: could use slug instead of id?
+
   const { name, slug } = req.body;
   const customerId = req.query.customerId;
 
@@ -190,9 +190,15 @@ async function addGamesToWishlist(req, res) {
       return;
     }
     const game = await asyncMySQL(
-      `SELECT id from games WHERE slug = '${slug}'`
+      `SELECT id FROM games WHERE slug = '${slug}'`
     );
 
+    if (game.length === 0) {
+      res.status(404).send("Game not found");
+      return;
+    }
+
+    console.log(game);
     const gameToAdd = game[0].id;
 
     await asyncMySQL(`INSERT INTO wishlist_games

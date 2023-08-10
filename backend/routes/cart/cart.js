@@ -1,8 +1,19 @@
 const express = require("express");
-const router = express.Router();
-const { getGamesList, getGame } = require("../../controllers/games/games");
+const Router = express.Router();
+const {
+  getCartItems,
+  addToCart,
+  clearCart,
+  removeFromCart,
+  incrementItemQuantity,
+  createCart,
+} = require("../../controllers/cart.controller");
 
-router.get("/", getGamesList);
-router.get("/:slug", getGame);
+Router.get("/", getCartItems);
+Router.post("/", createCart);
+Router.post("/add", addToCart);
+Router.delete("/", clearCart);
+Router.delete("/remove", removeFromCart);
+Router.patch("/cartId", incrementItemQuantity);
 
-module.exports = router;
+module.exports = Router;

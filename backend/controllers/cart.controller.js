@@ -138,6 +138,7 @@ async function removeFromCart(req, res) {
   await asyncMySQL(`DELETE FROM cart_games 
                                   WHERE game_id = ${gameId} AND cart_id = ${cartId};`);
 
+  // TODO: add functionality to delete cart when cart_games.length === 0;
   res.status(200).send("successfully deleted game from cart");
 }
 

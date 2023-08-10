@@ -16,7 +16,7 @@ async function loginUser(req, res) {
     !password ||
     typeof password !== "string"
   ) {
-    res.send("incorrect credentials");
+    res.status(401).send("incorrect credentials");
     return;
   }
 
@@ -24,12 +24,12 @@ async function loginUser(req, res) {
                                       WHERE email = '${email}';`);
 
   try {
-    const results = await asyncMySQL(`SELECT password, user_id
+    const results = await asyncMySQL(`SELECT password, user_id, name, email
       FROM users
       WHERE email = '${email}';`);
 
     if (results.length === 0) {
-      res.send("no user found");
+      res.status(404).send("no user found");
       return;
     }
 
@@ -37,11 +37,10 @@ async function loginUser(req, res) {
 
     const matchedPassword = await bcrypt.compare(password, hashedPassword);
     if (!matchedPassword) {
-      res.status(404).send("Incorrect password supplied");
+      res.status(401).send("Incorrect password supplied");
       return;
     }
 
-    // TODO: use something better than email, userId
     const token = jwt.sign(
       { userId },
       process.env.TOKEN_KEY,
@@ -51,16 +50,26 @@ async function loginUser(req, res) {
       (err, token) => {
         if (err) {
           console.log(err);
+          res.status(500).send("couldn't verify token");
         }
-        res.status(404);
+        res
+          .status(200)
+          .send({
+            userInfo: { name: results[0].name, id: results[0].user_id },
+            token,
+          });
       }
     );
     // Creating session for user
-    req.session.user_id = results[0].user_id;
-    console.log("success!");
-    res.status(200).send({ results, token });
+    // req.session.user_id = results[0].user_id;
+    // console.log("success!");
+    // res.status(200).send({
+    //   token,
+    //   userInfo: { name: results[0].name, id: results[0].user_id },
+    // });
   } catch (error) {
     console.log("The error is:", error);
+    res.status(500).send("There was an error");
   }
 }
 
@@ -91,10 +100,11 @@ async function registerUser(req, res) {
     VALUES
     ('${name}', '${email}', '${encryptedPassword}')`);
 
-    const user = await asyncMySQL(`SELECT user_id FROM users
+    const user = await asyncMySQL(`SELECT user_id, name, email FROM users
                                          WHERE email = '${email}';`);
 
     const userId = user[0].id;
+    const userInfo = { name: user[0].name, email: user[0].email };
 
     // res.send(token);
     const token = jwt.sign(
@@ -107,7 +117,7 @@ async function registerUser(req, res) {
         if (err) {
           console.log(err);
         }
-        res.status(200).send(token);
+        res.status(200).send({ userInfo, token });
       }
     );
   } catch (error) {
