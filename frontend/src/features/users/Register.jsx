@@ -1,32 +1,101 @@
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { validate } from "../../validation/index";
+import { useDispatch, useSelector } from "react-redux";
+import { selectLoggedInState, setUser } from "./usersSlice";
 const Register = () => {
-    return ( 
-        <div className="card w-96 bg-base-100 shadow-xl">
-          <div className="card-body items-center text-center">
-            <h2 className="card-title">Register</h2>
-            <form action="">
-            <label htmlFor="name">
-                <input type="text" name="name" />
-                </label>
-                <label htmlFor="address">
-                <input type="text" name="address" />
-                </label>
-                <label htmlFor="email">
-                <input type="text" name="email" />
-                </label>
-                <label htmlFor="password">
-                <input type="text" name="password"/>
-                </label>
-                <Link to="register">
-              
-              </Link>
-            <div className="card-actions">
-              <button className="btn btn-primary">Register</button>
-              
-            </div>
-                </form>
-          </div>
-        </div>
-             );
-}
+  const [register, setRegister] = useState({
+    name: "",
+    email: "",
+    // address: "",
+    password: "",
+  });
 
-export default Register
+  const dispatch = useDispatch();
+  const { isAuth, userInfo, error, loading } = useSelector(selectLoggedInState);
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (isAuth) {
+      navigate("/");
+    }
+  }, [isAuth]);
+  const handleInputs = (e) => {
+    const { name, value } = e.target;
+    setRegister((inputs) => ({ ...inputs, [name]: value }));
+    console.log(value);
+  };
+
+  const handleRegister = async (e) => {
+    e.preventDefault();
+
+    try {
+      await dispatch(setUser(register));
+      // navigate("/");
+    } catch (error) {
+      console.log("There was an error creating the user", error);
+    }
+  };
+  return (
+    <section className="mt-4 flex flex-col items-center justify-center">
+      <div className="card w-96 rounded-md border-2 bg-base-100 bg-base-100 p-4 shadow-xl">
+        <div className="card-body  flex flex-col items-center text-center">
+          <h2 className="card-title">Register</h2>
+          <form
+            className="flex flex-col gap-4"
+            action="POST"
+            onSubmit={handleRegister}
+          >
+            <label htmlFor="name">Name</label>
+            <input
+              placeholder="name"
+              type="text"
+              name="name"
+              value={register.name}
+              onChange={handleInputs}
+              className="rounded-md p-2"
+            />
+            {/* <label htmlFor="address">Address</label>
+            <input
+              placeholder="address"
+              type="text"
+              name="address"
+              value={register.address}
+              onChange={handleInputs}
+              className="rounded-md p-2"
+            /> */}
+            <label htmlFor="email">Email</label>
+            <input
+              placeholder="email"
+              type="text"
+              name="email"
+              value={register.email}
+              onChange={handleInputs}
+              className="rounded-md p-2"
+            />
+            <label htmlFor="password">Password</label>
+            <input
+              placeholder="password"
+              type="text"
+              name="password"
+              value={register.password}
+              onChange={handleInputs}
+              className="rounded-md p-2"
+            />
+            <div className="card-actions">
+              <button className="active-btn text-slate-100 mx-2 w-[100%] rounded-full bg-logo p-2 duration-300 ease-in-out hover:scale-110">
+                {loading ? "Loading..." : "Register"}
+              </button>
+              <Link to="/login">
+                <p className="mt-4">Already have an account?</p>
+              </Link>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default Register;
