@@ -150,6 +150,8 @@ const getGamesByDate = async (req, res) => {
     const { data } = await axios.get(
       `https://api.rawg.io/api/games?dates=${startDate},${endDate}&key=${apiKey}`
     );
+
+    console.log(data);
     const filteredResults = data.results.filter((game) => {
       return game.rating >= 3.5;
     });
@@ -167,19 +169,40 @@ const getGameDetail = async (req, res) => {
     const { data } = await axios.get(
       `https://api.rawg.io/api/games/${slug}?key=${apiKey}`
     );
-
+    const {
+      released,
+      name,
+      background_image,
+      rating,
+      platforms,
+      genres,
+      developers,
+      description,
+      id,
+      price,
+    } = data;
     console.log(" the data is:", data);
     const results = {
-      released: data.released,
-      name: data.name,
-      background_image: data.background_image,
-      rating: data.rating,
-      platforms: data.platforms,
-      genres: data.genres,
-      developers: data.developers,
-      description: data.description,
-      id: data.id,
-      price: data.price,
+      // released: data.released,
+      // name: data.name,
+      // background_image: data.background_image,
+      // rating: data.rating,
+      // platforms: data.platforms,
+      // genres: data.genres,
+      // developers: data.developers,
+      // description: data.description,
+      // id: data.id,
+      // price: data.price,
+      released,
+      name,
+      background_image,
+      rating,
+      platforms,
+      genres,
+      developers,
+      description,
+      id,
+      price,
     };
 
     res.status(200).send(results);
@@ -201,8 +224,14 @@ const getGameTrailers = async (req, res) => {
     const { data } = await axios.get(
       `https://api.rawg.io/api/games/${slug}/movies?key=${apiKey}`
     );
-    // const results = data.results;
-    res.status(200).send(data);
+    const results = data.results;
+
+    if (results.length > 0) {
+      res.status(200).send(results);
+    } else {
+      res.status(204).send("No game trailers available for the given slug.");
+    }
+
     // return data;
   } catch (error) {
     console.log("error:", error);
