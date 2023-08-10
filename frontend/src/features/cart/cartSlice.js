@@ -1,12 +1,52 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { sumItems } from "../../utils/helpers";
-
+import {
+  getCartItems,
+  // addToCart,
+  clearCart,
+  // removeFromCart,
+} from "../../utils/data";
 const initialState = {
   items: [],
   count: 1,
   ...sumItems([]),
   total: 0,
 };
+
+// export const getItems = createAsyncThunk("cart/getItems", async () => {
+//   try {
+//     const response = await getCartItems();
+//     return response;
+//   } catch (error) {
+//     console.log("There was an error:", error);
+//   }
+// });
+
+// export const add = createAsyncThunk("cart/addToCart", async () => {
+//   try {
+//     const response = await addToCart();
+//     return response;
+//   } catch (error) {
+//     console.log("There was an error:", error);
+//   }
+// });
+
+// export const remove = createAsyncThunk("cart/remove", async () => {
+//   try {
+//     const response = await removeFromCart();
+//     return response;
+//   } catch (error) {
+//     console.log("There was an error:", error);
+//   }
+// });
+// export const clear = createAsyncThunk("cart/clear", async () => {
+//   try {
+//     const response = await clearCart();
+//     return response;
+//   } catch (error) {
+//     console.log("There was an error:", error);
+//   }
+// });
 
 export const cartSlice = createSlice({
   name: "cart",
@@ -46,6 +86,9 @@ export const cartSlice = createSlice({
       return { ...initialState };
     },
   },
+  // extraReducers: (builder) => {
+  //   builder.addCase().addCase().addCase();
+  // },
 });
 
 export const { removeFromCart, addToCart, clear } = cartSlice.actions;

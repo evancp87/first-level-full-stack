@@ -18,12 +18,13 @@ const AllTimeBest = () => {
       <h2 className="my-4">All Time Highest Rated</h2>
       <ul>
         {highestRated &&
-          highestRated.map((game) => (
+          highestRated.map((game, index) => (
             <li key={game.id}>
               <GameCard
                 game={game}
                 liked={game.liked}
                 handleLikes={handleLikes}
+                index={index}
               />
             </li>
           ))}

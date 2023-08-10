@@ -15,6 +15,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCartPlus } from "@fortawesome/free-solid-svg-icons";
 import parse from "html-react-parser";
 import { addToCart } from "../cart/cartSlice";
+import { useNavigate } from "react-router-dom";
+import { selectLoggedInState } from "../users/usersSlice";
+
 const GameDetail = () => {
   const [showMore, setShowMore] = useState(false);
   const gameDetailRef = useRef(null);
@@ -23,6 +26,10 @@ const GameDetail = () => {
   const game = useSelector(selectGameDetail);
   const screenshots = useSelector(selectScreenshots);
   const trailers = useSelector(selectTrailers);
+  const navigate = useNavigate();
+  const { isAuth } = useSelector(selectLoggedInState);
+
+  console.log("the trailers are:", trailers);
   // unpacks slug from the url to dispatch the store and fetch game detail from api
   const { slug } = useParams();
 
@@ -65,10 +72,14 @@ const GameDetail = () => {
 
   // handles both adding to the cart and scroll to top
   const handleAddToCart = (game) => {
-    dispatch(addToCart(game));
-    gameDetailRef.current.scrollIntoView({
-      behavior: "smooth",
-    });
+    if (isAuth) {
+      dispatch(addToCart(game));
+      gameDetailRef.current.scrollIntoView({
+        behavior: "smooth",
+      });
+    } else {
+      navigate("/login");
+    }
   };
 
   // Object of game detail sent to the shopping cart
@@ -91,8 +102,8 @@ const GameDetail = () => {
   // truncated descriptions for long blocks of text
   const truncatedDescription = truncateText(tidiedDescription, 500);
   const isTooLong = truncatedDescription.length < tidiedDescription.length;
-  const videoUrl = trailers.length > 0 && trailers[0].data[480];
-  const previewUrl = trailers.length > 0 && trailers[0].preview;
+  // const videoUrl = trailers.length > 0 && trailers[0].data[480];
+  // const previewUrl = trailers.length > 0 && trailers[0].preview;
 
   const platformNames =
     platforms && platforms.map((console) => console.platform.name).join(", ");
@@ -168,7 +179,7 @@ const GameDetail = () => {
         {/* carousel of screenshots */}
         <div className="w-full overflow-x-auto">
           <ul
-            className="carousel-center carousel rounded-box  space-x-2 overflow-y-hidden p-4"
+            className="carousel carousel-center rounded-box  space-x-2 overflow-y-hidden p-4"
             style={{ height: 300 }}
           >
             {screenshots &&
@@ -180,6 +191,7 @@ const GameDetail = () => {
                 >
                   <img
                     className="rounded-box object-cover"
+                    // src={screenshot.image}
                     src={screenshot.image}
                     alt={`${name} screenshot ${index} `}
                   />
@@ -189,13 +201,13 @@ const GameDetail = () => {
         </div>
 
         {/* only show a trailer if the game page has a trailer */}
-        {videoUrl && (
+        {/* {videoUrl && (
           <div className="my-[2em] flex justify-center p-[0.5em]">
             <video controls poster={previewUrl} className="w-full">
               <source src={videoUrl} type="video/mp4"></source>
             </video>
           </div>
-        )}
+        )} */}
       </section>
     </section>
   );

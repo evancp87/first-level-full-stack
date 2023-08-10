@@ -104,9 +104,11 @@ const Search = () => {
         const genreQuery = game.genres.some((genre) =>
           genre.name.toLowerCase().includes(searchInput.toLowerCase())
         );
-        const platformQuery = game.platforms.some((item) =>
-          item.platform.name.toLowerCase().includes(searchInput.toLowerCase())
-        );
+        const platformQuery = game.platforms
+          .split(",")
+          .some((item) =>
+            item.platform.name.toLowerCase().includes(searchInput.toLowerCase())
+          );
 
         return gameQuery || genreQuery || platformQuery;
       });
@@ -114,7 +116,9 @@ const Search = () => {
 
     if (selectedPlatform) {
       filteredList = filteredList.filter((game) =>
-        game.platforms.some((item) => item.platform.name === selectedPlatform)
+        game.platforms
+          .split(",")
+          .some((item) => item.platform === selectedPlatform)
       );
     }
 
@@ -195,14 +199,14 @@ const Search = () => {
           <button
             onClick={() => setCurrentPage(currentPage - 1)}
             disabled={currentPage === 1 || filteredGames.length === 0}
-            className="btn-outline join-item btn"
+            className="btn btn-outline join-item"
           >
             Previous page
           </button>
           <button
             onClick={() => setCurrentPage(currentPage + 1)}
             disabled={currentPage > totalPages || filteredGames.length === 0}
-            className="btn-outline join-item btn"
+            className="btn btn-outline join-item"
           >
             Next
           </button>

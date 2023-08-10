@@ -13,7 +13,7 @@ const FilteredList = () => {
       setGamesByDate({
         startDate: oneMonthAgo,
         endDate: currentDate,
-        dateType: "newlyReleased",
+        // dateType: "newlyReleased",
       })
     );
   }, [dispatch, setGamesByDate]);
@@ -26,7 +26,7 @@ const FilteredList = () => {
     <>
       <h2 className="my-4 px-4 text-xl">Latest Games</h2>
 
-      <ul className="carousel-center carousel rounded-box space-x-2 overflow-y-hidden px-4 ">
+      <ul className="carousel carousel-center rounded-box space-x-2 overflow-y-hidden px-4 ">
         {newReleases && newReleases.length === 0 ? (
           <div className="my-[5em]">
             <p className="text-logo">
