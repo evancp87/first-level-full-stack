@@ -30,40 +30,50 @@ GROUP BY game.name;`
 
 // gets individual game
 
-async function getGameOnWishList(req, res) {
-  console.log("game route ran");
-  const slug = req.params.slug;
+// async function getGameOnWishList(req, res) {
+//   console.log("game route ran");
+//   const slug = req.params.slug;
 
-  if (!slug || typeof slug !== "string") {
-    res.status(404).send("No game slug was provided");
-    return;
-  }
-  const results = await asyncMySQL(`SELECT id, slug, name, rating
-                                        FROM games 
-                                          WHERE slug LIKE '${slug}';`);
+//   if (!slug || typeof slug !== "string") {
+//     res.status(404).send("No game slug was provided");
+//     return;
+//   }
+//   const results = await asyncMySQL(`SELECT id, slug, name, rating
+//                                         FROM games
+//                                           WHERE slug LIKE '${slug}';`);
 
-  if (results.length > 0) {
-    res.status(200).send(results);
-    return;
-  }
+//   if (results.length > 0) {
+//     res.status(200).send(results);
+//     return;
+//   }
 
-  res.status(404).send("game not found with that slug");
-}
+//   res.status(404).send("game not found with that slug");
+// }
 
 async function getGameOnWishList(req, res) {
   console.log("finding customer and game on wishlist");
+  const wishlistId = req.query.wishlistId;
+  const userId = req.query.userId;
+  console.log(wishlistId, userId);
+  if (!userId || isNaN(userId) || !wishlistId || isNaN(wishlistId)) {
+    res.status(400).send("Incorrect credentials");
+  }
 
   const query = `
-    SELECT
-      wishlists.name AS wishlist_name,
-      games.Name AS game_name,
-      games.id AS game_id,
-      wishlists.customer_id,
-      users.name
-    FROM games
-    JOIN wishlists ON wishlists.game_id = games.id
-    JOIN users ON users.user_id = wishlists.customer_id
-  `;
+SELECT
+  games.released,
+  games.Name AS game_name,
+  games.background_image,
+  games.slug,
+  games.rating,
+  wishlists.name AS wishlist_name,
+  wishlists.customer_id,
+  users.name
+FROM games
+JOIN wishlists ON wishlists.game_id = games.id
+JOIN users ON users.user_id = wishlists.customer_id
+WHERE wishlists.customer_id = ${userId} AND wishlists.id = ${wishlistId};
+`;
 
   try {
     const results = await asyncMySQL(query);
@@ -74,7 +84,7 @@ async function getGameOnWishList(req, res) {
     }
   } catch (error) {
     console.error("Error:", error);
-    res.status(500).send("Internal Server Error");
+    res.status(500).send("There was an internal server error");
   }
 }
 
@@ -138,25 +148,16 @@ const getGamesByDate = async (req, res) => {
     const startDate = req.query.startDate;
     const endDate = req.query.endDate;
 
-    // if (
-    //   !startDate ||
-    //   typeof startDate !== "string" ||
-    //   !endDate ||
-    //   typeof endDate !== "string"
-    // ) {
-    //   res.status(404).send("incorrect dates supplied");
-    // }
-
     const { data } = await axios.get(
       `https://api.rawg.io/api/games?dates=${startDate},${endDate}&key=${apiKey}`
     );
 
     console.log(data);
-    const filteredResults = data.results.filter((game) => {
-      return game.rating >= 3.5;
-    });
-    const results = filteredResults.slice(0, 10);
-    res.status(200).send(results);
+    // const filteredResults = data.filter((game) => {
+    //   return game.rating >= 3.5;
+    // });
+    // const results = filteredResults.slice(0, 10);
+    res.status(200).send(data);
   } catch (error) {
     console.log("error:", error);
     res.status(500).send("internal server error");

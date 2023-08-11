@@ -25,16 +25,15 @@ async function getWishlists(req, res) {
 async function getWishlist(req, res) {
   console.log("getting individual game route ran");
   const id = req.params.id;
-  const customerId = req.query.customerId;
+  const userId = req.query.userId;
 
-  if (!id || isNaN(id) || !customerId || isNaN(customerId)) {
+  if (!id || isNaN(id) || !userId || isNaN(userId)) {
     res.status(400).send("please add a correct id");
   }
 
-  // TODO add user id
   const results = await asyncMySQL(`SELECT name
                                         FROM wishlists
-                                            WHERE id = ${id} AND customer_id = ${customerId};`);
+                                            WHERE id = ${id} AND customer_id = ${userId};`);
 
   if (results.length > 0) {
     res.send({ status: 200, results });
