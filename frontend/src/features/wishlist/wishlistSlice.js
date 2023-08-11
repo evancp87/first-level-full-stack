@@ -7,12 +7,14 @@ import {
   deleteWishlist,
   updateWishlist,
   addGamesOnWishlist,
+  listOfGamesWishlist,
 } from "../../utils/data";
 
 const initialState = {
   wishlists: [],
   wishlist: {},
   gamesOnWishlist: [],
+  searchInput: "",
 };
 
 export const setWishlists = createAsyncThunk(
@@ -34,11 +36,24 @@ export const setWishlists = createAsyncThunk(
   }
 );
 
+export const getGamesFromWishlist = createAsyncThunk(
+  "wishlist/getGamesFromWishlist",
+  async (wishlistIdentifier) => {
+    try {
+      const response = await listOfGamesWishlist(wishlistIdentifier);
+      return response;
+    } catch (error) {
+      console.log("There was an error", error);
+      throw new Error(error);
+    }
+  }
+);
+
 export const getWishlist = createAsyncThunk(
   "wishlist/getWishlist",
-  async () => {
+  async (wishlistDetails) => {
     try {
-      const response = await singleWishlist();
+      const response = await singleWishlist(wishlistDetails);
       return response;
     } catch (error) {
       console.log("There was an error", error);
@@ -61,9 +76,9 @@ export const addWishlist = createAsyncThunk(
 
 export const removeWishlist = createAsyncThunk(
   "wishlist/removeWishlist",
-  async () => {
+  async ({ id, token, userId }) => {
     try {
-      const response = await deleteWishlist();
+      const response = await deleteWishlist({ id, token, userId });
       return response;
     } catch (error) {
       console.log("There was an error", error);
@@ -104,7 +119,11 @@ export const addGamesToWishlist = createAsyncThunk(
 const wishlistsSlice = createSlice({
   name: "wishlists",
   initialState,
-  reducers: {},
+  reducers: {
+    search: (state, action) => {
+      state.searchInput = action.payload;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(setWishlists.fulfilled, (state, action) => {
@@ -114,29 +133,46 @@ const wishlistsSlice = createSlice({
         state.wishlist = action.payload;
       })
       .addCase(addWishlist.fulfilled, (state, action) => {
-        console.log("Doing some checks", action.payload, action.payload.data);
-        state.wishlists = [...state.wishlists, action.payload.data];
+        console.log("Doing some checks", action.payload, action.payload);
+        state.wishlists = [...state.wishlists, action.payload];
       })
       .addCase(removeWishlist.fulfilled, (state, action) => {
-        // const index = state.wishlists.indexOf(action.payload);
+        // const index = state.wishlists.findIndex(
+        //   (wishlist) => wishlist.id === action.payload
+        // );
         // const wishlistToRemove = state.wishlists[index];
         // const updatedList = state.wishlists.splice(wishlistToRemove, 1);
         // state.wishlists = updatedList;
 
-        state.wishlists = state.wishlists.filter(
-          (wishlist) => wishlist.id !== action.payload.id
+        const index = state.wishlists.findIndex(
+          (wishlist) => wishlist.id === action.payload.id
         );
+        const wishlistToRemove = state.wishlists[index];
+        // const updatedList = state.wishlists.splice(wishlistToRemove, 1);
+        if (index !== -1) {
+          state.wishlists.splice(wishlistToRemove, 1);
+        }
+
+        // state.wishlists = state.wishlists.filter(
+        //   (wishlist) => wishlist.id !== action.payload.id
+        // );
       })
       .addCase(update.fulfilled, (state, action) => {
         state.wishlists = action.payload;
       })
       .addCase(addGamesToWishlist.fulfilled, (state, action) => {
         state.gamesOnWishlist = [...state.gamesOnWishlist, action.payload];
+      })
+      .addCase(getGamesFromWishlist.fulfilled, (state, action) => {
+        state.gamesOnWishlist = action.payload;
       });
   },
 });
 
+export const { search } = wishlistsSlice.actions;
 export const selectWishlists = (state) => state.wishlists.wishlists;
-export const selectGamesOnWishlist = (state) => state.gamesOnWishlist;
+export const selectGamesOnWishlist = (state) => state.wishlists.gamesOnWishlist;
+export const selectSingleWishlist = (state) => state.wishlists.wishlist;
+export const selectSearch = (state) => state.wishlists.searchInput;
 
 export default wishlistsSlice.reducer;
