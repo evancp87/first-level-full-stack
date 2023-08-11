@@ -8,8 +8,13 @@ import {
 } from "./wishlistSlice";
 import { useNavigate } from "react-router-dom";
 import { selectLoggedInState } from "../users/usersSlice";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const WishlistModal = ({ name, slug }) => {
+  const notify = () => toast("Your wishlist was created");
+  const notifySaved = () => toast("Your game was saved");
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const wishlists = useSelector(selectWishlists);
@@ -55,7 +60,8 @@ const WishlistModal = ({ name, slug }) => {
       const gameToSave = { userId, wishlistId, slug, token };
       dispatch(addGamesToWishlist(gameToSave));
     }
-    navigate("/wishlists");
+    notifySaved();
+    // navigate("/wishlists");
   };
 
   const handleCreateWishlist = async (e) => {
@@ -66,7 +72,8 @@ const WishlistModal = ({ name, slug }) => {
 
     console.log("the details are:", wishlistWithGame);
     await dispatch(addWishlist({ userId, token, wishlistWithGame }));
-    navigate("/favorites");
+    notify();
+    // navigate("/favorites");
   };
 
   const showModal = () => {
@@ -100,7 +107,7 @@ const WishlistModal = ({ name, slug }) => {
             {/* map over wishlists here */}
             <ul className="min-h-[100px]">
               {wishlists && isAuth && wishlists.length > 0 ? (
-                wishlists.data.map((list, index) => (
+                wishlists.map((list, index) => (
                   <li key={index} className="flex  gap-4 overflow-scroll">
                     <input
                       type="checkbox"
@@ -123,6 +130,7 @@ const WishlistModal = ({ name, slug }) => {
             >
               Save
             </button>
+            <ToastContainer />
           </div>
 
           <div className="mt-4 ">
@@ -146,6 +154,7 @@ const WishlistModal = ({ name, slug }) => {
                 >
                   Create
                 </button>
+                <ToastContainer />
               </div>
             </div>
             {/* {showAddWishlist && (
