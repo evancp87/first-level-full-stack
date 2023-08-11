@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { getGames, getGamesByDate } from "../../utils/data";
+import { getGames, gamesByDate } from "../../utils/data";
 
 const initialState = {
   games: [],
@@ -26,7 +26,7 @@ export const setGamesByDate = createAsyncThunk(
   "games/setGamesDate",
   async ({ startDate, endDate }) => {
     try {
-      const response = await getGamesByDate(startDate, endDate);
+      const response = await gamesByDate(startDate, endDate);
 
       return response;
     } catch (error) {
