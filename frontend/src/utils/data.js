@@ -12,23 +12,25 @@ export const getGames = async () => {
 
 console.log(getGames());
 
-export const getGamesByDate = async (startDate, endDate) => {
+export const gamesByDate = async (startDate, endDate) => {
+  console.log("the dates are:", startDate, endDate);
   try {
     // Will take a start date and end date at point of dispatch to the store
     const { data } = await axios.get(
       // `http://localhost:6001/games/dates}`
+      // `https://api.rawg.io/api/games?dates=${startDate},${endDate}&key=${apiKey}`
       // `https://api.rawg.io/api/games?dates=${startDate},${endDate}&key=${apiKey}`
       `http://localhost:6001/games/dates?startDate=${startDate}&endDate=${endDate}`
     );
 
     console.log("the data os", data);
     // gets games within date range that have rating of over 3.5. I found 4 and 4.5 too narrow
-    // const filteredResults = data.results.filter((game) => {
-    //   return game.rating >= 3.5;
-    // });
-    // const results = filteredResults.slice(0, 10);
-    // return results;
-    return data;
+    const filteredResults = data.results.filter((game) => {
+      return game.rating >= 3.5;
+    });
+    const results = filteredResults.slice(0, 10);
+    return results;
+    // return data;
   } catch (error) {
     console.log("error:", error);
   }
@@ -198,15 +200,29 @@ export const wishlists = async (customerId, token) => {
       }
     );
     console.log("the data for the wishlists is:", data);
-    return data;
+    console.log(data);
+    return data.data;
   } catch (error) {
     console.log("There was an error:", error);
   }
 };
-export const singleWishlist = async (id) => {
+export const singleWishlist = async (singleWishlistData) => {
+  const { token, id, userId } = singleWishlistData;
+  console.log(token, id, userId);
   try {
-    const { data } = await axios.get(`http://localhost:6001/wishlist/${id}`);
-    return data;
+    const { data } = await axios.get(
+      ` http://localhost:6001/wishlists/${id}?userId=${userId}`,
+      // {
+      //   id,
+      //   userId,
+      // },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return data.results[0];
   } catch (error) {
     console.log("There was an error:", error);
   }
@@ -244,9 +260,17 @@ export const createWishlist = async (
     console.log("There was an error:", error);
   }
 };
-export const deleteWishlist = async (id) => {
+export const deleteWishlist = async (wishlist) => {
+  const { id, token, userId } = wishlist;
   try {
-    const data = await axios.delete(`http://localhost:6001/wishlist/${id}`);
+    const data = await axios.delete(
+      `http://localhost:6001/wishlists/${id}?userId=${userId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
     return data;
   } catch (error) {
     console.log("There was an error:", error);
@@ -254,7 +278,7 @@ export const deleteWishlist = async (id) => {
 };
 export const updateWishlist = async () => {
   try {
-    const { data } = await axios.patch("http://localhost:6001/wishlist");
+    const { data } = await axios.patch("http://localhost:6001/games/wishlist");
     return data;
   } catch (error) {
     console.log("There was an error:", error);
@@ -279,6 +303,31 @@ export const addGamesOnWishlist = async (
       {
         headers: {
           Authorization: `Bearer ${gameToAdd.token}`,
+        },
+      }
+    );
+    return data;
+  } catch (error) {
+    console.log("There was an error:", error);
+  }
+};
+
+export const listOfGamesWishlist = async (
+  // userId,
+  // wishlistId,
+  // gameSlug,
+  // token
+
+  gamesList
+) => {
+  console.log(gamesList);
+  const { userId, token, id } = gamesList;
+  try {
+    const { data } = await axios.get(
+      `http://localhost:6001/games/wishlist?userId=${userId}&wishlistId=${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
       }
     );
