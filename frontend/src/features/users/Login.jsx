@@ -56,7 +56,7 @@ const Login = () => {
             <label htmlFor="password"></label>
             <input
               placeholder="password"
-              type="text"
+              type="password"
               name="password"
               className="rounded-md p-2"
               value={login.password}
