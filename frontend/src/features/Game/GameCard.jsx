@@ -32,7 +32,13 @@ const GameCard = ({ game, handleLikes, index }) => {
           <div className="card-body">
             <div className="flex flex-col gap-4 ">
               <h2 className="card-title ">{name}</h2>
-              <p>{game ? `Released ${released}` : <Skeleton count={1} />}</p>
+              <p>
+                {game ? (
+                  `Released ${new Date(released).toDateString()}`
+                ) : (
+                  <Skeleton count={1} />
+                )}
+              </p>
               {/* <p className="text-sm">
                 {game ? platformNames : <Skeleton count={1} />}
               </p> */}
