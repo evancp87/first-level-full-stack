@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -10,17 +10,23 @@ import { selectItems, selectTotal } from "../features/cart/cartSlice";
 import { selectLoggedInState } from "../features/users/usersSlice";
 import { logoutUser } from "../features/users/usersSlice";
 import Cart from "../features/cart/Cart";
-
+import PacmanLoader from "react-spinners/PacmanLoader";
+import { createPortal } from "react-dom";
 const Nav = () => {
   const items = useSelector(selectItems);
   const count = useSelector(selectTotal);
   const { isAuth, userInfo, error, loading } = useSelector(selectLoggedInState);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [loadingLogout, setLoadingLogout] = useState(false);
 
   const handleLogout = async () => {
+    setLoadingLogout(true);
     await dispatch(logoutUser());
-    navigate("/");
+    setTimeout(async () => {
+      setLoadingLogout(false);
+      navigate("/");
+    }, 3000);
   };
 
   return (
@@ -32,6 +38,9 @@ const Nav = () => {
       </div>
       <ul className="me-[30px] flex flex-row flex-wrap gap-x-[30px]">
         {isAuth && <li>Welcome, {userInfo.name}</li>}
+        {loadingLogout && (
+          <PacmanLoader color="#36d7b7" loading={loadingLogout} />
+        )}
         <li>
           {isAuth ? (
             <p to="/login" className="cursor-pointer" onClick={handleLogout}>
