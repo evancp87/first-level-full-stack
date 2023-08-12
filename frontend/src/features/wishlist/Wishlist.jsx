@@ -12,6 +12,7 @@ import {
   getGamesFromWishlist,
   selectSingleWishlist,
   selectGamesOnWishlist,
+  deleteGame,
 } from "./wishlistSlice";
 import { selectLoggedInState } from "../users/usersSlice";
 
@@ -28,7 +29,7 @@ const Wishlist = () => {
 
   // TODO: get userId;
   // handles both adding to the cart and scroll to top
-
+  // const wishlistId = wishlist;
   useEffect(() => {
     if (!isAuth) {
       navigate("/login");
@@ -43,6 +44,14 @@ const Wishlist = () => {
     userId,
     token,
     id,
+  };
+
+  const handleDelete = (wishlistId, token, userId, slug) => {
+    console.log(token);
+    console.log(wishlistId);
+    console.log(slug);
+    console.log(userId);
+    dispatch(deleteGame({ id: wishlistId, token, userId, slug }));
   };
 
   const fetchWishlist = useCallback(async () => {
@@ -67,28 +76,25 @@ const Wishlist = () => {
           </p>
         )) ||
           []}
-        <TransitionGroup>
-          {games &&
-            games.map((game) => (
-              <Transition
-                key={game.id}
-                timeout={200}
-                in={true}
-                // onExit={onLikeExit}
-                // unmountOnExit
+        {games &&
+          games.map((game) => (
+            <>
+              <Link to={`game/${game.id}`}>
+                <li key={game.id}>
+                  <GameCard
+                    game={game}
+                    liked={game.liked}
+                    // handleLikes={handleLikes}
+                  />
+                </li>
+              </Link>
+              <button
+                onClick={() => handleDelete(id, token, userId, game.slug)}
               >
-                <Link to={`game/${game.id}`}>
-                  <li key={game.id}>
-                    <GameCard
-                      game={game}
-                      liked={game.liked}
-                      // handleLikes={handleLikes}
-                    />
-                  </li>
-                </Link>
-              </Transition>
-            ))}
-        </TransitionGroup>
+                Delete {game.name}
+              </button>
+            </>
+          ))}
       </ul>
     </section>
   );

@@ -8,15 +8,23 @@ const Login = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { isAuth, loading, error } = useSelector(selectLoggedInState);
-
+  const [errors, setErrors] = useState(null);
   const [login, setLogin] = useState({
     password: "",
     email: "",
   });
 
-  const handleInputs = (e) => {
+  const handleInputs = async (e) => {
     const { name, value } = e.target;
     setLogin((inputs) => ({ ...inputs, [name]: value }));
+
+    try {
+      const payload = { [name]: value };
+      const res = await validate(payload);
+      setErrors(res);
+    } catch (error) {
+      console.log("There was an error:", error);
+    }
   };
   useEffect(() => {
     if (isAuth) {
@@ -53,6 +61,14 @@ const Login = () => {
               className="rounded-md p-2"
               onChange={handleInputs}
             />
+            {errors &&
+              errors.map((error, index) =>
+                error.key === "email" ? (
+                  <p key={index} style={{ color: "#FF3E3E" }}>
+                    {error.message}
+                  </p>
+                ) : null
+              )}
             <label htmlFor="password"></label>
             <input
               placeholder="password"
@@ -62,6 +78,14 @@ const Login = () => {
               value={login.password}
               onChange={handleInputs}
             />
+            {errors &&
+              errors.map((error, index) =>
+                error.key === "password" ? (
+                  <p key={index} style={{ color: "#FF3E3E" }}>
+                    {error.message}
+                  </p>
+                ) : null
+              )}
             <Link to="/register">
               <p className="mt-4"> Forgot password?</p>
             </Link>

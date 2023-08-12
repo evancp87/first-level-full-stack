@@ -10,6 +10,7 @@ const Register = () => {
     // address: "",
     password: "",
   });
+  const [errors, setErrors] = useState(null);
 
   const dispatch = useDispatch();
   const { isAuth, userInfo, error, loading } = useSelector(selectLoggedInState);
@@ -21,10 +22,18 @@ const Register = () => {
       navigate("/");
     }
   }, [isAuth]);
-  const handleInputs = (e) => {
+  const handleInputs = async (e) => {
     const { name, value } = e.target;
     setRegister((inputs) => ({ ...inputs, [name]: value }));
     console.log(value);
+
+    try {
+      const payload = { [name]: value };
+      const res = await validate(payload);
+      setErrors(res);
+    } catch (error) {
+      console.log("There was an error:", error);
+    }
   };
 
   const handleRegister = async (e) => {
@@ -56,6 +65,14 @@ const Register = () => {
               onChange={handleInputs}
               className="rounded-md p-2"
             />
+            {errors &&
+              errors.map((error, index) =>
+                error.key === "name" ? (
+                  <p key={index} style={{ color: "#FF3E3E" }}>
+                    {error.message}
+                  </p>
+                ) : null
+              )}
             {/* <label htmlFor="address">Address</label>
             <input
               placeholder="address"
@@ -74,6 +91,14 @@ const Register = () => {
               onChange={handleInputs}
               className="rounded-md p-2"
             />
+            {errors &&
+              errors.map((error, index) =>
+                error.key === "email" ? (
+                  <p key={index} style={{ color: "#FF3E3E" }}>
+                    {error.message}
+                  </p>
+                ) : null
+              )}
             <label htmlFor="password">Password</label>
             <input
               placeholder="password"
@@ -83,6 +108,14 @@ const Register = () => {
               onChange={handleInputs}
               className="rounded-md p-2"
             />
+            {errors &&
+              errors.map((error, index) =>
+                error.key === "password" ? (
+                  <p key={index} style={{ color: "#FF3E3E" }}>
+                    {error.message}
+                  </p>
+                ) : null
+              )}
             <div className="card-actions">
               <button className="active-btn text-slate-100 mx-2 w-[100%] rounded-full bg-logo p-2 duration-300 ease-in-out hover:scale-110">
                 {loading ? "Loading..." : "Register"}
