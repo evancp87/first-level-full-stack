@@ -276,6 +276,7 @@ export const deleteWishlist = async (wishlist) => {
     console.log("There was an error:", error);
   }
 };
+
 export const updateWishlist = async () => {
   try {
     const { data } = await axios.patch("http://localhost:6001/games/wishlist");
@@ -284,6 +285,7 @@ export const updateWishlist = async () => {
     console.log("There was an error:", error);
   }
 };
+
 export const addGamesOnWishlist = async (
   // userId,
   // wishlistId,
@@ -325,6 +327,35 @@ export const listOfGamesWishlist = async (
   try {
     const { data } = await axios.get(
       `http://localhost:6001/games/wishlist?userId=${userId}&wishlistId=${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return data;
+  } catch (error) {
+    console.log("There was an error:", error);
+  }
+};
+
+export const deleteSingleGameFromWishlist = async (
+  // userId,
+  // wishlistId,
+  // gameSlug,
+  // token
+
+  gameDetails
+) => {
+  console.log(gameDetails);
+  const { userId, token, id, slug } = gameDetails;
+  try {
+    const { data } = await axios.delete(
+      `http://localhost:6001/wishlists/delete?userId=${userId}&wishlistId=${id}`,
+
+      {
+        slug: slug,
+      },
       {
         headers: {
           Authorization: `Bearer ${token}`,
