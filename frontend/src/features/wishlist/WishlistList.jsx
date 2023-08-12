@@ -172,11 +172,13 @@ const WishlistList = () => {
                   <h2 className="card-title">{wishlist.name}</h2>
                   <div className="card-actions justify-end">
                     <Link to={`/wishlist/${wishlist.id}`}>
-                      <button>Wishlist</button>
+                      <button className="active-btn text-slate-100 hover:scale-11 h-[40px] w-[25%] self-start rounded-full bg-logo duration-300 ease-in-out">
+                        Wishlist
+                      </button>
                     </Link>
                     <button
                       onClick={() => handleRemove(wishlist.id, token, userId)}
-                      className="btn"
+                      className="active-btn btn"
                     >
                       delete
                     </button>
