@@ -169,6 +169,7 @@ async function addGamesToWishlist(req, res) {
   const wishlistId = req.query.wishlistId;
   const userId = req.query.userId;
 
+  console.log(slug, wishlistId, userId);
   if (
     !slug ||
     typeof slug !== "string" ||
@@ -210,6 +211,54 @@ async function addGamesToWishlist(req, res) {
     console.log("There was an error:", error);
   }
 }
+
+const deleteGamesFromWishlist = async (req, res) => {
+  console.log("deleting game from wishlist ran");
+  const { slug } = req.body;
+  const wishlistId = req.query.wishlistId;
+  const userId = req.query.userId;
+
+  if (
+    !slug ||
+    typeof slug !== "string" ||
+    !wishlistId ||
+    isNaN(wishlistId) ||
+    !userId ||
+    isNaN(userId)
+  ) {
+    res.status(400).send("wrong details");
+    return;
+  }
+
+  try {
+    const wishlist = await asyncMySQL(`SELECT id FROM wishlists 
+                                          WHERE id = ${wishlistId} AND customer_id = ${userId}`);
+
+    if (wishlist.length === 0) {
+      res.status(404).send("Wishlist not found for the specified user");
+      return;
+    }
+    const game = await asyncMySQL(
+      `SELECT id FROM games WHERE slug = '${slug}'`
+    );
+
+    if (game.length === 0) {
+      res.status(404).send("Game not found");
+      return;
+    }
+
+    console.log(game);
+    const gameToDelete = game[0].id;
+
+    await asyncMySQL(`DELETE FROM wishlist_games
+                                WHERE
+                                  game_id = ${gameToDelete} AND user_id = ${userId} AND wishlist_id = ${wishlistId};`);
+    res.status(200).send("game deleted from wishlist");
+  } catch (error) {
+    res.status(500).send("There was a problem deleting that game");
+    console.log("There was an error:", error);
+  }
+};
 module.exports = {
   getWishlist,
   getWishlists,
@@ -217,4 +266,5 @@ module.exports = {
   deleteWishlist,
   updateWishlist,
   addGamesToWishlist,
+  deleteGamesFromWishlist,
 };
