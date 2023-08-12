@@ -60,20 +60,31 @@ async function getGameOnWishList(req, res) {
   }
 
   const query = `
-SELECT
+  SELECT
   games.released,
-  games.Name AS game_name,
+  games.Name AS name,
   games.background_image,
   games.slug,
   games.rating,
-  wishlists.name AS wishlist_name,
-  wishlists.customer_id,
-  users.name
+  users.name AS user_name
 FROM games
-JOIN wishlists ON wishlists.game_id = games.id
-JOIN users ON users.user_id = wishlists.customer_id
-WHERE wishlists.customer_id = ${userId} AND wishlists.id = ${wishlistId};
-`;
+JOIN wishlist_games ON wishlist_games.game_id = games.id
+JOIN users ON users.user_id = wishlist_games.user_id
+WHERE wishlist_games.user_id = ${userId} AND wishlist_games.wishlist_id = ${wishlistId};
+  `;
+
+  // SELECT
+  //   games.released,
+  //   games.Name AS game,
+  //   games.background_image,
+  //   games.slug,
+  //   games.rating,
+
+  //   users.name
+  // FROM games
+  // JOIN wishlists ON wishlists.game_id = games.id
+  // JOIN users ON users.user_id = wishlists.customer_id
+  // WHERE wishlists.customer_id = ${userId} AND wishlists.id = ${wishlistId};
 
   try {
     const results = await asyncMySQL(query);
