@@ -7,6 +7,7 @@ import {
   deleteWishlist,
   updateWishlist,
   addGamesOnWishlist,
+  deleteSingleGameFromWishlist,
   listOfGamesWishlist,
 } from "../../utils/data";
 
@@ -108,6 +109,27 @@ export const addGamesToWishlist = createAsyncThunk(
         // gameSlug,
         // userId
         gameToAdd
+      );
+      return response;
+    } catch (error) {
+      console.log("There was an error", error);
+    }
+  }
+);
+
+export const deleteGame = createAsyncThunk(
+  "wishlist/deleteGame",
+  async (
+    // token, wishlistId, gameSlug, userId
+    gameToDelete
+  ) => {
+    try {
+      const response = await deleteSingleGameFromWishlist(
+        // token,
+        // wishlistId,
+        // gameSlug,
+        // userId
+        gameToDelete
       );
       return response;
     } catch (error) {
