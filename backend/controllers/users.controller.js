@@ -33,6 +33,7 @@ async function loginUser(req, res) {
       return;
     }
 
+    // checks password against hashed password in db
     const hashedPassword = results[0].password;
 
     const matchedPassword = await bcrypt.compare(password, hashedPassword);
@@ -41,6 +42,7 @@ async function loginUser(req, res) {
       return;
     }
 
+    // signs jwt
     const token = jwt.sign(
       { userId },
       process.env.TOKEN_KEY,
@@ -86,6 +88,8 @@ async function registerUser(req, res) {
     return;
   }
 
+  // hashes password
+
   const encryptedPassword = await bcrypt.hash(password, saltRounds);
 
   try {
@@ -97,10 +101,11 @@ async function registerUser(req, res) {
     const user = await asyncMySQL(`SELECT user_id, name, email FROM users
                                          WHERE email = '${email}';`);
 
+    //  gets user info to send back in response
     const userId = user[0].id;
     const userInfo = { name: user[0].name, email: user[0].email };
 
-    // res.send(token);
+    //  jwt token signed
     const token = jwt.sign(
       { userId },
       process.env.TOKEN_KEY,

@@ -3,6 +3,7 @@ const asyncMySQL = require("../database/connection");
 const apiKey = process.env.API_KEY;
 const axios = require("axios");
 
+// gets games list from db- joining on genres, platforms, genres_games and platform_games tables
 async function getGamesList(req, res) {
   const results = await asyncMySQL(
     `SELECT game.id,
@@ -24,6 +25,7 @@ INNER JOIN genres g ON gg.genre_id = g.id
 GROUP BY game.name;`
   );
 
+  // converts genres and platforms into arrays of strings
   const games = results.map((result) => ({
     ...result,
     platforms: result.platforms.split(", "),
@@ -38,6 +40,7 @@ GROUP BY game.name;`
   res.send({ status: 404, reason: "No games found" });
 }
 
+// filters games list and gets top 10 highest rated games
 async function getHighestRatedGames(req, res) {
   const results = await asyncMySQL(
     `SELECT game.id,
@@ -65,13 +68,6 @@ GROUP BY game.name;`
     genres: result.genres.split(", "),
   }));
 
-  // const filterHighestRated: (state) => {
-  //   if (state.games && state.games.length) {
-  //     const highest = state.games.filter((game) => game.rating >= 4.5);
-  //     const topTen = highest.slice(0, 10);
-  //     state.allTimeBest = topTen;
-  //   }
-  // },
   const highestRatedGames = games
     .filter((game) => {
       return game.rating >= 4.5;
@@ -86,15 +82,16 @@ GROUP BY game.name;`
   res.send({ status: 404, reason: "No games found" });
 }
 
+// gets single game on a wishlist
 async function getGameOnWishList(req, res) {
-  console.log("finding customer and game on wishlist");
   const wishlistId = req.query.wishlistId;
   const userId = req.query.userId;
-  console.log(wishlistId, userId);
+
   if (!userId || isNaN(userId) || !wishlistId || isNaN(wishlistId)) {
     res.status(400).send("Incorrect credentials");
   }
 
+  // finds game on wishlist by joining user and wishlist tables
   const query = `
   SELECT
   games.released,
@@ -154,7 +151,7 @@ const getGenres = async (req, res) => {
   }
 };
 
-// screenshots
+// screenshots from external api
 const getScreenshots = async (req, res) => {
   try {
     const game_pk = req.params.game_pk;
@@ -179,6 +176,7 @@ const getScreenshots = async (req, res) => {
   }
 };
 
+// gets newly released games from external api, filtered on the frontend
 const getGamesByDate = async (req, res) => {
   try {
     const startDate = req.query.startDate;
@@ -189,10 +187,7 @@ const getGamesByDate = async (req, res) => {
     );
 
     console.log(data);
-    // const filteredResults = data.filter((game) => {
-    //   return game.rating >= 3.5;
-    // });
-    // const results = filteredResults.slice(0, 10);
+
     res.status(200).send(data);
   } catch (error) {
     console.log("error:", error);
@@ -200,6 +195,7 @@ const getGamesByDate = async (req, res) => {
   }
 };
 
+// gets the details of a single game
 const getGameDetail = async (req, res) => {
   try {
     const slug = req.params.slug;

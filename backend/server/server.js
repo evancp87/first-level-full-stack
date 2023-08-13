@@ -1,5 +1,4 @@
 const express = require("express");
-
 const app = express();
 const helmet = require("helmet");
 const cookieParser = require("cookie-parser");
@@ -11,6 +10,10 @@ require("dotenv").config();
 app.use(helmet());
 app.use(express.json());
 app.use(express.static("public"));
+app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
+app.use(cors({ credentials: true, origin: "http://localhost:5173" }));
+// session middleware
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
@@ -21,9 +24,6 @@ app.use(
     httpOnly: true,
   })
 );
-app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(cors({ credentials: true, origin: "http://localhost:5173" }));
 
 app.use(function myLogger(req, res, next) {
   console.log("logged");
@@ -31,6 +31,7 @@ app.use(function myLogger(req, res, next) {
 });
 // app.use(limiter);
 
+// server routes
 app.use("/games", require("../routes/games/games"));
 app.use("/cart", checkToken, require("../routes/cart/cart"));
 app.use("/wishlists", checkToken, require("../routes/wishlist/wishlist"));

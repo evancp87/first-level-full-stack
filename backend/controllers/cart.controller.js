@@ -50,6 +50,7 @@ async function addToCart(req, res) {
     return;
   }
 
+  // finds existing instance of a cart
   try {
     const existingCart = await asyncMySQL(
       `SELECT id FROM cart WHERE user_id = ${customerId};`
@@ -59,6 +60,7 @@ async function addToCart(req, res) {
       const cartId = existingCart[0].id;
       console.log(cartId);
 
+      // inserts games added to cart
       await asyncMySQL(`INSERT INTO cart_games (game_id, cart_id)
         VALUES
         ('${gameId}', '${cartId}');`);
@@ -67,8 +69,10 @@ async function addToCart(req, res) {
       const newCart = await asyncMySQL(`INSERT INTO cart( user_id, total) 
                                              VALUES (${customerId}, ${total});`);
 
+      //  gets newly inserted cart id
       const cartId = newCart.insertId;
 
+      // inserts games into that cart
       await asyncMySQL(`INSERT INTO cart_games (game_id, cart_id)
                             VALUES
                                ('${gameId}', '${cartId}');`);
@@ -81,12 +85,13 @@ async function addToCart(req, res) {
   }
 }
 
-// // adds a game
+/// adds a game
 
 async function clearCart(req, res) {
   console.log("clear cart route ran");
   const customerId = req.query.customerId;
 
+  // sanitisation
   if (!customerId || isNaN(customerId)) {
     res.status(400).send("Game was not added to the cart successfully");
     return;
@@ -98,7 +103,7 @@ async function clearCart(req, res) {
 
   const cartId = cart[0].id;
   console.log(cartId);
-  // TODO: does  cart need to be deleted?
+  // deletes games from cart and then cart
   try {
     await asyncMySQL(`DELETE FROM cart_games 
                         WHERE cart_id = '${cartId}'`);
@@ -112,7 +117,7 @@ async function clearCart(req, res) {
   }
 }
 
-// // deleting
+// deleting
 async function removeFromCart(req, res) {
   console.log("game deleted route ran");
 
@@ -135,6 +140,7 @@ async function removeFromCart(req, res) {
 
   console.log(cartId);
 
+  // deletes game from cart
   await asyncMySQL(`DELETE FROM cart_games 
                                   WHERE game_id = ${gameId} AND cart_id = ${cartId};`);
 
@@ -142,7 +148,6 @@ async function removeFromCart(req, res) {
   res.status(200).send("successfully deleted game from cart");
 }
 
-// TODO: look into this as really a cart should only be created when a game is added
 async function createCart(req, res) {
   //   await asyncMySQL(`CREATE)
   return;
