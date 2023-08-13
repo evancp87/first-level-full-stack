@@ -13,11 +13,13 @@ const AllTimeBest = () => {
   }, [dispatch]);
   // gets filtered list of highest rated games from store
   const highestRated = useSelector(selectHighestRated);
+  console.log(highestRated);
+
   return (
     <div className="my-8 px-4 text-xl">
       <h2 className="my-4">All Time Highest Rated</h2>
       <ul>
-        {highestRated &&
+        {highestRated && highestRated.length > 0 ? (
           highestRated.map((game, index) => (
             <li key={game.id}>
               <GameCard
@@ -27,7 +29,10 @@ const AllTimeBest = () => {
                 index={index}
               />
             </li>
-          ))}
+          ))
+        ) : (
+          <p>Highest Rated Games not Available</p>
+        )}
       </ul>
     </div>
   );
