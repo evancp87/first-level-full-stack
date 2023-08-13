@@ -8,6 +8,8 @@ import { Link } from "react-router-dom";
 import Wishlist from "./Wishlist";
 import BackBtn from "../../components/BackBtn";
 import { validate } from "../../validation/index";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 import {
   setWishlists,
@@ -15,6 +17,7 @@ import {
   addWishlist,
   selectSearch,
   search,
+  reset,
   selectGamesOnWishlist,
   removeWishlist,
 } from "./wishlistSlice";
@@ -47,6 +50,7 @@ const WishlistList = () => {
 
     setSearchError(res);
   };
+  const notify = () => toast("The wishlist was deleted");
 
   // Gets list of wishlist names for dropdown
 
@@ -65,7 +69,7 @@ const WishlistList = () => {
   }, [dispatch, selectGamesOnWishlist]);
 
   useEffect(() => {
-    getGamesOnWishlist;
+    getGamesOnWishlist();
   }, [getGamesOnWishlist]);
 
   useEffect(() => {
@@ -80,20 +84,9 @@ const WishlistList = () => {
     console.log(token);
     console.log(wishlistId);
     dispatch(removeWishlist({ id: wishlistId, token, userId }));
+    notify();
   };
 
-  // TODO: not currently working- the idea being to animate out a game card on being removed from wishlist
-  // const onLikeExit = (node) => {
-  //   gsap.to(node, {
-  //     x: -100,
-  //     delay: 0.2,
-  //     ease: "power3",
-  //     opacity: 0,
-  //     stagger: {
-  //       amount: 0.2,
-  //     },
-  //   });
-  // };
   const filteredSearch = () => {
     let filteredList = [...wishlists];
 
@@ -126,86 +119,106 @@ const WishlistList = () => {
     setCurrentPage(1);
   }, [searchInput]);
 
+  const resetFilters = () => {
+    dispatch(reset());
+    setSearchText("");
+  };
   return (
-    <div className="flex max-w-[80vw] flex-col  items-center">
-      <div className="my-1.5 flex flex-row flex-wrap justify-center ">
-        <BackBtn />
+    <div className="flex  flex-col  items-center">
+      <div className="w-80vw">
+        <div className="my-1.5 flex flex-row flex-wrap justify-center ">
+          <BackBtn />
 
-        <div className="form-control  flex w-full justify-center">
-          <label className="label self-start">
-            <span className="label-text">Search for wishlists</span>
-          </label>
-          <input
-            onChange={searchValue}
-            value={searchText}
-            type="text"
-            placeholder="Search wishlists"
-            className="focus-input max-w-xs input input-bordered my-[1.5em] w-full"
-          />
-          <ul>
-            {searchError &&
-              searchError.map((error, index) => (
-                <li key={index}>
-                  <p className="mb-4 text-logo"> {error.message}</p>
-                </li>
-              ))}
-          </ul>
+          <div className="form-control  flex w-full justify-center">
+            <label className="label self-start">
+              <h2 className="label-text text-xl">{`${userInfo.name}'s Wishlists`}</h2>
+            </label>
+            <input
+              onChange={searchValue}
+              value={searchText}
+              type="text"
+              placeholder="Search wishlists"
+              className="focus-input max-w-xs input input-bordered my-[1.5em] w-full"
+            />
+            <ul>
+              {searchError &&
+                searchError.map((error, index) => (
+                  <li key={index}>
+                    <p className="mb-4 text-logo"> {error.message}</p>
+                  </li>
+                ))}
+            </ul>
+            <button
+              value="reset"
+              className="active-btn text-slate-100 ml-[1.5em] h-[40px] w-[25%] justify-center self-start rounded-full bg-logo px-4 duration-300 ease-in-out hover:scale-110"
+              onClick={resetFilters}
+            >
+              Reset
+            </button>
+          </div>
+        </div>
+
+        <ul className="w-[100%]">
+          {filteredWishlists && filteredWishlists.length > 0 && isAuth ? (
+            filteredWishlists.map((wishlist, index) => (
+              <li key={wishlist.id}>
+                <article className="mx-w-full card card-bordered card-side m-6 flex-row flex-wrap items-center bg-base-100 shadow-xl">
+                  <div className="card w-96 bg-primary text-primary-content">
+                    <div className="card-body">
+                      <h3 className="card-title">{wishlist.name}</h3>
+                      <div className="card-actions flex items-center justify-end">
+                        <Link to={`/wishlist/${wishlist.id}`}>
+                          <button className="active-btn text-slate-100 h-[40px] self-start rounded-full bg-logo px-4 duration-300 ease-in-out hover:scale-110">
+                            Wishlist
+                          </button>
+                        </Link>
+                        <button
+                          onClick={() =>
+                            handleRemove(wishlist.id, token, userId)
+                          }
+                          className="active-btn btn h-[40px] rounded-full duration-300 ease-in-out hover:scale-110 "
+                        >
+                          delete
+                        </button>
+                        <ToastContainer
+                          position="bottom-left"
+                          autoClose={5000}
+                          hideProgressBar={false}
+                          newestOnTop={false}
+                          closeOnClick
+                          rtl={false}
+                          draggable
+                          pauseOnHover
+                          theme="colored"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </article>
+              </li>
+            ))
+          ) : (
+            <p>No wishlists</p>
+          )}
+        </ul>
+        <div className="join my-[3em] grid grid-cols-2  pe-[1em] ps-[1em]">
           <button
-            value="reset"
-            className="active-btn text-slate-100 h-[40px] w-[25%] self-start rounded-full bg-logo duration-300 ease-in-out hover:scale-110"
-            // onClick={resetFilters}
+            onClick={() => setCurrentPage(currentPage - 1)}
+            disabled={currentPage === 1 || filteredWishlists.length === 0}
+            className="btn btn-outline join-item"
           >
-            Reset
+            Previous page
+          </button>
+          <button
+            onClick={() => setCurrentPage(currentPage + 1)}
+            disabled={
+              currentPage > totalPages || filteredWishlists.length === 0
+            }
+            className="btn btn-outline join-item"
+          >
+            Next
           </button>
         </div>
-      </div>
-
-      {filteredWishlists && filteredWishlists.length > 0 && isAuth ? (
-        filteredWishlists.map((wishlist, index) => (
-          <>
-            <article
-              key={wishlist.id}
-              className="mx-w-full card card-bordered card-side m-6 flex-row flex-wrap items-center bg-base-100 shadow-xl"
-            >
-              <div className="card w-96 bg-primary text-primary-content">
-                <div className="card-body">
-                  <h2 className="card-title">{wishlist.name}</h2>
-                  <div className="card-actions justify-end">
-                    <Link to={`/wishlist/${wishlist.id}`}>
-                      <button className="active-btn text-slate-100 hover:scale-11 h-[40px] w-[25%] self-start rounded-full bg-logo duration-300 ease-in-out">
-                        Wishlist
-                      </button>
-                    </Link>
-                    <button
-                      onClick={() => handleRemove(wishlist.id, token, userId)}
-                      className="active-btn btn"
-                    >
-                      delete
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </article>
-          </>
-        ))
-      ) : (
-        <p>Wishlists will appear here when created</p>
-      )}
-      <div className="join my-[3em] grid grid-cols-2  pe-[1em] ps-[1em]">
-        <button
-          onClick={() => setCurrentPage(currentPage - 1)}
-          disabled={currentPage === 1 || filteredWishlists.length === 0}
-          className="btn btn-outline join-item"
-        >
-          Previous page
-        </button>
-        <button
-          onClick={() => setCurrentPage(currentPage + 1)}
-          disabled={currentPage > totalPages || filteredWishlists.length === 0}
-          className="btn btn-outline join-item"
-        >
-          Next
-        </button>
       </div>
     </div>
   );
