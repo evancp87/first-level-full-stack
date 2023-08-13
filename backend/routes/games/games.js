@@ -11,10 +11,10 @@ const {
   getGamesByDate,
 } = require("../../controllers/games.controller");
 
+router.get("/", getGamesList);
 router.get("/dates", getGamesByDate);
 router.get("/wishlist", getGameOnWishList);
 router.get("/platforms", getPlatforms);
-router.get("/", getGamesList);
 router.get("/genres", getGenres);
 router.get("/screenshots/:game_pk", getScreenshots);
 router.get("/:slug", getGameDetail);

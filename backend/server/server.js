@@ -1,4 +1,5 @@
 const express = require("express");
+
 const app = express();
 const helmet = require("helmet");
 const cookieParser = require("cookie-parser");
@@ -16,11 +17,14 @@ app.use(
     cookie: { maxAge: 1000 * 60 * 60 * 24 },
     saveUninitialized: false,
     resave: false,
+    secure: true,
+    httpOnly: true,
   })
 );
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(cors());
+app.use(cors({ credentials: true, origin: "http://localhost:5173" }));
+
 app.use(function myLogger(req, res, next) {
   console.log("logged");
   next();
