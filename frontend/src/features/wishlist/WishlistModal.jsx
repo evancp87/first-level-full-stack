@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React, { useRef, useEffect, useCallback, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
@@ -8,27 +9,28 @@ import {
 } from "./wishlistSlice";
 import { useNavigate } from "react-router-dom";
 import { selectLoggedInState } from "../users/usersSlice";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { escapeForRegExp } from "../../utils/helpers";
 
-const WishlistModal = ({ name, slug }) => {
+const WishlistModal = ({ slug }) => {
   const notify = () => toast("Your wishlist was created");
   const notifySaved = () => toast("Your game was saved");
-
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const wishlists = useSelector(selectWishlists);
   const [selectedWishlists, setSelectedWishlists] = useState([]);
-
   const { isAuth, userInfo, token } = useSelector(selectLoggedInState);
   const [wishlistName, setWishlistName] = useState("");
   const userId = userInfo.id;
   console.log("the user id is", userId);
+
+  // sets wishlists on modal inputs
   const getWishlists = useCallback(() => {
     dispatch(setWishlists(userId));
   }, [setWishlists]);
 
+  // check for logged in user = disables add to wishlist button if not
   useEffect(() => {
     if (isAuth) {
       getWishlists();
@@ -50,7 +52,7 @@ const WishlistModal = ({ name, slug }) => {
       );
     }
   };
-
+  // sanitising wishlist name
   const setCreateWishlistInput = (e) => {
     setWishlistName(escapeForRegExp(e.target.value));
   };
@@ -66,19 +68,18 @@ const WishlistModal = ({ name, slug }) => {
     // navigate("/wishlists");
   };
 
-  const handleCreateWishlist = async (e) => {
+  // creates wishlists
+  const handleCreateWishlist = async () => {
     const wishlistWithGame = {
       name: wishlistName,
       slug,
     };
 
-    console.log("the details are:", wishlistWithGame);
-    await dispatch(addWishlist({ userId, token, wishlistWithGame }));
+    dispatch(addWishlist({ userId, token, wishlistWithGame }));
     notify();
     setWishlistName("");
-    // gets the new wishlist name isntantly
+    // gets the new wishlist name instantly
     getWishlists();
-
     // navigate("/favorites");
   };
 

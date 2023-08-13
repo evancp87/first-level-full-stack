@@ -1,11 +1,6 @@
 import React, { useEffect, useCallback, useState } from "react";
-import GameCard from "../Game/GameCard";
-import { useHandleLikes } from "../../utils/hooks/localStorage.jsx";
 import { useDispatch, useSelector } from "react-redux";
-import gsap from "gsap";
-import { Transition } from "react-transition-group";
 import { Link } from "react-router-dom";
-import Wishlist from "./Wishlist";
 import BackBtn from "../../components/BackBtn";
 import { validate } from "../../validation/index";
 import { ToastContainer, toast } from "react-toastify";
@@ -14,11 +9,9 @@ import "react-toastify/dist/ReactToastify.css";
 import {
   setWishlists,
   selectWishlists,
-  addWishlist,
   selectSearch,
   search,
   reset,
-  selectGamesOnWishlist,
   removeWishlist,
 } from "./wishlistSlice";
 import { selectLoggedInState } from "../users/usersSlice";
@@ -81,12 +74,11 @@ const WishlistList = () => {
   };
 
   const filteredSearch = () => {
-    // let filteredList = wishlists ? [...wishlists] : [];
+    // checks if is an array or array like and if not an empty array - to handle initial state of wishlists
     let filteredList = Array.isArray(wishlists) ? [...wishlists] : [];
 
     // defensive checks for rendering filtered list based on input
     if (searchInput) {
-      console.log("is there a searchInput:", searchInput);
       filteredList = filteredList.filter((wishlist) => {
         const wishlistQuery = wishlist.name
           .toLowerCase()
@@ -100,13 +92,13 @@ const WishlistList = () => {
     const endIndex = startIndex + 10;
     const paginatedWishlists = filteredList.slice(startIndex, endIndex);
 
+    // returns paginatedwishlists and original length of wishlists to calculate total number of pages
     return { paginatedWishlists, totalWishlists: filteredList.length };
-    // return filteredList;
   };
 
   const { paginatedWishlists } = filteredSearch();
-  // const filteredWishlists = filteredSearch();
   const filteredWishlists = paginatedWishlists;
+
   useEffect(() => {
     const { totalWishlists } = filteredSearch();
     // Calculate total pages for pagination
@@ -118,9 +110,6 @@ const WishlistList = () => {
     dispatch(reset());
     setSearchText("");
   };
-
-  console.log("checking total pages", totalPages);
-  console.log("checking total pages", totalPages.length);
 
   return (
     <div className="flex  flex-col  items-center">
@@ -159,7 +148,7 @@ const WishlistList = () => {
 
         <ul className="w-[100%]">
           {filteredWishlists && filteredWishlists.length > 0 && isAuth ? (
-            filteredWishlists.map((wishlist, index) => (
+            filteredWishlists.map((wishlist) => (
               <li key={wishlist.id}>
                 <article
                   key={wishlist.id}

@@ -3,7 +3,6 @@ import { validate } from "../../validation/index.js";
 import GameCard from "../Game/GameCard";
 import { useDispatch, useSelector } from "react-redux";
 import Controls from "./Controls.jsx";
-import { useHandleLikes } from "../../utils/hooks/localStorage.jsx";
 
 import {
   selectSort,
@@ -38,7 +37,6 @@ const Search = () => {
   const [totalPages, setTotalPages] = useState(1);
   const dispatch = useDispatch();
   const games = useSelector(selectGames);
-  const { likes, handleLikes } = useHandleLikes();
   const inputRef = useRef(null);
 
   // const platformNames = [...games.map((game) => game.console.platform.name)];
@@ -154,8 +152,7 @@ const Search = () => {
     const endIndex = startIndex + 10;
     const paginatedGames = filteredList.slice(startIndex, endIndex);
 
-    // return paginatedGames;
-    // return filteredList;
+    // returns paginatedGames for pagination and filteredList for calculating total pages;
 
     return {
       paginatedGames,
@@ -198,12 +195,7 @@ const Search = () => {
 
           {filteredGames &&
             filteredGames.map((game) => (
-              <GameCard
-                key={game.id}
-                game={game}
-                liked={game.liked}
-                handleLikes={handleLikes}
-              />
+              <GameCard key={game.id} game={game} liked={game.liked} />
             ))}
         </ul>
         <div className="join my-[3em] grid grid-cols-2  pe-[1em] ps-[1em]">

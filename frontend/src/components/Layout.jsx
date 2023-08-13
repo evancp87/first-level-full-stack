@@ -26,7 +26,6 @@ const Layout = ({ children }) => {
 
   return (
     <>
-      {/* <div className="relative " style={{ height: "100%" }}> */}
       <Nav />
       <SwitchTransition mode="out-in">
         <Transition

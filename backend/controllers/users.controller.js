@@ -52,21 +52,15 @@ async function loginUser(req, res) {
           console.log(err);
           res.status(500).send("couldn't verify token");
         }
-        res
-          .status(200)
-          .send({
-            userInfo: { name: results[0].name, id: results[0].user_id },
-            token,
-          });
+        res.status(200).send({
+          userInfo: { name: results[0].name, id: results[0].user_id },
+          token,
+        });
       }
     );
+
     // Creating session for user
-    // req.session.user_id = results[0].user_id;
-    // console.log("success!");
-    // res.status(200).send({
-    //   token,
-    //   userInfo: { name: results[0].name, id: results[0].user_id },
-    // });
+    req.session.user_id = results[0].user_id;
   } catch (error) {
     console.log("The error is:", error);
     res.status(500).send("There was an error");

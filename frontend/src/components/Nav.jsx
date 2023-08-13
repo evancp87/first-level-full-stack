@@ -11,7 +11,6 @@ import { selectLoggedInState } from "../features/users/usersSlice";
 import { logoutUser } from "../features/users/usersSlice";
 import Cart from "../features/cart/Cart";
 import PacmanLoader from "react-spinners/PacmanLoader";
-import { createPortal } from "react-dom";
 import { clear } from "../features/cart/cartSlice";
 
 const Nav = () => {
@@ -22,9 +21,9 @@ const Nav = () => {
   const dispatch = useDispatch();
   const [loadingLogout, setLoadingLogout] = useState(false);
 
-  const handleLogout = async () => {
+  const handleLogout = () => {
     setLoadingLogout(true);
-    await dispatch(logoutUser());
+    dispatch(logoutUser());
     setTimeout(async () => {
       setLoadingLogout(false);
       if (items && items.length > 0) {
@@ -43,7 +42,6 @@ const Nav = () => {
         </Link>
       </div>
       <ul className="me-[30px] flex flex-row flex-wrap gap-x-[30px]">
-        {/* {isAuth && <li>Welcome, {userInfo.name}</li>} */}
         {loadingLogout && (
           <PacmanLoader color="#36d7b7" loading={loadingLogout} />
         )}
@@ -70,14 +68,7 @@ const Nav = () => {
             />
           </Link>
         </li>
-        {/* <li>
-          <Link to="/favorites">
-            <FontAwesomeIcon
-              className="cursor-pointer duration-300 ease-in-out hover:scale-150"
-              icon={faHeart}
-            />
-          </Link>
-        </li> */}
+
         <li>
           <Link to="/wishlists">
             <FontAwesomeIcon

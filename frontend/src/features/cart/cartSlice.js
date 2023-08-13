@@ -1,17 +1,18 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 import { sumItems } from "../../utils/helpers";
-import {
-  getCartItems,
-  // addToCart,
-  clearCart,
-  // removeFromCart,
-} from "../../utils/data";
+import // getCartItems,
+// addToCart,
+// clearCart,
+// removeFromCart,
+"../../utils/data";
 const initialState = {
   items: [],
   count: 1,
   ...sumItems([]),
   total: 0,
 };
+
+// To be implemented at a later date
 
 // export const getItems = createAsyncThunk("cart/getItems", async () => {
 //   try {
@@ -86,9 +87,6 @@ export const cartSlice = createSlice({
       return { ...initialState };
     },
   },
-  // extraReducers: (builder) => {
-  //   builder.addCase().addCase().addCase();
-  // },
 });
 
 export const { removeFromCart, addToCart, clear } = cartSlice.actions;

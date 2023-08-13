@@ -32,10 +32,10 @@ const Login = () => {
     }
   }, [isAuth]);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     try {
       e.preventDefault();
-      await dispatch(loggedInUser(login));
+      dispatch(loggedInUser(login));
       // navigate(-1);
     } catch (error) {
       console.log("There was an error logging in", error);

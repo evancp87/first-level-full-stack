@@ -79,8 +79,6 @@ const Cart = () => {
               Checkout
             </button>
           </div>
-          <FontAwesomeIcon icon={["fa-solid", "fa-cart-shopping"]} />
-          <FontAwesomeIcon icon={["fa-solid", "fa-trash-can"]} />
         </div>
       )}
     </div>

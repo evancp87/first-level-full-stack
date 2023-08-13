@@ -2,8 +2,6 @@
 
 import React from "react";
 import { Link } from "react-router-dom";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faHeart } from "@fortawesome/free-solid-svg-icons";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import WishlistModal from "../wishlist/WishlistModal";
@@ -42,13 +40,9 @@ const GameCard = ({ game, index }) => {
               <p className="text-sm">
                 {game ? platformNames : <Skeleton count={1} />}
               </p>
-              {/* <p className="text-sm">
-                {game ? platforms : <Skeleton count={1} />}
-              </p> */}
             </div>
             <div className="flex items-center">
-              {/* handles liked state of heart when clicked, saves to localStorage and favorites page */}
-
+              {/*opens wishlist modal for creating and adding to wishlists */}
               <WishlistModal name={name} slug={slug} />
               <p className="card-actions justify-end">
                 {game ? `Rating: ${rating}` : <Skeleton count={1} />}{" "}

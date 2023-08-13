@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import GameCard from "../Game/GameCard";
 import { useSelector, useDispatch } from "react-redux";
 import PacmanLoader from "react-spinners/PacmanLoader";
@@ -6,15 +6,11 @@ import PacmanLoader from "react-spinners/PacmanLoader";
 import { selectHighestRated, setTopRated } from "./dashboardSlice";
 
 const AllTimeBest = () => {
-  // const [loading, setLoading] = useState(true);
   const dispatch = useDispatch();
 
+  // gets list of top rated games
   useEffect(() => {
-    // setLoading(true);
     dispatch(setTopRated());
-    // setTimeout(() => {
-    //   setLoading(false);
-    // }, 3000);
   }, [dispatch]);
 
   // gets filtered list of highest rated games from store

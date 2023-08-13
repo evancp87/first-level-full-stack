@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { register, loginUser, logout } from "../../utils/data";
 
+// gets jwt from localStorage on logging in
 const token = localStorage.getItem("token")
   ? localStorage.getItem("token")
   : null;
@@ -49,35 +50,10 @@ export const logoutUser = createAsyncThunk("users/logout", async () => {
   }
 });
 
-// TODO: make async
 export const usersSlice = createSlice({
   name: "users",
   initialState,
-  reducers: {
-    // login: (state, action) => {
-    //   const loggedInUser = {
-    //     isLoggedIn: true,
-    //     firstName: action.payload,
-    //     lastName: action.payload,
-    //     password: action.payload,
-    //     email: action.payload,
-    //   };
-    //   state.value = loggedInUser;
-    // },
-    // logout: (state) => {
-    //   return initialState;
-    // },
-    // register: (state, action) => {
-    //   const newUser = {
-    //     isLoggedIn: true,
-    //     firstName: action.payload,
-    //     lastName: action.payload,
-    //     password: action.payload,
-    //     email: action.payload,
-    //   };
-    //   state.value = newUser;
-    // },
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(loggedInUser.pending, (state) => {
@@ -89,7 +65,6 @@ export const usersSlice = createSlice({
         state.loading = false;
         state.isAuth = true;
         state.userInfo = action.payload.userInfo;
-        // state.token = token;
         state.token = action.payload.token;
         state.error = null;
       })
@@ -99,50 +74,15 @@ export const usersSlice = createSlice({
         state.token = null;
         state.userInfo = null;
       })
-      .addCase(setUser.pending, (state, action) => {
-        // const { firstName, lastName, email, token } = action.payload;
-
-        // const newUser = {
-        //   isLoggedIn: true,
-        //   firstName,
-        //   lastName,
-        //   token: token,
-        //   email,
-        // };
-
-        // state.value = newUser;
-
+      .addCase(setUser.pending, (state) => {
         state.loading = false;
         state.error = null;
       })
       .addCase(setUser.rejected, (state, action) => {
-        // const { firstName, lastName, email, token } = action.payload;
-
-        // const newUser = {
-        //   isLoggedIn: true,
-        //   firstName,
-        //   lastName,
-        //   token,
-        //   email,
-        // };
-
-        // state.value = newUser;
-
         state.loading = false;
         state.error = action.payload;
       })
       .addCase(setUser.fulfilled, (state, action) => {
-        // const { firstName, lastName, email, token } = action.payload;
-
-        // const newUser = {
-        //   isLoggedIn: true,
-        //   firstName,
-        //   lastName,
-        //   token,
-        //   email,
-        // };
-
-        // state.value = newUser;
         state.isAuth = true;
         state.userInfo = action.payload.userInfo;
         state.token = action.payload.token;
@@ -154,8 +94,6 @@ export const usersSlice = createSlice({
       });
   },
 });
-
-// export const { login, logout } = usersSlice.actions;
 
 export const selectLoggedInState = (state) => state.users;
 

@@ -7,7 +7,6 @@ const Register = () => {
   const [register, setRegister] = useState({
     name: "",
     email: "",
-    // address: "",
     password: "",
   });
   const [errors, setErrors] = useState(null);
@@ -22,6 +21,7 @@ const Register = () => {
       navigate("/");
     }
   }, [isAuth]);
+
   const handleInputs = async (e) => {
     const { name, value } = e.target;
     setRegister((inputs) => ({ ...inputs, [name]: value }));
@@ -40,7 +40,7 @@ const Register = () => {
     e.preventDefault();
 
     try {
-      await dispatch(setUser(register));
+      dispatch(setUser(register));
       // navigate("/");
     } catch (error) {
       console.log("There was an error creating the user", error);
@@ -72,15 +72,7 @@ const Register = () => {
                   </p>
                 ) : null
               )}
-            {/* <label htmlFor="address">Address</label>
-            <input
-              placeholder="address"
-              type="text"
-              name="address"
-              value={register.address}
-              onChange={handleInputs}
-              className="rounded-md p-2"
-            /> */}
+
             <input
               placeholder="email"
               type="text"

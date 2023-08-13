@@ -1,9 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import {
-  getGameDetail,
-  getScreenshots,
-  getGameTrailers,
-} from "../../utils/data";
+import { getGameDetail, getScreenshots } from "../../utils/data";
 
 const initialState = {
   detail: {},
@@ -11,12 +7,12 @@ const initialState = {
   trailers: [],
 };
 
-// gets detail of a single gamee
+// gets detail of a single game
 export const getGame = createAsyncThunk("games/getGame", async (slug) => {
   try {
     const gameDetail = await getGameDetail(slug);
 
-    const price = Math.floor(Math.random() * 11) + 50;
+    const price = 50;
 
     gameDetail.price = price;
 
@@ -25,25 +21,13 @@ export const getGame = createAsyncThunk("games/getGame", async (slug) => {
     console.log("There was an error getting the game details:", error);
   }
 });
-
+// gets arr of screenshots
 export const getGameScreenshots = createAsyncThunk(
   "games/getScreenshots",
   async (slug) => {
     try {
       const screenshots = await getScreenshots(slug);
       return screenshots;
-    } catch (error) {
-      console.log("There was an error getting the game details:", error);
-    }
-  }
-);
-
-export const getTrailers = createAsyncThunk(
-  "games/getTrailers",
-  async (slug) => {
-    try {
-      const trailers = await getGameTrailers(slug);
-      return trailers;
     } catch (error) {
       console.log("There was an error getting the game details:", error);
     }
@@ -70,9 +54,7 @@ export const gameDetailsSlice = createSlice({
         console.log("the payload is:", action.payload);
         state.detail = action.payload;
       })
-      .addCase(getTrailers.fulfilled, (state, action) => {
-        state.trailers = action.payload;
-      })
+
       .addCase(getGameScreenshots.fulfilled, (state, action) => {
         state.screenshots = action.payload;
       });

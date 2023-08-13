@@ -1,5 +1,4 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-// import wishlistsSlice from "../favorites/wishlistsSlice";
 import {
   wishlists,
   singleWishlist,
@@ -98,10 +97,7 @@ export const update = createAsyncThunk("wishlist/update", async () => {
 
 export const addGamesToWishlist = createAsyncThunk(
   "wishlist/addGame",
-  async (
-    // token, wishlistId, gameSlug, userId
-    gameToAdd
-  ) => {
+  async (gameToAdd) => {
     try {
       const response = await addGamesOnWishlist(gameToAdd);
       return response;
@@ -153,7 +149,6 @@ const wishlistsSlice = createSlice({
         const index = state.wishlists.findIndex(
           (wishlist) => wishlist.id === action.payload.data.id
         );
-        console.log(index);
         const wishlistToRemove = state.wishlists[index];
         console.log(wishlistToRemove);
         const updatedList = [...state.wishlists];
@@ -167,34 +162,19 @@ const wishlistsSlice = createSlice({
         state.gamesOnWishlist = [...state.gamesOnWishlist, action.payload];
       })
       .addCase(getGamesFromWishlist.fulfilled, (state, action) => {
-        console.log("checking the payload here for wishlists xoxoxo");
-        console.log(action.payload);
-        console.log(typeof action.payload);
         if (action.payload.length > 0) {
           state.gamesOnWishlist = action.payload;
         } else {
           state.gamesOnWishlist = [];
         }
       })
-      //   .addCase(getGamesFromWishlist.fulfilled, (state, action) => {
-      //     if (Array.isArray(action.payload) && action.payload.length > 0) {
-      //       state.gamesOnWishlist = action.payload;
-      //     } else if (!Array.isArray(action.payload)) {
-      //       state.gamesOnWishlist = [action.payload];
-      //     } else {
-      //       state.gamesOnWishlist = [];
-      //     }
-      //   })
 
       .addCase(deleteGame.fulfilled, (state, action) => {
-        console.log();
-
         console.log(action.payload);
         const index = state.gamesOnWishlist.findIndex(
           (game) => game.id === action.payload.id
         );
         console.log(index);
-        // const gameToRemove = state.gamesOnWishlist[index];
 
         const updatedList = [...state.gamesOnWishlist];
         updatedList.splice(index, 1);

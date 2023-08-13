@@ -75,6 +75,7 @@ export const currentDate = dayjs().format("YYYY-MM-DD");
 export const oneMonthAgo = dayjs().subtract(1, "month").format("YYYY-MM-DD");
 export const oneMonthAhead = dayjs().add(1, "month").format("YYYY-MM-DD");
 
+// regex sanitisation function
 export const escapeForRegExp = (text) => {
   return text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 };

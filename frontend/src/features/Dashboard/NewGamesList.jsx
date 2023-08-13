@@ -13,7 +13,6 @@ const FilteredList = () => {
       setGamesByDate({
         startDate: oneMonthAgo,
         endDate: currentDate,
-        // dateType: "newlyReleased",
       })
     );
   }, [dispatch, setGamesByDate]);

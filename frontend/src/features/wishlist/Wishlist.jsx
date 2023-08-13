@@ -1,13 +1,11 @@
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, { useEffect, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import BackBtn from "../../components/BackBtn";
 import GameCard from "../Game/GameCard";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { Transition } from "react-transition-group";
 import { Link } from "react-router-dom";
-import { TransitionGroup } from "react-transition-group";
 import {
   getWishlist,
   getGamesFromWishlist,
@@ -23,17 +21,11 @@ const Wishlist = () => {
   const navigate = useNavigate();
   // unpacks slug from the url to dispatch the store and fetch game detail from api
   const { id } = useParams();
-
   const { isAuth, userInfo, token } = useSelector(selectLoggedInState);
   const games = useSelector(selectGamesOnWishlist);
-
-  console.log(games);
   const wishlist = useSelector(selectSingleWishlist);
   console.log(wishlist);
 
-  // TODO: get userId;
-  // handles both adding to the cart and scroll to top
-  // const wishlistId = wishlist;
   useEffect(() => {
     if (!isAuth) {
       navigate("/login");
@@ -51,18 +43,11 @@ const Wishlist = () => {
   };
 
   const handleDelete = (wishlistId, token, userId, slug) => {
-    console.log(token);
-    console.log(wishlistId);
-    console.log(slug);
-    console.log(userId);
-    console.log(typeof token);
-    console.log(typeof wishlistId);
-    console.log(typeof slug);
-    console.log(typeof userId);
     dispatch(deleteGame({ wishlistId, token, userId, slug }));
     notify();
   };
 
+  // fetches single wishlist
   const fetchWishlist = useCallback(async () => {
     dispatch(getWishlist(wishlistDetails));
     dispatch(getGamesFromWishlist(wishlistDetails));
@@ -81,22 +66,12 @@ const Wishlist = () => {
         </div>
 
         <ul>
-          {/* {(games.length === 0 && (
-            <p className="mt-8 flex items-center justify-center text-xl">
-              Nothing here. Like games to add to this section
-            </p>
-          )) ||
-            []} */}
           {games && games.length > 0 ? (
             games.map((game) => (
               <>
                 <li key={game.id}>
                   <Link to={`game/${game.id}`}>
-                    <GameCard
-                      game={game}
-                      liked={game.liked}
-                      // handleLikes={handleLikes}
-                    />
+                    <GameCard game={game} liked={game.liked} />
                   </Link>
                   <button
                     onClick={() =>

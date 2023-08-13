@@ -11,13 +11,13 @@ const Error404 = () => {
         src={empty}
         alt="empty chest"
       />
-      <div className="flex w-[30%] flex-col items-center">
+      <div className="mb-4 flex w-[30%] flex-col items-center">
         <p>
           The page could not be found. Please check the address bar for typos,
           and make sure the page exists, otherwise navigate back to the home
           page below
         </p>
-        <button className="active-btn text-slate-100 my-4 h-[40px] w-[200px]  rounded-full bg-logo">
+        <button className="active-btn text-slate-100 mb-4 mt-4 h-[40px] w-[200px]  rounded-full bg-logo">
           <Link to="/">Home</Link>
         </button>
       </div>

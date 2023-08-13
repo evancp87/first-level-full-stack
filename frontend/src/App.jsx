@@ -5,7 +5,6 @@ import "../dist/output.css";
 import { Routes, Route } from "react-router-dom";
 import Search from "./features/Dashboard/Search";
 import Dashboard from "./features/Dashboard/Dashboard";
-import Favorites from "./features/Favorites/Favorites";
 import GameDetail from "./features/Game/GameDetail";
 import Error404 from "./components/Error404";
 import Layout from "./components/Layout";
@@ -15,14 +14,11 @@ import Wishlist from "./features/wishlist/Wishlist";
 import WishlistList from "./features/wishlist/WishlistList";
 import "react-loading-skeleton/dist/skeleton.css";
 import { setGames } from "./features/Dashboard/dashboardSlice";
-import ProtectedRoute from "./components/ProtectedRoute";
-import { selectLoggedInState } from "./features/users/usersSlice";
-import { useSelector } from "react-redux";
+// import ProtectedRoute from "./components/ProtectedRoute";
 
 const App = () => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(true);
-  const { isAuth } = useSelector(selectLoggedInState);
 
   // gets data and renders loading screen with state variable
   const getData = useCallback(async () => {
@@ -49,12 +45,6 @@ const App = () => {
             <Routes>
               <Route index element={<Dashboard />} />
               <Route path="/search" element={<Search />} />
-              <Route path="/favorites" element={<Favorites />} />
-              {/* <ProtectedRoute
-                path="/favorites"
-                element={<Favorites />}
-                isAuth={isAuth}
-              /> */}
               <Route path="/game/:slug" element={<GameDetail />} />
               <Route path="*" element={<Error404 />} />
               <Route path="/register" element={<Register />} />
