@@ -12,6 +12,8 @@ import { logoutUser } from "../features/users/usersSlice";
 import Cart from "../features/cart/Cart";
 import PacmanLoader from "react-spinners/PacmanLoader";
 import { createPortal } from "react-dom";
+import { clear } from "../features/cart/cartSlice";
+
 const Nav = () => {
   const items = useSelector(selectItems);
   const count = useSelector(selectTotal);
@@ -25,6 +27,10 @@ const Nav = () => {
     await dispatch(logoutUser());
     setTimeout(async () => {
       setLoadingLogout(false);
+      if (items && items.length > 0) {
+        dispatch(clear());
+      }
+
       navigate("/");
     }, 3000);
   };
@@ -37,19 +43,24 @@ const Nav = () => {
         </Link>
       </div>
       <ul className="me-[30px] flex flex-row flex-wrap gap-x-[30px]">
-        {isAuth && <li>Welcome, {userInfo.name}</li>}
+        {/* {isAuth && <li>Welcome, {userInfo.name}</li>} */}
         {loadingLogout && (
           <PacmanLoader color="#36d7b7" loading={loadingLogout} />
         )}
-        <li>
-          {isAuth ? (
-            <p to="/login" className="cursor-pointer" onClick={handleLogout}>
-              Logout
-            </p>
-          ) : (
+        {isAuth ? (
+          <>
+            <li>Welcome, {userInfo.name}</li>
+            <li>
+              <p to="/login" className="cursor-pointer" onClick={handleLogout}>
+                Logout
+              </p>
+            </li>
+          </>
+        ) : (
+          <li>
             <Link to="/login">Login</Link>
-          )}
-        </li>
+          </li>
+        )}
 
         <li>
           <Link to="/">
