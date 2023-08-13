@@ -44,20 +44,10 @@ const Nav = () => {
         <li>
           {isAuth ? (
             <p to="/login" className="cursor-pointer" onClick={handleLogout}>
-              {/* <FontAwesomeIcon
-          className="cursor-pointer duration-300 ease-in-out hover:scale-150"
-          icon={faHouse}
-        /> */}
               Logout
             </p>
           ) : (
-            <Link to="/login">
-              {/* <FontAwesomeIcon
-              className="cursor-pointer duration-300 ease-in-out hover:scale-150"
-              icon={faHouse}
-            /> */}
-              Login
-            </Link>
+            <Link to="/login">Login</Link>
           )}
         </li>
 
