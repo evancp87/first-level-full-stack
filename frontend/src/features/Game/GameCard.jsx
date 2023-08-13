@@ -20,15 +20,15 @@ const GameCard = ({ game, handleLikes, index }) => {
     <>
       <SkeletonTheme color="#f3f3f3" highlightColor="#e0e0e0">
         <article className="mx-w-full card card-bordered card-side m-6 flex-row flex-wrap items-center bg-base-100 shadow-xl">
-          <picture className="rounded-sm sm:max-w-[100%] lg:max-w-[20%]">
-            <Link to={`/game/${slug}`}>
+          <Link to={`/game/${slug}`}>
+            <picture className="rounded-sm sm:max-w-[100%] lg:max-w-[20%]">
               {background_image ? (
                 <img className="rounded-xl" src={background_image} alt={name} />
               ) : (
                 <Skeleton width={100} count={3} />
               )}
-            </Link>
-          </picture>
+            </picture>
+          </Link>
 
           <div className="card-body">
             <div className="flex flex-col gap-4 ">
