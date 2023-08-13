@@ -81,7 +81,8 @@ const WishlistList = () => {
   };
 
   const filteredSearch = () => {
-    let filteredList = [...wishlists];
+    // let filteredList = wishlists ? [...wishlists] : [];
+    let filteredList = Array.isArray(wishlists) ? [...wishlists] : [];
 
     // defensive checks for rendering filtered list based on input
     if (searchInput) {
@@ -129,7 +130,7 @@ const WishlistList = () => {
 
           <div className="form-control  flex w-full justify-center">
             <label className="label self-start">
-              <h2 className="label-text text-xl">{`${userInfo.name}'s Wishlists`}</h2>
+              <h2 className="label-text text-xl">{`${userInfo.name}'s wishlists`}</h2>
             </label>
             <input
               onChange={searchValue}
@@ -199,7 +200,7 @@ const WishlistList = () => {
               </li>
             ))
           ) : (
-            <p>No wishlists</p>
+            <p>No wishlists. Why not create some?</p>
           )}
         </ul>
         <div className="join my-[3em] grid grid-cols-2  pe-[1em] ps-[1em]">
