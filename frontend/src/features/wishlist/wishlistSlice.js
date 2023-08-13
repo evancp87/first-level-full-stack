@@ -167,8 +167,25 @@ const wishlistsSlice = createSlice({
         state.gamesOnWishlist = [...state.gamesOnWishlist, action.payload];
       })
       .addCase(getGamesFromWishlist.fulfilled, (state, action) => {
-        state.gamesOnWishlist = action.payload;
+        console.log("checking the payload here for wishlists xoxoxo");
+        console.log(action.payload);
+        console.log(typeof action.payload);
+        if (action.payload.length > 0) {
+          state.gamesOnWishlist = action.payload;
+        } else {
+          state.gamesOnWishlist = [];
+        }
       })
+      //   .addCase(getGamesFromWishlist.fulfilled, (state, action) => {
+      //     if (Array.isArray(action.payload) && action.payload.length > 0) {
+      //       state.gamesOnWishlist = action.payload;
+      //     } else if (!Array.isArray(action.payload)) {
+      //       state.gamesOnWishlist = [action.payload];
+      //     } else {
+      //       state.gamesOnWishlist = [];
+      //     }
+      //   })
+
       .addCase(deleteGame.fulfilled, (state, action) => {
         console.log();
 

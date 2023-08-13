@@ -52,11 +52,18 @@ const WishlistList = () => {
   };
   const notify = () => toast("The wishlist was deleted");
 
+  useEffect(() => {
+    const filteredWishlists = filteredSearch();
+    // Calculate total pages for pagination
+    setTotalPages(Math.ceil(filteredWishlists.length / 10));
+    setCurrentPage(1);
+  }, [searchInput]);
+
   // Gets list of wishlist names for dropdown
 
   const getWishlists = useCallback(() => {
     dispatch(setWishlists(userId));
-  }, []);
+  }, [setWishlists]);
 
   useEffect(() => {
     if (isAuth) {
@@ -92,16 +99,17 @@ const WishlistList = () => {
     const endIndex = startIndex + 10;
     const paginatedWishlists = filteredList.slice(startIndex, endIndex);
 
-    return paginatedWishlists;
+    return { paginatedWishlists, totalWishlists: filteredList.length };
     // return filteredList;
   };
 
-  const filteredWishlists = filteredSearch();
-
+  const { paginatedWishlists } = filteredSearch();
+  // const filteredWishlists = filteredSearch();
+  const filteredWishlists = paginatedWishlists;
   useEffect(() => {
-    const filteredWishlists = filteredSearch();
+    const { totalWishlists } = filteredSearch();
     // Calculate total pages for pagination
-    setTotalPages(Math.ceil(filteredWishlists.length / 10));
+    setTotalPages(Math.ceil(totalWishlists / 10));
     setCurrentPage(1);
   }, [searchInput]);
 
@@ -109,6 +117,10 @@ const WishlistList = () => {
     dispatch(reset());
     setSearchText("");
   };
+
+  console.log("checking total pages", totalPages);
+  console.log("checking total pages", totalPages.length);
+
   return (
     <div className="flex  flex-col  items-center">
       <div className="w-80vw">
@@ -200,9 +212,7 @@ const WishlistList = () => {
           </button>
           <button
             onClick={() => setCurrentPage(currentPage + 1)}
-            disabled={
-              currentPage > totalPages || filteredWishlists.length === 0
-            }
+            disabled={currentPage === totalPages || totalPages.length === 1}
             className="btn btn-outline join-item"
           >
             Next
