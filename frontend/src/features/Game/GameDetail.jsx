@@ -191,7 +191,7 @@ const GameDetail = () => {
                 >
                   <img
                     className="rounded-box object-cover"
-                    // src={screenshot.image}
+                    key={screenshot.id}
                     src={screenshot.image}
                     alt={`${name} screenshot ${index} `}
                   />
