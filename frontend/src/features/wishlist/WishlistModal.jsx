@@ -24,9 +24,9 @@ const WishlistModal = ({ name, slug }) => {
   const [wishlistName, setWishlistName] = useState("");
   const userId = userInfo.id;
   console.log("the user id is", userId);
-  const getWishlists = useCallback(async () => {
-    await dispatch(setWishlists(userId));
-  }, []);
+  const getWishlists = useCallback(() => {
+    dispatch(setWishlists(userId));
+  }, [setWishlists]);
 
   useEffect(() => {
     if (isAuth) {
@@ -75,6 +75,8 @@ const WishlistModal = ({ name, slug }) => {
     await dispatch(addWishlist({ userId, token, wishlistWithGame }));
     notify();
     setWishlistName("");
+    // gets the new wishlist name isntantly
+    getWishlists();
 
     // navigate("/favorites");
   };
@@ -120,8 +122,8 @@ const WishlistModal = ({ name, slug }) => {
                   >
                     <input
                       type="checkbox"
-                      className="h-[20px] w-[20px]"
-                      value={selectedWishlists}
+                      className="h-[20px] w-[20px] cursor-pointer"
+                      value={list.id}
                       onChange={(e) => setInputs(e, list.id)}
                       checked={selectedWishlists.includes(list.id)}
                     />
@@ -134,8 +136,9 @@ const WishlistModal = ({ name, slug }) => {
             </ul>
             <button
               // onClick={handleAddGameWishlist}
+              disabled={selectedWishlists.length === 0}
               onClick={handleSaveToWishlist}
-              className="active-btn text-slate-100 mt-4 h-[40px] rounded-full  bg-logo px-4 duration-300 ease-in-out hover:scale-110"
+              className="active-btn text-slate-100 mt-4 h-[40px] cursor-pointer rounded-full  bg-logo px-4 duration-300 ease-in-out hover:scale-110"
             >
               Save
             </button>
@@ -152,11 +155,12 @@ const WishlistModal = ({ name, slug }) => {
                     type="text"
                     value={wishlistName}
                     onChange={setCreateWishlistInput}
-                    className="border-b-2 border-dashed bg-transparent"
+                    className=" border-b-2 border-dashed bg-transparent"
                   />
                   <button
+                    disabled={!wishlistName}
                     type="submit"
-                    className="active-btn text-slate-100 flex h-[40px] items-center rounded-full bg-logo  p-4 px-4 duration-300 ease-in-out hover:scale-110"
+                    className="active-btn text-slate-100 flex h-[40px] cursor-pointer items-center rounded-full  bg-logo p-4 px-4 duration-300 ease-in-out hover:scale-110"
                     onClick={handleCreateWishlist}
                   >
                     Create Wishlist
