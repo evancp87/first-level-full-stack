@@ -32,12 +32,13 @@ export const inputsSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(setGenres.fulfilled, (state, action) => {
-        const genreNames = action.payload.map((platform) => platform.name);
+        const genreNames = action.payload.map((genre) => genre.name);
         const namesSlice = genreNames.slice(0, 14);
         state.genres = namesSlice;
       })
       .addCase(setPlatforms.fulfilled, (state, action) => {
         const platformNames = action.payload.map((platform) => platform.name);
+        console.log(platformNames);
         const namesSlice = platformNames.slice(0, 7);
         state.platforms = namesSlice;
       });
