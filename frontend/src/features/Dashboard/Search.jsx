@@ -53,9 +53,20 @@ const Search = () => {
   }, [getInputs]);
 
   useEffect(() => {
-    const filteredGames = filteredSearch();
+    // const filteredGames = filteredSearch();
+    const { totalFilteredGames } = filteredSearch();
+
+    console.log(totalFilteredGames, "a check here");
     // Calculate total pages for pagination
-    setTotalPages(Math.ceil(filteredGames.length / 10));
+    const totalPages = Math.ceil(totalFilteredGames / 10);
+    setTotalPages(totalPages);
+    setCurrentPage(1);
+    // setTotalPages(Math.ceil(filteredGames.length / 10));
+    console.log(totalFilteredGames);
+    console.log(totalFilteredGames / 10);
+    console.log(totalPages);
+
+    console.log("checking here", totalPages);
     setCurrentPage(1);
   }, [searchInput, selectedPlatform, selectedGenre, sortInput]);
 
@@ -143,11 +154,19 @@ const Search = () => {
     const endIndex = startIndex + 10;
     const paginatedGames = filteredList.slice(startIndex, endIndex);
 
-    return paginatedGames;
+    // return paginatedGames;
     // return filteredList;
-  };
 
-  const filteredGames = filteredSearch();
+    return {
+      paginatedGames,
+      totalFilteredGames: filteredList.length,
+    };
+  };
+  // const filteredGames = filteredSearch();
+  const { paginatedGames } = filteredSearch();
+
+  const filteredGames = paginatedGames;
+
   return (
     <section className="flex flex-col items-center">
       {/* <input type="text" onInput={searchValue} /> */}
@@ -197,7 +216,7 @@ const Search = () => {
           </button>
           <button
             onClick={() => setCurrentPage(currentPage + 1)}
-            disabled={currentPage > totalPages || filteredGames.length === 0}
+            disabled={currentPage === totalPages || filteredGames.length === 0}
             className="btn btn-outline join-item"
           >
             Next
