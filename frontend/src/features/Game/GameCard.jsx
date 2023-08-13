@@ -7,13 +7,14 @@ import { faHeart } from "@fortawesome/free-solid-svg-icons";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import WishlistModal from "../wishlist/WishlistModal";
+import { ToastContainer } from "react-toastify";
 
 const GameCard = ({ game, handleLikes, index }) => {
   const { released, name, background_image, slug, rating, platforms, liked } =
     game;
 
-  // const platformNames =
-  //   platforms && platforms.map((console) => console.platform.name).join(", ");
+  const platformNames =
+    platforms && platforms.map((platform) => platform).join(", ");
 
   return (
     <>
@@ -31,7 +32,7 @@ const GameCard = ({ game, handleLikes, index }) => {
 
           <div className="card-body">
             <div className="flex flex-col gap-4 ">
-              <h2 className="card-title ">{name}</h2>
+              <h2 className="card-title text-xl">{name}</h2>
               <p>
                 {game ? (
                   `Released ${new Date(released).toDateString()}`
@@ -39,28 +40,30 @@ const GameCard = ({ game, handleLikes, index }) => {
                   <Skeleton count={1} />
                 )}
               </p>
-              {/* <p className="text-sm">
+              <p className="text-sm">
                 {game ? platformNames : <Skeleton count={1} />}
+              </p>
+              {/* <p className="text-sm">
+                {game ? platforms : <Skeleton count={1} />}
               </p> */}
             </div>
             <div className="flex items-center">
               {/* handles liked state of heart when clicked, saves to localStorage and favorites page */}
-              <FontAwesomeIcon
-                className="active-btn cursor-pointer"
-                style={{
-                  filter: liked
-                    ? "brightness(0) saturate(100%) invert(23%) sepia(80%) saturate(6831%) hue-rotate(355deg) brightness(98%) contrast(123%)"
-                    : "none",
-                }}
-                icon={faHeart}
-                onClick={() => {
-                  handleLikes(game.id, game);
-                }}
-              />
+
               <WishlistModal name={name} slug={slug} />
               <p className="card-actions justify-end">
                 {game ? `Rating: ${rating}` : <Skeleton count={1} />}{" "}
               </p>
+              <ToastContainer
+                className="fixed bottom-4 left-4 z-50 md:bottom-8 md:left-8"
+                autoClose={5000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnHover
+                theme="colored"
+              />
             </div>
           </div>
         </article>
