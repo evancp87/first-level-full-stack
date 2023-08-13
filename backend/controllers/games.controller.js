@@ -38,27 +38,53 @@ GROUP BY game.name;`
   res.send({ status: 404, reason: "No games found" });
 }
 
-// gets individual game
+async function getHighestRatedGames(req, res) {
+  const results = await asyncMySQL(
+    `SELECT game.id,
+  game.name,
+  game.released,
+  game.slug,
+  game.released,
+  game.background_image,
+game.rating,
+  game.price,
+  GROUP_CONCAT(DISTINCT p.name SEPARATOR ', ') AS platforms,
+  GROUP_CONCAT(DISTINCT g.name SEPARATOR ', ') AS genres
 
-// async function getGameOnWishList(req, res) {
-//   console.log("game route ran");
-//   const slug = req.params.slug;
+FROM games game
+INNER JOIN platform_games pg ON game.id = pg.game_id
+INNER JOIN platforms p ON pg.platform_id = p.id
+INNER JOIN genre_games gg ON game.id = gg.game_id
+INNER JOIN genres g ON gg.genre_id = g.id
+GROUP BY game.name;`
+  );
 
-//   if (!slug || typeof slug !== "string") {
-//     res.status(404).send("No game slug was provided");
-//     return;
-//   }
-//   const results = await asyncMySQL(`SELECT id, slug, name, rating
-//                                         FROM games
-//                                           WHERE slug LIKE '${slug}';`);
+  const games = results.map((result) => ({
+    ...result,
+    platforms: result.platforms.split(", "),
+    genres: result.genres.split(", "),
+  }));
 
-//   if (results.length > 0) {
-//     res.status(200).send(results);
-//     return;
-//   }
+  // const filterHighestRated: (state) => {
+  //   if (state.games && state.games.length) {
+  //     const highest = state.games.filter((game) => game.rating >= 4.5);
+  //     const topTen = highest.slice(0, 10);
+  //     state.allTimeBest = topTen;
+  //   }
+  // },
+  const highestRatedGames = games
+    .filter((game) => {
+      return game.rating >= 4.5;
+    })
+    .slice(0, 10);
 
-//   res.status(404).send("game not found with that slug");
-// }
+  if (highestRatedGames.length > 0) {
+    res.status(200).send(highestRatedGames);
+    return;
+  }
+
+  res.send({ status: 404, reason: "No games found" });
+}
 
 async function getGameOnWishList(req, res) {
   console.log("finding customer and game on wishlist");
@@ -83,19 +109,6 @@ JOIN wishlist_games ON wishlist_games.game_id = games.id
 JOIN users ON users.user_id = wishlist_games.user_id
 WHERE wishlist_games.user_id = ${userId} AND wishlist_games.wishlist_id = ${wishlistId};
   `;
-
-  // SELECT
-  //   games.released,
-  //   games.Name AS game,
-  //   games.background_image,
-  //   games.slug,
-  //   games.rating,
-
-  //   users.name
-  // FROM games
-  // JOIN wishlists ON wishlists.game_id = games.id
-  // JOIN users ON users.user_id = wishlists.customer_id
-  // WHERE wishlists.customer_id = ${userId} AND wishlists.id = ${wishlistId};
 
   try {
     const results = await asyncMySQL(query);
@@ -262,4 +275,5 @@ module.exports = {
   getGameDetail,
   getGameTrailers,
   getGamesByDate,
+  getHighestRatedGames,
 };

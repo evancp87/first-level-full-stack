@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { getGames, gamesByDate } from "../../utils/data";
+import { getGames, gamesByDate, getTopRated } from "../../utils/data";
 
 const initialState = {
   games: [],
@@ -35,6 +35,17 @@ export const setGamesByDate = createAsyncThunk(
     }
   }
 );
+
+export const setTopRated = createAsyncThunk("games/topRated", async () => {
+  try {
+    const response = await getTopRated();
+
+    return response;
+  } catch (error) {
+    console.log("Error fetching games:", error);
+    throw error;
+  }
+});
 
 export const dashboardSlice = createSlice({
   name: "dashboard",
@@ -82,6 +93,9 @@ export const dashboardSlice = createSlice({
       })
       .addCase(setGamesByDate.fulfilled, (state, action) => {
         state.newlyReleasedGames = action.payload;
+      })
+      .addCase(setTopRated.fulfilled, (state, action) => {
+        state.allTimeBest = action.payload;
       });
   },
 });

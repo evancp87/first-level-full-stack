@@ -9,9 +9,8 @@ import "react-loading-skeleton/dist/skeleton.css";
 import WishlistModal from "../wishlist/WishlistModal";
 import { ToastContainer } from "react-toastify";
 
-const GameCard = ({ game, handleLikes, index }) => {
-  const { released, name, background_image, slug, rating, platforms, liked } =
-    game;
+const GameCard = ({ game, index }) => {
+  const { released, name, background_image, slug, rating, platforms } = game;
 
   const platformNames =
     platforms && platforms.map((platform) => platform).join(", ");
@@ -20,15 +19,15 @@ const GameCard = ({ game, handleLikes, index }) => {
     <>
       <SkeletonTheme color="#f3f3f3" highlightColor="#e0e0e0">
         <article className="mx-w-full card card-bordered card-side m-6 flex-row flex-wrap items-center bg-base-100 shadow-xl">
-          <Link to={`/game/${slug}`}>
-            <picture className="rounded-sm sm:max-w-[100%] lg:max-w-[20%]">
+          <picture className="rounded-sm sm:max-w-[100%] lg:max-w-[20%]">
+            <Link to={`/game/${slug}`}>
               {background_image ? (
                 <img className="rounded-xl" src={background_image} alt={name} />
               ) : (
                 <Skeleton width={100} count={3} />
               )}
-            </picture>
-          </Link>
+            </Link>
+          </picture>
 
           <div className="card-body">
             <div className="flex flex-col gap-4 ">
