@@ -118,7 +118,7 @@ async function deleteWishlist(req, res) {
                           FROM wishlists
                               WHERE id = '${id}' AND customer_id = ${user};`);
 
-    res.status(200).send("wishlist deleted");
+    res.status(200).send({ id: id });
   } catch (error) {
     console.log("error:", error);
     res.status(500).send("internal server error");
@@ -214,7 +214,7 @@ async function addGamesToWishlist(req, res) {
 
 const deleteGamesFromWishlist = async (req, res) => {
   console.log("deleting game from wishlist ran");
-  const { slug } = req.body;
+  const slug = req.query.slug;
   const wishlistId = req.query.wishlistId;
   const userId = req.query.userId;
 
@@ -253,7 +253,7 @@ const deleteGamesFromWishlist = async (req, res) => {
     await asyncMySQL(`DELETE FROM wishlist_games
                                 WHERE
                                   game_id = ${gameToDelete} AND user_id = ${userId} AND wishlist_id = ${wishlistId};`);
-    res.status(200).send("game deleted from wishlist");
+    res.status(200).send({ id: gameToDelete });
   } catch (error) {
     res.status(500).send("There was a problem deleting that game");
     console.log("There was an error:", error);
