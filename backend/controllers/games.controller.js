@@ -13,15 +13,25 @@ async function getGamesList(req, res) {
   game.background_image,
 game.rating,
   game.price,
-  GROUP_CONCAT(p.name SEPARATOR ', ') AS platforms
+  GROUP_CONCAT(DISTINCT p.name SEPARATOR ', ') AS platforms,
+  GROUP_CONCAT(DISTINCT g.name SEPARATOR ', ') AS genres
+
 FROM games game
 INNER JOIN platform_games pg ON game.id = pg.game_id
 INNER JOIN platforms p ON pg.platform_id = p.id
+INNER JOIN genre_games gg ON game.id = gg.game_id
+INNER JOIN genres g ON gg.genre_id = g.id
 GROUP BY game.name;`
   );
 
-  if (results.length > 0) {
-    res.status(200).send(results);
+  const games = results.map((result) => ({
+    ...result,
+    platforms: result.platforms.split(", "),
+    genres: result.genres.split(", "),
+  }));
+
+  if (games.length > 0) {
+    res.status(200).send(games);
     return;
   }
 
@@ -65,6 +75,7 @@ async function getGameOnWishList(req, res) {
   games.Name AS name,
   games.background_image,
   games.slug,
+  games.id,
   games.rating,
   users.name AS user_name
 FROM games
@@ -105,9 +116,10 @@ const getPlatforms = async (req, res) => {
     const results = await asyncMySQL(`select name from platforms`);
 
     if (results.length > 0) {
-      res.status(200).json(results);
+      return res.status(200).json(results);
     }
-    res.status(404).json("no results found");
+
+    return res.status(404).json("no results found");
   } catch (error) {
     console.log("error:", error);
     res.status(500).json("internal server error");
@@ -120,9 +132,9 @@ const getGenres = async (req, res) => {
     const results = await asyncMySQL(`select name from genres`);
 
     if (results.length > 0) {
-      res.status(200).json(results);
+      return res.status(200).json(results);
     }
-    res.status(404).json("no results found");
+    return res.status(404).json("no results found");
   } catch (error) {
     console.log("error:", error);
     res.status(500).json("internal server error");
@@ -195,16 +207,6 @@ const getGameDetail = async (req, res) => {
     } = data;
     console.log(" the data is:", data);
     const results = {
-      // released: data.released,
-      // name: data.name,
-      // background_image: data.background_image,
-      // rating: data.rating,
-      // platforms: data.platforms,
-      // genres: data.genres,
-      // developers: data.developers,
-      // description: data.description,
-      // id: data.id,
-      // price: data.price,
       released,
       name,
       background_image,
