@@ -271,6 +271,7 @@ export const deleteWishlist = async (wishlist) => {
         },
       }
     );
+    console.log("checking delete wishlist data", data);
     return data;
   } catch (error) {
     console.log("There was an error:", error);
@@ -348,14 +349,10 @@ export const deleteSingleGameFromWishlist = async (
   gameDetails
 ) => {
   console.log(gameDetails);
-  const { userId, token, id, slug } = gameDetails;
+  const { userId, token, wishlistId, slug } = gameDetails;
   try {
     const { data } = await axios.delete(
-      `http://localhost:6001/wishlists/delete?userId=${userId}&wishlistId=${id}`,
-
-      {
-        slug: slug,
-      },
+      `http://localhost:6001/wishlists/remove?userId=${userId}&wishlistId=${wishlistId}&slug=${slug}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
