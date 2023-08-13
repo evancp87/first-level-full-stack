@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { selectLoggedInState } from "../users/usersSlice";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { escapeForRegExp } from "../../utils/helpers";
 
 const WishlistModal = ({ name, slug }) => {
   const notify = () => toast("Your wishlist was created");
@@ -51,7 +52,7 @@ const WishlistModal = ({ name, slug }) => {
   };
 
   const setCreateWishlistInput = (e) => {
-    setWishlistName(e.target.value);
+    setWishlistName(escapeForRegExp(e.target.value));
   };
 
   // loop over checked options and insert into wishlist games table
