@@ -64,8 +64,8 @@ const Wishlist = () => {
   };
 
   const fetchWishlist = useCallback(async () => {
-    await dispatch(getWishlist(wishlistDetails));
-    await dispatch(getGamesFromWishlist(wishlistDetails));
+    dispatch(getWishlist(wishlistDetails));
+    dispatch(getGamesFromWishlist(wishlistDetails));
   }, [dispatch, getWishlist]);
 
   useEffect(() => {
@@ -81,13 +81,13 @@ const Wishlist = () => {
         </div>
 
         <ul>
-          {(games.length === 0 && (
+          {/* {(games.length === 0 && (
             <p className="mt-8 flex items-center justify-center text-xl">
               Nothing here. Like games to add to this section
             </p>
           )) ||
-            []}
-          {games &&
+            []} */}
+          {games && games.length > 0 ? (
             games.map((game) => (
               <>
                 <li key={game.id}>
@@ -102,7 +102,7 @@ const Wishlist = () => {
                     onClick={() =>
                       handleDelete(Number(id), token, userId, game.slug)
                     }
-                    className="active-btn text-slate-100 ml-6 h-[40px] rounded-full  bg-logo px-4 duration-300 ease-in-out hover:scale-110"
+                    className="active-btn text-slate-100 ml-6 h-[40px] rounded-full bg-logo  px-4 duration-300 ease-in-out hover:scale-110"
                   >
                     Delete {game.name}
                   </button>
@@ -119,7 +119,12 @@ const Wishlist = () => {
                   />
                 </li>
               </>
-            ))}
+            ))
+          ) : (
+            <p className="mt-4 text-xl">
+              Nothing here. Add games to the wishlist
+            </p>
+          )}
         </ul>
       </div>
     </section>
