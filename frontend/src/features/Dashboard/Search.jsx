@@ -102,13 +102,11 @@ const Search = () => {
           .toLowerCase()
           .includes(searchInput.toLowerCase());
         const genreQuery = game.genres.some((genre) =>
-          genre.name.toLowerCase().includes(searchInput.toLowerCase())
+          genre.toLowerCase().includes(searchInput.toLowerCase())
         );
-        const platformQuery = game.platforms
-          .split(",")
-          .some((item) =>
-            item.platform.name.toLowerCase().includes(searchInput.toLowerCase())
-          );
+        const platformQuery = game.platforms.some((platform) =>
+          platform.toLowerCase().includes(searchInput.toLowerCase())
+        );
 
         return gameQuery || genreQuery || platformQuery;
       });
@@ -116,30 +114,24 @@ const Search = () => {
 
     if (selectedPlatform) {
       filteredList = filteredList.filter((game) =>
-        game.platforms
-          .split(",")
-          .some((item) => item.platform === selectedPlatform)
+        game.platforms.some((platform) => platform === selectedPlatform)
       );
     }
 
     if (selectedGenre) {
       filteredList = filteredList.filter((game) =>
-        game.genres.some((genre) => genre.name === selectedGenre)
+        game.genres.some((genre) => genre === selectedGenre)
       );
     }
 
     // sorting alphabetically ascending or descending
     switch (sortInput) {
-      case "Asc":
-        filteredList.sort((numOne, numTwo) =>
-          numOne.name > numTwo.name ? 1 : -1
-        );
+      case "Desc":
+        filteredList.sort((numOne, numTwo) => (numOne > numTwo ? 1 : -1));
         break;
 
-      case "Desc":
-        filteredList.sort((numOne, numTwo) =>
-          numOne.name > numTwo.name ? -1 : 1
-        );
+      case "Asc":
+        filteredList.sort((numOne, numTwo) => (numOne > numTwo ? -1 : 1));
         break;
 
       default:
