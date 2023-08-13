@@ -3,7 +3,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import BackBtn from "../../components/BackBtn";
 import GameCard from "../Game/GameCard";
-
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { Transition } from "react-transition-group";
 import { Link } from "react-router-dom";
 import { TransitionGroup } from "react-transition-group";
@@ -17,6 +18,7 @@ import {
 import { selectLoggedInState } from "../users/usersSlice";
 
 const Wishlist = () => {
+  const notify = () => toast("The game was deleted");
   const dispatch = useDispatch();
   const navigate = useNavigate();
   // unpacks slug from the url to dispatch the store and fetch game detail from api
@@ -24,6 +26,8 @@ const Wishlist = () => {
 
   const { isAuth, userInfo, token } = useSelector(selectLoggedInState);
   const games = useSelector(selectGamesOnWishlist);
+
+  console.log(games);
   const wishlist = useSelector(selectSingleWishlist);
   console.log(wishlist);
 
@@ -51,7 +55,12 @@ const Wishlist = () => {
     console.log(wishlistId);
     console.log(slug);
     console.log(userId);
-    dispatch(deleteGame({ id: wishlistId, token, userId, slug }));
+    console.log(typeof token);
+    console.log(typeof wishlistId);
+    console.log(typeof slug);
+    console.log(typeof userId);
+    dispatch(deleteGame({ wishlistId, token, userId, slug }));
+    notify();
   };
 
   const fetchWishlist = useCallback(async () => {
@@ -64,38 +73,55 @@ const Wishlist = () => {
   }, [fetchWishlist]);
 
   return (
-    <section>
-      <BackBtn />
-      {/* TODO: rerender wishlist name in useEffect */}
-      <h3>{wishlist.name}</h3>
+    <section className="flex flex-col items-center">
+      <div className="w-[90%]">
+        <BackBtn />
+        <div className="ml-6 mt-16 flex">
+          <h2 className="mt-[5em] text-xl">{wishlist.name}</h2>
+        </div>
 
-      <ul>
-        {(games.length === 0 && (
-          <p className="mt-8 flex items-center justify-center text-xl">
-            Nothing here. Like games to add to this section
-          </p>
-        )) ||
-          []}
-        {games &&
-          games.map((game) => (
-            <>
-              <Link to={`game/${game.id}`}>
+        <ul>
+          {(games.length === 0 && (
+            <p className="mt-8 flex items-center justify-center text-xl">
+              Nothing here. Like games to add to this section
+            </p>
+          )) ||
+            []}
+          {games &&
+            games.map((game) => (
+              <>
                 <li key={game.id}>
-                  <GameCard
-                    game={game}
-                    liked={game.liked}
-                    // handleLikes={handleLikes}
+                  <Link to={`game/${game.id}`}>
+                    <GameCard
+                      game={game}
+                      liked={game.liked}
+                      // handleLikes={handleLikes}
+                    />
+                  </Link>
+                  <button
+                    onClick={() =>
+                      handleDelete(Number(id), token, userId, game.slug)
+                    }
+                    className="active-btn text-slate-100 ml-6 h-[40px] rounded-full  bg-logo px-4 duration-300 ease-in-out hover:scale-110"
+                  >
+                    Delete {game.name}
+                  </button>
+                  <ToastContainer
+                    position="bottom-left"
+                    autoClose={5000}
+                    hideProgressBar={false}
+                    newestOnTop={false}
+                    closeOnClick
+                    rtl={false}
+                    draggable
+                    pauseOnHover
+                    theme="colored"
                   />
                 </li>
-              </Link>
-              <button
-                onClick={() => handleDelete(id, token, userId, game.slug)}
-              >
-                Delete {game.name}
-              </button>
-            </>
-          ))}
-      </ul>
+              </>
+            ))}
+        </ul>
+      </div>
     </section>
   );
 };

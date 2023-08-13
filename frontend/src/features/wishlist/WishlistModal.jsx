@@ -60,6 +60,7 @@ const WishlistModal = ({ name, slug }) => {
       const gameToSave = { userId, wishlistId, slug, token };
       dispatch(addGamesToWishlist(gameToSave));
     }
+
     notifySaved();
     // navigate("/wishlists");
   };
@@ -73,6 +74,8 @@ const WishlistModal = ({ name, slug }) => {
     console.log("the details are:", wishlistWithGame);
     await dispatch(addWishlist({ userId, token, wishlistWithGame }));
     notify();
+    setWishlistName("");
+
     // navigate("/favorites");
   };
 
@@ -91,7 +94,10 @@ const WishlistModal = ({ name, slug }) => {
 
   return (
     <div className="relative">
-      <button className="btn" onClick={showModal}>
+      <button
+        className="active-btn text-slate-100 mt-4 h-[40px] rounded-full  bg-logo px-4 duration-300 ease-in-out hover:scale-110"
+        onClick={showModal}
+      >
         Add to wishlist
       </button>
       <dialog ref={modalRef} className="modal">
@@ -101,14 +107,17 @@ const WishlistModal = ({ name, slug }) => {
           </button>
 
           <div className="mb-4">
-            <h3>Save to</h3>
+            <h3 className="text-xl">Save to</h3>
           </div>
-          <div className="max-w-[70%]">
+          <div className=" max-w-[95%]">
             {/* map over wishlists here */}
-            <ul className="min-h-[100px]">
+            <ul className=" h-56 overflow-scroll border-b-2 border-dashed pr-4">
               {wishlists && isAuth && wishlists.length > 0 ? (
                 wishlists.map((list, index) => (
-                  <li key={index} className="flex  gap-4 overflow-scroll">
+                  <li
+                    key={index}
+                    className="flex  items-center justify-between gap-4 "
+                  >
                     <input
                       type="checkbox"
                       className="h-[20px] w-[20px]"
@@ -126,35 +135,34 @@ const WishlistModal = ({ name, slug }) => {
             <button
               // onClick={handleAddGameWishlist}
               onClick={handleSaveToWishlist}
-              className="hover:bg-slate-100 btn self-end border-0 bg-transparent hover:rounded-full hover:border-2"
+              className="active-btn text-slate-100 mt-4 h-[40px] rounded-full  bg-logo px-4 duration-300 ease-in-out hover:scale-110"
             >
               Save
             </button>
-            <ToastContainer />
+            {/* <ToastContainer /> */}
           </div>
 
           <div className="mt-4 ">
             <div className="flex flex-col">
-              <h4>Create wishlist</h4>
-              <p className="mt-4 w-[20px]">+</p>
-              <div className="flex flex-col justify-center">
-                <div className="mt-4 flex flex-row">
-                  <h3>Name</h3>
+              <h3 className="mt-4 text-xl">Or create a new wishlist</h3>
+
+              <div className="flex flex-col ">
+                <div className="mt-4 flex flex-row justify-between">
                   <input
                     type="text"
                     value={wishlistName}
                     onChange={setCreateWishlistInput}
                     className="border-b-2 border-dashed bg-transparent"
                   />
+                  <button
+                    type="submit"
+                    className="active-btn text-slate-100 flex h-[40px] items-center rounded-full bg-logo  p-4 px-4 duration-300 ease-in-out hover:scale-110"
+                    onClick={handleCreateWishlist}
+                  >
+                    Create Wishlist
+                  </button>
                 </div>
-                <button
-                  type="submit"
-                  className="hover:bg-slate-100 btn self-end border-0 bg-transparent hover:rounded-full hover:border-2"
-                  onClick={handleCreateWishlist}
-                >
-                  Create
-                </button>
-                <ToastContainer />
+                {/* <ToastContainer /> */}
               </div>
             </div>
             {/* {showAddWishlist && (

@@ -103,13 +103,7 @@ export const addGamesToWishlist = createAsyncThunk(
     gameToAdd
   ) => {
     try {
-      const response = await addGamesOnWishlist(
-        // token,
-        // wishlistId,
-        // gameSlug,
-        // userId
-        gameToAdd
-      );
+      const response = await addGamesOnWishlist(gameToAdd);
       return response;
     } catch (error) {
       console.log("There was an error", error);
@@ -119,18 +113,11 @@ export const addGamesToWishlist = createAsyncThunk(
 
 export const deleteGame = createAsyncThunk(
   "wishlist/deleteGame",
-  async (
-    // token, wishlistId, gameSlug, userId
-    gameToDelete
-  ) => {
+  async (gameToDelete) => {
     try {
-      const response = await deleteSingleGameFromWishlist(
-        // token,
-        // wishlistId,
-        // gameSlug,
-        // userId
-        gameToDelete
-      );
+      const response = await deleteSingleGameFromWishlist(gameToDelete);
+      console.log(gameToDelete);
+      console.log("checking the respons", response);
       return response;
     } catch (error) {
       console.log("There was an error", error);
@@ -144,6 +131,9 @@ const wishlistsSlice = createSlice({
   reducers: {
     search: (state, action) => {
       state.searchInput = action.payload;
+    },
+    reset: (state) => {
+      state.searchInput = "";
     },
   },
   extraReducers: (builder) => {
@@ -159,25 +149,16 @@ const wishlistsSlice = createSlice({
         state.wishlists = [...state.wishlists, action.payload];
       })
       .addCase(removeWishlist.fulfilled, (state, action) => {
-        // const index = state.wishlists.findIndex(
-        //   (wishlist) => wishlist.id === action.payload
-        // );
-        // const wishlistToRemove = state.wishlists[index];
-        // const updatedList = state.wishlists.splice(wishlistToRemove, 1);
-        // state.wishlists = updatedList;
-
+        console.log(action.payload);
         const index = state.wishlists.findIndex(
-          (wishlist) => wishlist.id === action.payload.id
+          (wishlist) => wishlist.id === action.payload.data.id
         );
+        console.log(index);
         const wishlistToRemove = state.wishlists[index];
-        // const updatedList = state.wishlists.splice(wishlistToRemove, 1);
-        if (index !== -1) {
-          state.wishlists.splice(wishlistToRemove, 1);
-        }
-
-        // state.wishlists = state.wishlists.filter(
-        //   (wishlist) => wishlist.id !== action.payload.id
-        // );
+        console.log(wishlistToRemove);
+        const updatedList = [...state.wishlists];
+        updatedList.splice(index, 1);
+        state.wishlists = updatedList;
       })
       .addCase(update.fulfilled, (state, action) => {
         state.wishlists = action.payload;
@@ -187,11 +168,25 @@ const wishlistsSlice = createSlice({
       })
       .addCase(getGamesFromWishlist.fulfilled, (state, action) => {
         state.gamesOnWishlist = action.payload;
+      })
+      .addCase(deleteGame.fulfilled, (state, action) => {
+        console.log();
+
+        console.log(action.payload);
+        const index = state.gamesOnWishlist.findIndex(
+          (game) => game.id === action.payload.id
+        );
+        console.log(index);
+        // const gameToRemove = state.gamesOnWishlist[index];
+
+        const updatedList = [...state.gamesOnWishlist];
+        updatedList.splice(index, 1);
+        state.gamesOnWishlist = updatedList;
       });
   },
 });
 
-export const { search } = wishlistsSlice.actions;
+export const { search, reset } = wishlistsSlice.actions;
 export const selectWishlists = (state) => state.wishlists.wishlists;
 export const selectGamesOnWishlist = (state) => state.wishlists.gamesOnWishlist;
 export const selectSingleWishlist = (state) => state.wishlists.wishlist;
