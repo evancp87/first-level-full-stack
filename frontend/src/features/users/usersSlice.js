@@ -91,10 +91,13 @@ export const usersSlice = createSlice({
         state.userInfo = action.payload.userInfo;
         // state.token = token;
         state.token = action.payload.token;
+        state.error = null;
       })
       .addCase(loggedInUser.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload;
+        state.error = action.error.message;
+        state.token = null;
+        state.userInfo = null;
       })
       .addCase(setUser.pending, (state, action) => {
         // const { firstName, lastName, email, token } = action.payload;
@@ -146,6 +149,7 @@ export const usersSlice = createSlice({
         state.loading = false;
       })
       .addCase(logoutUser.fulfilled, () => {
+        localStorage.removeItem("token");
         return initialState;
       });
   },

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { validate } from "../../validation/index";
+import { validateRegister } from "../../validation/index";
 import { useDispatch, useSelector } from "react-redux";
 import { selectLoggedInState, setUser } from "./usersSlice";
 const Register = () => {
@@ -29,7 +29,7 @@ const Register = () => {
 
     try {
       const payload = { [name]: value };
-      const res = await validate(payload);
+      const res = await validateRegister(payload);
       setErrors(res);
     } catch (error) {
       console.log("There was an error:", error);
@@ -56,7 +56,6 @@ const Register = () => {
             action="POST"
             onSubmit={handleRegister}
           >
-            <label htmlFor="name">Name</label>
             <input
               placeholder="name"
               type="text"
@@ -82,7 +81,6 @@ const Register = () => {
               onChange={handleInputs}
               className="rounded-md p-2"
             /> */}
-            <label htmlFor="email">Email</label>
             <input
               placeholder="email"
               type="text"
@@ -99,7 +97,6 @@ const Register = () => {
                   </p>
                 ) : null
               )}
-            <label htmlFor="password">Password</label>
             <input
               placeholder="password"
               type="text"

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { validate } from "../../validation/index";
+import { validateLogin } from "../../validation/index";
 import { selectLoggedInState, loggedInUser } from "./usersSlice";
 
 const Login = () => {
@@ -20,7 +20,7 @@ const Login = () => {
 
     try {
       const payload = { [name]: value };
-      const res = await validate(payload);
+      const res = await validateLogin(payload);
       setErrors(res);
     } catch (error) {
       console.log("There was an error:", error);
@@ -92,7 +92,7 @@ const Login = () => {
             <div className="card-actions">
               <button
                 disabled={loading}
-                className="active-btn text-slate-100 btn-outline mx-2 w-[30%] rounded-full bg-logo p-2 duration-300 ease-in-out hover:scale-110"
+                className="active-btn text-slate-100 h-[40px] w-[25%] self-start rounded-full bg-logo duration-300 ease-in-out hover:scale-110"
               >
                 {loading ? "Loading" : "Login"}
               </button>
