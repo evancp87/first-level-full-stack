@@ -54,23 +54,9 @@ const WishlistList = () => {
 
   // Gets list of wishlist names for dropdown
 
-  const getWishlists = useCallback(async () => {
-    await dispatch(setWishlists(userId));
+  const getWishlists = useCallback(() => {
+    dispatch(setWishlists(userId));
   }, []);
-  // rerenders selected wishlist based on selection from dropdown
-  const getGamesOnWishlist = useCallback(async () => {
-    const id = wishlists.data.findIndex((id, wishlist) => wishlist.id === id);
-    const wishlistToFind = wishlists[id];
-    const wishlistData = {
-      userId,
-      wishlistId: wishlistToFind,
-    };
-    await dispatch(selectGamesOnWishlist(wishlistData));
-  }, [dispatch, selectGamesOnWishlist]);
-
-  useEffect(() => {
-    getGamesOnWishlist();
-  }, [getGamesOnWishlist]);
 
   useEffect(() => {
     if (isAuth) {
@@ -162,7 +148,10 @@ const WishlistList = () => {
           {filteredWishlists && filteredWishlists.length > 0 && isAuth ? (
             filteredWishlists.map((wishlist, index) => (
               <li key={wishlist.id}>
-                <article className="mx-w-full card card-bordered card-side m-6 flex-row flex-wrap items-center bg-base-100 shadow-xl">
+                <article
+                  key={wishlist.id}
+                  className="mx-w-full card card-bordered card-side m-6 flex-row flex-wrap items-center bg-base-100 shadow-xl"
+                >
                   <div className="card w-96 bg-primary text-primary-content">
                     <div className="card-body">
                       <h3 className="card-title">{wishlist.name}</h3>
