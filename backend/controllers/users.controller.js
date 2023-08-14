@@ -1,4 +1,10 @@
 const asyncMySQL = require("../database/connection");
+const {
+  getUserId,
+  checkUser,
+  addUser,
+  registerUserId,
+} = require("../database/queries");
 
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
@@ -20,13 +26,15 @@ async function loginUser(req, res) {
     return;
   }
 
-  const userId = await asyncMySQL(`SELECT user_id FROM users
-                                      WHERE email = '${email}';`);
+  if (email.length > 50) {
+    res.status(400).send("bad request");
+    return;
+  }
+
+  const userId = await asyncMySQL(getUserId(), [email]);
 
   try {
-    const results = await asyncMySQL(`SELECT password, user_id, name, email
-      FROM users
-      WHERE email = '${email}';`);
+    const results = await asyncMySQL(checkUser(), [email]);
 
     if (results.length === 0) {
       res.status(404).send("no user found");
@@ -88,18 +96,19 @@ async function registerUser(req, res) {
     return;
   }
 
+  if (email.length > 50) {
+    res.status(400).send("bad request");
+    return;
+  }
+
   // hashes password
 
   const encryptedPassword = await bcrypt.hash(password, saltRounds);
 
   try {
-    await asyncMySQL(`INSERT INTO users 
-    (name, email, password)
-    VALUES
-    ('${name}', '${email}', '${encryptedPassword}')`);
+    await asyncMySQL(addUser(), [name, email, encryptedPassword]);
 
-    const user = await asyncMySQL(`SELECT user_id, name, email FROM users
-                                         WHERE email = '${email}';`);
+    const user = await asyncMySQL(registerUserId(), [email]);
 
     //  gets user info to send back in response
     const userId = user[0].id;
@@ -133,14 +142,12 @@ async function logout(req, res) {
         res.sendStatus(500).json("couldn't log out");
         return;
       } else {
-        res.redirect("/");
+        res.status(200).send("logged out");
       }
     });
-    // clears json web token
-    res.clearCookie("jwtToken");
   } catch (error) {
     console.log("There was an error:", error);
-    res.sendStatus(500).json("couldn't log out");
+    res.status(500).send("couldn't log out");
     return;
   }
 }

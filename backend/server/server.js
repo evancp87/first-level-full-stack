@@ -4,7 +4,7 @@ const helmet = require("helmet");
 const cookieParser = require("cookie-parser");
 const session = require("express-session");
 const checkToken = require("../middleware/authentication/token");
-// const limiter = require("../middleware/rate-limiter");
+const limiter = require("../middleware/rate-limiter");
 const cors = require("cors");
 require("dotenv").config();
 app.use(helmet());
@@ -29,7 +29,7 @@ app.use(function myLogger(req, res, next) {
   console.log("logged");
   next();
 });
-// app.use(limiter);
+app.use(limiter);
 
 // server routes
 app.use("/games", require("../routes/games/games"));

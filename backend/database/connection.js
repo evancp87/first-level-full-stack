@@ -8,9 +8,9 @@ const connection = mysql.createConnection({
   database: "games-db",
 });
 
-function asyncMySQL(query) {
+function asyncMySQL(query, params) {
   return new Promise((resolve, reject) => {
-    connection.query(query, (error, results) => {
+    connection.query(query, params, (error, results) => {
       if (error) {
         reject(error);
       }

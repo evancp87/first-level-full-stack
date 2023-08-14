@@ -7,22 +7,22 @@ const axios = require("axios");
 async function getGamesList(req, res) {
   const results = await asyncMySQL(
     `SELECT game.id,
-  game.name,
-  game.released,
-  game.slug,
-  game.released,
-  game.background_image,
-game.rating,
-  game.price,
-  GROUP_CONCAT(DISTINCT p.name SEPARATOR ', ') AS platforms,
-  GROUP_CONCAT(DISTINCT g.name SEPARATOR ', ') AS genres
+      game.name,
+      game.released,
+      game.slug,
+      game.released,
+      game.background_image,
+      game.rating,
+      game.price,
+      GROUP_CONCAT(DISTINCT p.name SEPARATOR ', ') AS platforms,
+      GROUP_CONCAT(DISTINCT g.name SEPARATOR ', ') AS genres
 
-FROM games game
-INNER JOIN platform_games pg ON game.id = pg.game_id
-INNER JOIN platforms p ON pg.platform_id = p.id
-INNER JOIN genre_games gg ON game.id = gg.game_id
-INNER JOIN genres g ON gg.genre_id = g.id
-GROUP BY game.name;`
+      FROM games game
+      INNER JOIN platform_games pg ON game.id = pg.game_id
+      INNER JOIN platforms p ON pg.platform_id = p.id
+      INNER JOIN genre_games gg ON game.id = gg.game_id
+      INNER JOIN genres g ON gg.genre_id = g.id
+      GROUP BY game.name;`
   );
 
   // converts genres and platforms into arrays of strings
@@ -42,39 +42,28 @@ GROUP BY game.name;`
 
 // filters games list and gets top 10 highest rated games
 async function getHighestRatedGames(req, res) {
-  const results = await asyncMySQL(
-    `SELECT game.id,
-  game.name,
-  game.released,
-  game.slug,
-  game.released,
-  game.background_image,
-game.rating,
-  game.price,
-  GROUP_CONCAT(DISTINCT p.name SEPARATOR ', ') AS platforms,
-  GROUP_CONCAT(DISTINCT g.name SEPARATOR ', ') AS genres
+  const query = `SELECT game.id,
+                    game.name,
+                    game.released,
+                    game.slug,
+                    game.released,
+                    game.background_image,
+                    game.rating,
+                    game.price,
+                    GROUP_CONCAT(DISTINCT p.name SEPARATOR ', ') AS platforms,
+                    GROUP_CONCAT(DISTINCT g.name SEPARATOR ', ') AS genres
+                    FROM games game
+                    INNER JOIN platform_games pg ON game.id = pg.game_id
+                    INNER JOIN platforms p ON pg.platform_id = p.id
+                    INNER JOIN genre_games gg ON game.id = gg.game_id
+                    INNER JOIN genres g ON gg.genre_id = g.id
+                    GROUP BY game.name
+                    HAVING game.rating >= ? 
+                    LIMIT 10; 
+  ;`;
+  const results = await asyncMySQL(query, [4.5]);
 
-FROM games game
-INNER JOIN platform_games pg ON game.id = pg.game_id
-INNER JOIN platforms p ON pg.platform_id = p.id
-INNER JOIN genre_games gg ON game.id = gg.game_id
-INNER JOIN genres g ON gg.genre_id = g.id
-GROUP BY game.name;`
-  );
-
-  const games = results.map((result) => ({
-    ...result,
-    platforms: result.platforms.split(", "),
-    genres: result.genres.split(", "),
-  }));
-
-  const highestRatedGames = games
-    .filter((game) => {
-      return game.rating >= 4.5;
-    })
-    .slice(0, 10);
-
-  if (highestRatedGames.length > 0) {
+  if (results.length > 0) {
     res.status(200).send(highestRatedGames);
     return;
   }
@@ -93,22 +82,22 @@ async function getGameOnWishList(req, res) {
 
   // finds game on wishlist by joining user and wishlist tables
   const query = `
-  SELECT
-  games.released,
-  games.Name AS name,
-  games.background_image,
-  games.slug,
-  games.id,
-  games.rating,
-  users.name AS user_name
-FROM games
-JOIN wishlist_games ON wishlist_games.game_id = games.id
-JOIN users ON users.user_id = wishlist_games.user_id
-WHERE wishlist_games.user_id = ${userId} AND wishlist_games.wishlist_id = ${wishlistId};
+                SELECT
+                  games.released,
+                  games.Name AS name,
+                  games.background_image,
+                  games.slug,
+                  games.id,
+                  games.rating,
+                  users.name AS user_name
+                  FROM games
+                  JOIN wishlist_games ON wishlist_games.game_id = games.id
+                  JOIN users ON users.user_id = wishlist_games.user_id
+                  WHERE wishlist_games.user_id = ? AND wishlist_games.wishlist_id = ?;
   `;
 
   try {
-    const results = await asyncMySQL(query);
+    const results = await asyncMySQL(query, [userId, wishlistId]);
     if (results.length > 0) {
       res.status(200).send(results);
     } else {
@@ -123,7 +112,7 @@ WHERE wishlist_games.user_id = ${userId} AND wishlist_games.wishlist_id = ${wish
 // platform names
 const getPlatforms = async (req, res) => {
   try {
-    const results = await asyncMySQL(`select name from platforms`);
+    const results = await asyncMySQL(`SELECT name FROM platforms`);
 
     if (results.length > 0) {
       return res.status(200).json(results);
@@ -139,7 +128,7 @@ const getPlatforms = async (req, res) => {
 // genres
 const getGenres = async (req, res) => {
   try {
-    const results = await asyncMySQL(`select name from genres`);
+    const results = await asyncMySQL(`SELECT name FROM genres`);
 
     if (results.length > 0) {
       return res.status(200).json(results);
