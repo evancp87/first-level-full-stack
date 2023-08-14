@@ -29,7 +29,7 @@ const Nav = () => {
     setLoadingLogout(true);
     setTimeout(async () => {
       setLoadingLogout(false);
-      // notify();
+
       // clears cart of any items
       if (items && items.length > 0) {
         dispatch(clear());
