@@ -1,11 +1,11 @@
 import joi from "joi";
 export const searchSchema = {
-  search: joi.string().trim().min(2).label("Search"),
+  search: joi.string().trim().allow("").min(2).label("Search"),
 };
 
 export const loginSchema = {
-  email: joi.string().trim().min(2),
-  password: joi.string().trim().min(2),
+  email: joi.string().trim().min(2).label("Your email"),
+  password: joi.string().trim().min(2).label("Your password"),
 };
 
 export const registerSchema = {
@@ -13,16 +13,17 @@ export const registerSchema = {
     .string()
     .trim()
     .email({ minDomainSegments: 2, tlds: { allow: false } })
-    .label("email"),
-  name: joi.string().trim().min(1).max(40).label("name"),
+    .label("Your email"),
+  name: joi.string().trim().min(1).max(40).label("Your name"),
   password: joi
     .string()
     .trim()
     .min(1)
     .max(40)
     .regex(/[0-9a-zA-Z]*\d[0-9a-zA-Z]*/)
-    .label("password"),
-  // .rule({
-  //   message: "Your password requires at least one number and character",
-  // }),
+    .label("Your password")
+    .messages({
+      "object.regex": "Must have at one number",
+      "string.pattern.base": "Passwords require at least one number",
+    }),
 };
