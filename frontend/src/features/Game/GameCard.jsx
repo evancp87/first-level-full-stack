@@ -48,12 +48,14 @@ const GameCard = ({ game, index }) => {
                 {game ? `Rating: ${rating}` : <Skeleton count={1} />}{" "}
               </p>
               <ToastContainer
-                className="fixed bottom-4 left-4 z-50 md:bottom-8 md:left-8"
-                autoClose={5000}
+                position="top-center"
+                autoClose={3000}
                 hideProgressBar={false}
                 newestOnTop={false}
                 closeOnClick
                 rtl={false}
+                pauseOnFocusLoss
+                draggable={true}
                 pauseOnHover
                 theme="colored"
               />
