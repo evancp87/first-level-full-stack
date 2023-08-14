@@ -12,8 +12,11 @@ import { logoutUser } from "../features/users/usersSlice";
 import Cart from "../features/cart/Cart";
 import PacmanLoader from "react-spinners/PacmanLoader";
 import { clear } from "../features/cart/cartSlice";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Nav = () => {
+  const notify = () => toast("You are now logged out");
   const items = useSelector(selectItems);
   const count = useSelector(selectTotal);
   const { isAuth, userInfo, error, loading } = useSelector(selectLoggedInState);
@@ -22,16 +25,19 @@ const Nav = () => {
   const [loadingLogout, setLoadingLogout] = useState(false);
 
   const handleLogout = () => {
+    notify();
     setLoadingLogout(true);
-    dispatch(logoutUser());
     setTimeout(async () => {
       setLoadingLogout(false);
+      // notify();
+      // clears cart of any items
       if (items && items.length > 0) {
         dispatch(clear());
       }
 
+      dispatch(logoutUser());
       navigate("/");
-    }, 3000);
+    }, 1500);
   };
 
   return (
