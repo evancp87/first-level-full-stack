@@ -1,27 +1,27 @@
 module.exports = {
   getUserId: () => {
     return `SELECT user_id FROM users
-                         WHERE email = ?;`;
+                        WHERE email = ?;`;
   },
   registerUserId: () => {
     return `SELECT user_id, name, email FROM users
-    WHERE email = ?;`;
+                        WHERE email = ?;`;
   },
   checkUser: () => {
     return `SELECT password, user_id, name, email
-                                FROM users
-                                   WHERE email = ?;`;
+                    FROM users
+                    WHERE email = ?;`;
   },
   addUser: () => {
     return `INSERT INTO users 
-                      (name, email, password)
-                        VALUES
-                          (?,?,?);`;
+                (name, email, password)
+                    VALUES
+                        (?,?,?);`;
   },
   getWishlistName: () => {
     return `SELECT name
                 FROM wishlists
-                   WHERE id = ? AND customer_id = ?;`;
+                    WHERE id = ? AND customer_id = ?;`;
   },
   getGameId: () => {
     return `SELECT id FROM games
@@ -29,15 +29,15 @@ module.exports = {
   },
   insertIntoWishlist: () => {
     return `INSERT INTO wishlists
-                 (name, customer_id, game_id)
-                      VALUES
+                (name, customer_id, game_id)
+                    VALUES
                         (?,?,? );`;
   },
   insertIntoWishlistGames: () => {
     return `INSERT INTO wishlist_games
-                  (wishlist_id, game_id, user_id)
-                     VALUES
-                         (?,?,?);`;
+                (wishlist_id, game_id, user_id)
+                    VALUES
+                        (?,?,?);`;
   },
   selectUserById: () => {
     return `SELECT user_id FROM users
@@ -45,7 +45,7 @@ module.exports = {
   },
   deleteFromWishlist: () => {
     return `DELETE FROM wishlists
-                 WHERE id = ? AND customer_id = ?;`;
+                WHERE id = ? AND customer_id = ?;`;
   },
   deleteFromWishlistGames: () => {
     return `DELETE FROM wishlist_games 
@@ -60,7 +60,7 @@ module.exports = {
   },
   deleteSingleGameFromWishlist: () => {
     return `DELETE FROM wishlist_games
-                            WHERE
-                              game_id = ? AND user_id = ? AND wishlist_id = ?;`;
+                    WHERE
+                        game_id = ? AND user_id = ? AND wishlist_id = ?;`;
   },
 };
