@@ -142,7 +142,9 @@ const wishlistsSlice = createSlice({
       })
       .addCase(addWishlist.fulfilled, (state, action) => {
         console.log("Doing some checks", action.payload, action.payload);
-        state.wishlists = [...state.wishlists, action.payload];
+
+        const { wishlist } = action.payload.data;
+        state.wishlists = [...state.wishlists, wishlist];
       })
       .addCase(removeWishlist.fulfilled, (state, action) => {
         console.log(action.payload);

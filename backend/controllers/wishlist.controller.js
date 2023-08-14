@@ -24,7 +24,7 @@ async function getWishlists(req, res) {
 
   const wishlistQuery = `SELECT *
                             FROM wishlists
-                               WHERE customer_id = ?;`;
+                              WHERE customer_id = ?;`;
 
   const results = await asyncMySQL(wishlistQuery, [customerId]);
 
@@ -32,9 +32,9 @@ async function getWishlists(req, res) {
   if (results.length > 0) {
     res.status(200).send(results);
     return;
+  } else {
+    res.status(200).send([]);
   }
-
-  res.send({ status: 404, reason: "No wishlists found" });
 }
 
 // gets individual wishlist
@@ -117,8 +117,16 @@ async function createWishlist(req, res) {
     if (gameId) {
       await asyncMySQL(insertIntoWishlistGames(), [wishlist_id, game, user_id]);
 
-      // TODO: send back wishlist
-      res.status(200).send("wishlist created and game added");
+      // send back wishlist
+      res.status(200).send({
+        message: "wishlist created and game added",
+        wishlist: {
+          id: wishlist_id,
+          customer_id: customerId,
+          game_id: game,
+          name: name,
+        },
+      });
     }
   } catch (error) {
     console.log("error:", error);

@@ -64,7 +64,7 @@ async function getHighestRatedGames(req, res) {
   const results = await asyncMySQL(query, [4.5]);
 
   if (results.length > 0) {
-    res.status(200).send(highestRatedGames);
+    res.status(200).send(results);
     return;
   }
 
@@ -101,7 +101,7 @@ async function getGameOnWishList(req, res) {
     if (results.length > 0) {
       res.status(200).send(results);
     } else {
-      res.status(404).send("No games found for the specified customer_id");
+      res.status(200).send([]);
     }
   } catch (error) {
     console.error("Error:", error);
@@ -157,7 +157,7 @@ const getScreenshots = async (req, res) => {
         image: element.image,
       };
     });
-    console.log(results);
+
     res.status(200).send(results);
   } catch (error) {
     console.log("error:", error);
@@ -174,8 +174,6 @@ const getGamesByDate = async (req, res) => {
     const { data } = await axios.get(
       `https://api.rawg.io/api/games?dates=${startDate},${endDate}&key=${apiKey}`
     );
-
-    console.log(data);
 
     res.status(200).send(data);
   } catch (error) {

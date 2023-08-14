@@ -184,8 +184,9 @@ export const loginUser = async (credentials) => {
 };
 export const register = async (credentials) => {
   try {
+    // const {token, name, id} = credentials;
     const response = await axios.post(
-      "http://localhost:6001/users/register/",
+      "http://localhost:6001/users/register",
       credentials,
       {
         headers: {
@@ -193,11 +194,31 @@ export const register = async (credentials) => {
         },
       }
     );
-    return response.data;
+
+    console.log("checking the response", response);
+    return response;
+    // return {userInfo, token};
   } catch (error) {
     console.log("error:", error);
   }
 };
+
+// export const register = async (credentials) => {
+//   try {
+//     const response = await axios.post(
+//       "http://localhost:6001/users/register/",
+//       credentials,
+//       {
+//         headers: {
+//           "Content-Type": "application/json",
+//         },
+//       }
+//     );
+//     return response.data;
+//   } catch (error) {
+//     console.log("error:", error);
+//   }
+// };
 
 export const logout = async () => {
   try {

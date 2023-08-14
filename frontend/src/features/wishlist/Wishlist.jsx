@@ -80,7 +80,7 @@ const Wishlist = () => {
                     >
                       Delete {game.name}
                     </button>
-                    <ToastContainer
+                    {/* <ToastContainer
                       position="bottom-left"
                       autoClose={5000}
                       hideProgressBar={false}
@@ -90,7 +90,7 @@ const Wishlist = () => {
                       draggable
                       pauseOnHover
                       theme="colored"
-                    />
+                    /> */}
                   </li>
                 )}
               </React.Fragment>

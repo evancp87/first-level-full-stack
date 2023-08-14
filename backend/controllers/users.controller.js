@@ -111,9 +111,11 @@ async function registerUser(req, res) {
     const user = await asyncMySQL(registerUserId(), [email]);
 
     //  gets user info to send back in response
-    const userId = user[0].id;
-    const userInfo = { name: user[0].name, email: user[0].email };
 
+    const userId = user[0].user_id;
+
+    const userInfo = { name: user[0].name, email: user[0].email, id: userId };
+    console.log(userInfo);
     //  jwt token signed
     const token = jwt.sign(
       { userId },

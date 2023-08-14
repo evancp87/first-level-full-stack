@@ -75,9 +75,11 @@ const WishlistModal = ({ slug }) => {
       slug,
     };
 
+    console.log(wishlistWithGame);
     dispatch(addWishlist({ userId, token, wishlistWithGame }));
     notify();
     setWishlistName("");
+    console.log(wishlistName);
     // gets the new wishlist name instantly
     getWishlists();
     // navigate("/favorites");
