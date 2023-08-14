@@ -68,32 +68,34 @@ const Wishlist = () => {
         <ul>
           {games && games.length > 0 ? (
             games.map((game) => (
-              <>
-                <li key={game.id}>
-                  <Link to={`game/${game.id}`}>
-                    <GameCard game={game} liked={game.liked} />
-                  </Link>
-                  <button
-                    onClick={() =>
-                      handleDelete(Number(id), token, userId, game.slug)
-                    }
-                    className="active-btn text-slate-100 ml-6 h-[40px] rounded-full bg-logo  px-4 duration-300 ease-in-out hover:scale-110"
-                  >
-                    Delete {game.name}
-                  </button>
-                  <ToastContainer
-                    position="bottom-left"
-                    autoClose={5000}
-                    hideProgressBar={false}
-                    newestOnTop={false}
-                    closeOnClick
-                    rtl={false}
-                    draggable
-                    pauseOnHover
-                    theme="colored"
-                  />
-                </li>
-              </>
+              <React.Fragment key={game.id}>
+                {game.id && (
+                  <li>
+                    <Link to={`game/${game.id}`}>
+                      <GameCard game={game} liked={game.liked} />
+                    </Link>
+                    <button
+                      onClick={() =>
+                        handleDelete(Number(id), token, userId, game.slug)
+                      }
+                      className="active-btn text-slate-100 ml-6 h-[40px] rounded-full bg-logo  px-4 duration-300 ease-in-out hover:scale-110"
+                    >
+                      Delete {game.name}
+                    </button>
+                    <ToastContainer
+                      position="bottom-left"
+                      autoClose={5000}
+                      hideProgressBar={false}
+                      newestOnTop={false}
+                      closeOnClick
+                      rtl={false}
+                      draggable
+                      pauseOnHover
+                      theme="colored"
+                    />
+                  </li>
+                )}
+              </React.Fragment>
             ))
           ) : (
             <p className="mt-4 text-xl">
