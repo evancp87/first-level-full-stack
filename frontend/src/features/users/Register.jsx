@@ -25,7 +25,6 @@ const Register = () => {
   const handleInputs = async (e) => {
     const { name, value } = e.target;
     setRegister((inputs) => ({ ...inputs, [name]: value }));
-    console.log(value);
 
     try {
       const payload = { [name]: value };
@@ -33,6 +32,7 @@ const Register = () => {
       setErrors(res);
     } catch (error) {
       console.log("There was an error:", error);
+      setErrors(error.details);
     }
   };
 
@@ -43,6 +43,8 @@ const Register = () => {
       dispatch(setUser(register));
       // navigate("/");
     } catch (error) {
+      console.log("There was an error creating the user", error);
+      setErrors([{ key: "registration", message: error.message }]);
       console.log("There was an error creating the user", error);
     }
   };

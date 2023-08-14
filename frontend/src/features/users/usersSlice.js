@@ -35,7 +35,7 @@ export const setUser = createAsyncThunk(
       return response;
     } catch (error) {
       console.log("There was an error:", error);
-      throw Error;
+      throw Error("Registration failed, please try again");
     }
   }
 );
@@ -46,7 +46,7 @@ export const logoutUser = createAsyncThunk("users/logout", async () => {
     return response;
   } catch (error) {
     console.log("There was an error:", error);
-    throw Error;
+    // throw Error("Registration failed, please try again");
   }
 });
 
@@ -75,7 +75,7 @@ export const usersSlice = createSlice({
         state.userInfo = null;
       })
       .addCase(setUser.pending, (state) => {
-        state.loading = false;
+        state.loading = true;
         state.error = null;
       })
       .addCase(setUser.rejected, (state, action) => {
@@ -83,9 +83,11 @@ export const usersSlice = createSlice({
         state.error = action.payload;
       })
       .addCase(setUser.fulfilled, (state, action) => {
+        console.log(action.payload);
+        const { userInfo, token } = action.payload.data;
         state.isAuth = true;
-        state.userInfo = action.payload.userInfo;
-        state.token = action.payload.token;
+        state.userInfo = userInfo;
+        state.token = token;
         state.loading = false;
       })
       .addCase(logoutUser.fulfilled, () => {

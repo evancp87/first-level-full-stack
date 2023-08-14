@@ -86,9 +86,7 @@ const Login = () => {
                   </p>
                 ) : null
               )}
-            <Link to="/register">
-              <p className="mt-4"> Forgot password?</p>
-            </Link>
+
             <div className="card-actions">
               <button
                 disabled={loading}
