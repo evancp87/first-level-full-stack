@@ -71,9 +71,7 @@ const Wishlist = () => {
               <React.Fragment key={game.id}>
                 {game.id && (
                   <li>
-                    <Link to={`game/${game.id}`}>
-                      <GameCard game={game} liked={game.liked} />
-                    </Link>
+                    <GameCard game={game} liked={game.liked} />
                     <button
                       onClick={() =>
                         handleDelete(Number(id), token, userId, game.slug)
