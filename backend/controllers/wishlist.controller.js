@@ -95,7 +95,6 @@ async function createWishlist(req, res) {
 
     const game = gameId[0].id;
     // inserts game into wishlist
-
     const wishlist = await asyncMySQL(insertIntoWishlist(), [
       name,
       customerId,
@@ -113,6 +112,7 @@ async function createWishlist(req, res) {
     const user_id = customerId;
 
     //  inserting wishlist and game id into wishlist_games table.
+    // TODO: check if works
 
     if (gameId) {
       await asyncMySQL(insertIntoWishlistGames(), [wishlist_id, game, user_id]);
@@ -125,6 +125,7 @@ async function createWishlist(req, res) {
           customer_id: customerId,
           game_id: game,
           name: name,
+          slug: slug,
         },
       });
     }

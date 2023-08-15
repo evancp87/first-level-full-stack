@@ -16,6 +16,7 @@ import { escapeForRegExp } from "../../utils/helpers";
 const WishlistModal = ({ slug }) => {
   const notify = () => toast("Your wishlist was created");
   const notifySaved = () => toast("Your game was saved");
+  const notifyFailed = () => toast("Your game is already on that wishlist");
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const wishlists = useSelector(selectWishlists);
@@ -61,7 +62,17 @@ const WishlistModal = ({ slug }) => {
   const handleSaveToWishlist = () => {
     for (const wishlistId of selectedWishlists) {
       const gameToSave = { userId, wishlistId, slug, token };
-      dispatch(addGamesToWishlist(gameToSave));
+
+      const wishlistGames = wishlists.find(
+        (wishlist) => wishlist.id === wishlistId
+      );
+
+      // if the game is already on the wishlist then don't add, otherwise add to the list
+      if (wishlistGames && wishlistGames.slug === gameToSave.slug) {
+        notifyFailed();
+      } else {
+        dispatch(addGamesToWishlist(gameToSave));
+      }
     }
 
     notifySaved();
@@ -163,7 +174,7 @@ const WishlistModal = ({ slug }) => {
                   />
                   <button
                     disabled={!wishlistName}
-                    type="submit"
+                    type="button"
                     className="active-btn text-slate-100 flex h-[40px] cursor-pointer items-center rounded-full  bg-logo p-4 px-4 duration-300 ease-in-out hover:scale-110"
                     onClick={handleCreateWishlist}
                   >

@@ -62,7 +62,10 @@ const Wishlist = () => {
       <div className="w-[90%]">
         <BackBtn />
         <div className="ml-6 mt-16 flex">
-          <h2 className="mt-[5em] text-xl">{wishlist.name}</h2>
+          <h2 className="mt-[5em] text-xl">
+            {" "}
+            {wishlist && wishlist.name ? wishlist.name : "Wishlist Name"}
+          </h2>
         </div>
 
         <ul>
