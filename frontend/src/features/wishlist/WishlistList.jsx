@@ -159,11 +159,8 @@ const WishlistList = () => {
         <ul className="w-[100%]">
           {filteredWishlists && filteredWishlists.length > 0 && isAuth ? (
             filteredWishlists.map((wishlist) => (
-              <li key={wishlist.id}>
-                <article
-                  key={wishlist.id}
-                  className="mx-w-full card card-bordered card-side m-6 flex-row flex-wrap items-center bg-base-100 shadow-xl"
-                >
+              <li key={`wishlist_${wishlist.id}`}>
+                <article className="mx-w-full card card-bordered card-side m-6 flex-row flex-wrap items-center bg-base-100 shadow-xl">
                   <div className="card w-96 bg-primary text-primary-content">
                     <div className="card-body">
                       <h3 className="card-title">{wishlist.name}</h3>
