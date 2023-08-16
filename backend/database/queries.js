@@ -29,9 +29,9 @@ module.exports = {
   },
   insertIntoWishlist: () => {
     return `INSERT INTO wishlists
-                (name, customer_id, game_id)
+                (name, customer_id)
                     VALUES
-                        (?,?,? );`;
+                        (?,?);`;
   },
   insertIntoWishlistGames: () => {
     return `INSERT INTO wishlist_games
@@ -62,5 +62,22 @@ module.exports = {
     return `DELETE FROM wishlist_games
                     WHERE
                         game_id = ? AND user_id = ? AND wishlist_id = ?;`;
+  },
+  newlyCreatedGame: () => {
+    return `
+  SELECT
+    games.released,
+    games.Name AS name,
+    games.background_image,
+    games.slug,
+    games.id,
+    games.rating,
+    users.name AS user_name,
+    wishlist_games.wishlist_id as wishlist_id
+  FROM games
+  JOIN wishlist_games ON wishlist_games.game_id = games.id
+  JOIN users ON users.user_id = wishlist_games.user_id
+  WHERE wishlist_games.user_id = ? AND wishlist_games.wishlist_id = ? AND games.id = ?;
+`;
   },
 };

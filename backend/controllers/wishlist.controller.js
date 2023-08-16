@@ -10,6 +10,7 @@ const {
   getWishlistId,
   getGameIdWishlist,
   deleteSingleGameFromWishlist,
+  newlyCreatedGame,
 } = require("../database/queries");
 
 // gets all wishlists
@@ -95,11 +96,7 @@ async function createWishlist(req, res) {
 
     const game = gameId[0].id;
     // inserts game into wishlist
-    const wishlist = await asyncMySQL(insertIntoWishlist(), [
-      name,
-      customerId,
-      game,
-    ]);
+    const wishlist = await asyncMySQL(insertIntoWishlist(), [name, customerId]);
 
     // const wishlist = await asyncMySQL(`INSERT INTO wishlists
     // (name, customer_id, game_id)
@@ -123,7 +120,6 @@ async function createWishlist(req, res) {
         wishlist: {
           id: wishlist_id,
           customer_id: customerId,
-          game_id: game,
           name: name,
           slug: slug,
         },
@@ -258,7 +254,18 @@ async function addGamesToWishlist(req, res) {
                                    (?,?,?);`;
 
     await asyncMySQL(insertionQuery, [wishlistId, gameToAdd, userId]);
-    res.status(200).send("game added to wishlist");
+
+    // gets newly created game to send back as response
+    const newGameDetails = await asyncMySQL(newlyCreatedGame(), [
+      userId,
+      wishlistId,
+      gameToAdd,
+    ]);
+
+    if (newGameDetails.length === 1) {
+      const addedGame = newGameDetails[0];
+      res.status(200).send(addedGame);
+    }
   } catch (error) {
     res.status(500).send("There was a problem adding that game");
     console.log("There was an error:", error);
