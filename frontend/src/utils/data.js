@@ -169,19 +169,36 @@ export const incrementItemQuantity = async (gameId) => {
 
 // login api calls
 
+// for storing login api response in the shape of my rtk slice
+const transformResponse = (apiResponse) => {
+  const { token, userInfo } = apiResponse;
+  return {
+    loading: false,
+    isAuth: true,
+    userInfo,
+    error: null,
+    token,
+  };
+};
+
 export const loginUser = async (credentials) => {
   try {
     const { data } = await axios.post(
       "http://localhost:6001/users/login",
       credentials
     );
-    // saves jwt in localstorage on login
-    localStorage.setItem("token", data.token);
+    console.log("the data is", data);
+    // saves user session in localstorage on login
+
+    const transformedData = transformResponse(data);
+    localStorage.setItem("reduxStore", JSON.stringify(transformedData));
+
     return data;
   } catch (error) {
     console.log("error:", error);
   }
 };
+
 export const register = async (credentials) => {
   try {
     const response = await axios.post(

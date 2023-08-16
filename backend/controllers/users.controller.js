@@ -115,6 +115,7 @@ async function registerUser(req, res) {
     const userId = user[0].user_id;
 
     const userInfo = { name: user[0].name, email: user[0].email, id: userId };
+
     console.log(userInfo);
     //  jwt token signed
     const token = jwt.sign(

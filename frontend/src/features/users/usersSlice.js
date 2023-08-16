@@ -1,28 +1,29 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { register, loginUser, logout } from "../../utils/data";
 
-// gets jwt from localStorage on logging in
-const token = localStorage.getItem("token")
-  ? localStorage.getItem("token")
-  : null;
+// For sessions persistence, gets session from localStorage if they have store saved there, otherwise initial state is saved
+// note that the localStorage is cleared on logging out in utils/data.js
+const storedRedux = localStorage.getItem("reduxStore");
 
-const initialState = {
-  loading: false,
-  isAuth: false,
-  userInfo: {},
-  error: null,
-  token,
-};
+const initialState = storedRedux
+  ? JSON.parse(storedRedux)
+  : {
+      loading: false,
+      isAuth: false,
+      userInfo: {},
+      error: null,
+      token: null,
+    };
 
 export const loggedInUser = createAsyncThunk(
   "users/login",
-  async (credentials) => {
+  async (credentials, thunkAPI) => {
     try {
       const response = await loginUser(credentials);
       return response;
     } catch (error) {
       console.log("There was an error:", error);
-      throw Error;
+      return thunkAPI.rejectWithValue(error);
     }
   }
 );
@@ -46,7 +47,7 @@ export const logoutUser = createAsyncThunk("users/logout", async () => {
     return response;
   } catch (error) {
     console.log("There was an error:", error);
-    // throw Error("Registration failed, please try again");
+    throw Error("Registration failed, please try again");
   }
 });
 
@@ -60,6 +61,14 @@ export const usersSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
+      .addCase(loggedInUser.rejected, (state, action) => {
+        console.log(action.error.message);
+        state.loading = false;
+
+        state.error = action.payload;
+        state.token = null;
+        state.userInfo = null;
+      })
       .addCase(loggedInUser.fulfilled, (state, action) => {
         console.log(action.payload);
         state.loading = false;
@@ -67,12 +76,6 @@ export const usersSlice = createSlice({
         state.userInfo = action.payload.userInfo;
         state.token = action.payload.token;
         state.error = null;
-      })
-      .addCase(loggedInUser.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.error.message;
-        state.token = null;
-        state.userInfo = null;
       })
       .addCase(setUser.pending, (state) => {
         state.loading = true;
@@ -90,9 +93,14 @@ export const usersSlice = createSlice({
         state.token = token;
         state.loading = false;
       })
-      .addCase(logoutUser.fulfilled, () => {
-        localStorage.removeItem("token");
-        return initialState;
+      .addCase(logoutUser.fulfilled, (state) => {
+        localStorage.removeItem("reduxStore");
+        (state.isAuth = false),
+          (state.loading = false),
+          (state.isAuth = false),
+          (state.userInfo = {}),
+          (state.error = null),
+          (state.token = null);
       });
   },
 });
