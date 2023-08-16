@@ -6,6 +6,7 @@ import {
   selectWishlists,
   addWishlist,
   addGamesToWishlist,
+  selectGamesOnWishlist,
 } from "./wishlistSlice";
 import { useNavigate } from "react-router-dom";
 import { selectLoggedInState } from "../users/usersSlice";
@@ -24,6 +25,7 @@ const WishlistModal = ({ slug }) => {
   const { isAuth, userInfo, token } = useSelector(selectLoggedInState);
   const [wishlistName, setWishlistName] = useState("");
   const userId = userInfo.id;
+  const games = useSelector(selectGamesOnWishlist);
   console.log("the user id is", userId);
 
   // sets wishlists on modal inputs
@@ -63,18 +65,23 @@ const WishlistModal = ({ slug }) => {
     for (const wishlistId of selectedWishlists) {
       const gameToSave = { userId, wishlistId, slug, token };
 
-      const wishlistGames = wishlists.find(
-        (wishlist) => wishlist.id === wishlistId
-      );
+      // const wishlistGames = wishlists.find(
+      //   (wishlist) => wishlist.id === wishlistId
+      // );
+      console.log(games);
 
+      const duplicateGame = games.some(
+        (game) =>
+          game.wishlist_id === wishlistId && game.slug === gameToSave.slug
+      );
       // if the game is already on the wishlist then don't add, otherwise add to the list
-      if (wishlistGames && wishlistGames.slug === gameToSave.slug) {
+      if (duplicateGame) {
         notifyFailed();
       } else {
         dispatch(addGamesToWishlist(gameToSave));
+        setSelectedWishlists([]);
       }
     }
-
     notifySaved();
     // navigate("/wishlists");
   };
