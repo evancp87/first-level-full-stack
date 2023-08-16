@@ -66,11 +66,20 @@ const WishlistList = () => {
     }
   }, [isAuth]);
 
+  console.log(currentPage);
   const handleRemove = (wishlistId) => {
     console.log(token);
     console.log(wishlistId);
-    dispatch(removeWishlist({ id: wishlistId, token, userId }));
-    notify();
+
+    // removes the wishlist and then updates the state of wishlist - to handle deleting across paginated pages
+    dispatch(removeWishlist({ id: wishlistId, token, userId })).then(() => {
+      dispatch(setWishlists(userId));
+      notify();
+    });
+    // TODO: check if ok
+    // updates new
+
+    console.log("checking number of wishlists", filteredWishlists.length);
   };
 
   const filteredSearch = () => {
@@ -109,6 +118,7 @@ const WishlistList = () => {
   const resetFilters = () => {
     dispatch(reset());
     setSearchText("");
+    setCurrentPage(1);
   };
 
   return (
@@ -203,7 +213,11 @@ const WishlistList = () => {
           </button>
           <button
             onClick={() => setCurrentPage(currentPage + 1)}
-            disabled={currentPage === totalPages || totalPages.length === 1}
+            disabled={
+              currentPage === totalPages ||
+              totalPages === 1 ||
+              filteredWishlists.length === 0
+            }
             className="btn btn-outline join-item"
           >
             Next

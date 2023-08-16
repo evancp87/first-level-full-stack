@@ -151,8 +151,7 @@ const wishlistsSlice = createSlice({
         const index = state.wishlists.findIndex(
           (wishlist) => wishlist.id === action.payload.data.id
         );
-        const wishlistToRemove = state.wishlists[index];
-        console.log(wishlistToRemove);
+
         const updatedList = [...state.wishlists];
         updatedList.splice(index, 1);
         state.wishlists = updatedList;
