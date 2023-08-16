@@ -89,7 +89,8 @@ async function getGameOnWishList(req, res) {
                   games.slug,
                   games.id,
                   games.rating,
-                  users.name AS user_name
+                  users.name AS user_name,
+                  wishlist_games.wishlist_id as wishlist_id
                   FROM games
                   JOIN wishlist_games ON wishlist_games.game_id = games.id
                   JOIN users ON users.user_id = wishlist_games.user_id
