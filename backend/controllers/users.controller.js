@@ -37,7 +37,20 @@ async function loginUser(req, res) {
     const results = await asyncMySQL(checkUser(), [email]);
 
     if (results.length === 0) {
-      res.status(404).send("no user found");
+      // res.status(401).send({
+      //   userInfo: { name: null, id: null },
+      // });
+
+      res.status(401).send({
+        errors: [
+          {
+            userInfo: null,
+            token: null,
+
+            message: "incorrect credentials",
+          },
+        ],
+      });
       return;
     }
 

@@ -10,20 +10,19 @@ const initialState = storedRedux
   : {
       loading: false,
       isAuth: false,
-      userInfo: {},
+      userInfo: null,
       error: null,
       token: null,
     };
 
 export const loggedInUser = createAsyncThunk(
   "users/login",
-  async (credentials, thunkAPI) => {
+  async (credentials) => {
     try {
       const response = await loginUser(credentials);
       return response;
     } catch (error) {
-      console.log("There was an error:", error);
-      return thunkAPI.rejectWithValue(error);
+      throw new Error("There was an error logging in, please try again");
     }
   }
 );
@@ -35,8 +34,8 @@ export const setUser = createAsyncThunk(
       const response = await register(credentials);
       return response;
     } catch (error) {
-      console.log("There was an error:", error);
-      throw Error("Registration failed, please try again");
+      // console.log("There was an error:", error);
+      throw new Error("Registration failed, please try again");
     }
   }
 );
@@ -46,8 +45,8 @@ export const logoutUser = createAsyncThunk("users/logout", async () => {
     const response = await logout();
     return response;
   } catch (error) {
-    console.log("There was an error:", error);
-    throw Error("Registration failed, please try again");
+    // console.log("There was an error:", error);
+    throw new Error("Registration failed, please try again");
   }
 });
 
@@ -62,32 +61,32 @@ export const usersSlice = createSlice({
         state.error = null;
       })
       .addCase(loggedInUser.rejected, (state, action) => {
-        console.log(action.error.message);
         state.loading = false;
-
-        state.error = action.payload;
+        state.error = action.error.message;
         state.token = null;
         state.userInfo = null;
       })
       .addCase(loggedInUser.fulfilled, (state, action) => {
-        console.log(action.payload);
         state.loading = false;
         state.isAuth = true;
-        state.userInfo = action.payload.userInfo;
+        state.userInfo = action.payload.userInfo || null;
         state.token = action.payload.token;
         state.error = null;
       })
-      .addCase(setUser.pending, (state) => {
+      .addCase(setUser.pending, (state, action) => {
+        console.log(action.payload);
         state.loading = true;
         state.error = null;
       })
       .addCase(setUser.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload;
+        state.error = action.error.message;
+        state.token = null;
+        state.userInfo = null;
       })
       .addCase(setUser.fulfilled, (state, action) => {
         console.log(action.payload);
-        const { userInfo, token } = action.payload.data;
+        const { userInfo, token } = action.payload || {};
         state.isAuth = true;
         state.userInfo = userInfo;
         state.token = token;

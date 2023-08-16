@@ -3,7 +3,12 @@ import { Link, useNavigate } from "react-router-dom";
 import { validateRegister } from "../../validation/index";
 import { useDispatch, useSelector } from "react-redux";
 import { selectLoggedInState, setUser } from "./usersSlice";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 const Register = () => {
+  const notifyError = () => toast("There was an error registering");
+
   const [register, setRegister] = useState({
     name: "",
     email: "",
@@ -44,8 +49,7 @@ const Register = () => {
       // navigate("/");
     } catch (error) {
       console.log("There was an error creating the user", error);
-      setErrors([{ key: "registration", message: error.message }]);
-      console.log("There was an error creating the user", error);
+      notifyError();
     }
   };
   return (
@@ -69,7 +73,7 @@ const Register = () => {
             {errors &&
               errors.map((error, index) =>
                 error.key === "name" ? (
-                  <p key={index} style={{ color: "#FF3E3E" }}>
+                  <p key={index} className="logo-green">
                     {error.message}
                   </p>
                 ) : null
@@ -86,7 +90,7 @@ const Register = () => {
             {errors &&
               errors.map((error, index) =>
                 error.key === "email" ? (
-                  <p key={index} style={{ color: "#FF3E3E" }}>
+                  <p key={index} className="logo-green">
                     {error.message}
                   </p>
                 ) : null
@@ -102,15 +106,28 @@ const Register = () => {
             {errors &&
               errors.map((error, index) =>
                 error.key === "password" ? (
-                  <p key={index} style={{ color: "#FF3E3E" }}>
+                  <p className="logo-green" key={index}>
                     {error.message}
                   </p>
                 ) : null
               )}
             <div className="card-actions">
-              <button className="active-btn text-slate-100 mx-2 w-[100%] rounded-full bg-logo p-2 duration-300 ease-in-out hover:scale-110">
+              <button
+                disabled={
+                  loading ||
+                  !register.name ||
+                  !register.email ||
+                  !register.password
+                }
+                className="active-btn text-slate-100 mx-2 w-[100%] cursor-pointer rounded-full bg-logo p-2 duration-300 ease-in-out hover:scale-110"
+              >
                 {loading ? "Loading..." : "Register"}
               </button>
+              {error && (
+                <p className="logo-green">
+                  That email is already in use, please try again
+                </p>
+              )}
               <Link to="/login">
                 <p className="mt-4">Already have an account?</p>
               </Link>

@@ -195,7 +195,11 @@ export const loginUser = async (credentials) => {
 
     return data;
   } catch (error) {
-    console.log("error:", error);
+    if (error.response) {
+      throw error.response.data;
+    } else {
+      throw error;
+    }
   }
 };
 
@@ -213,7 +217,11 @@ export const register = async (credentials) => {
 
     return response;
   } catch (error) {
-    console.log("error:", error);
+    if (error.response) {
+      throw error.response.data;
+    } else {
+      throw error;
+    }
   }
 };
 

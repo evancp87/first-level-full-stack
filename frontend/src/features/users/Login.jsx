@@ -3,8 +3,11 @@ import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { validateLogin } from "../../validation/index";
 import { selectLoggedInState, loggedInUser } from "./usersSlice";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Login = () => {
+  const notifyError = () => toast("There was an error logging in");
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { isAuth, loading, error } = useSelector(selectLoggedInState);
@@ -39,6 +42,7 @@ const Login = () => {
       // navigate(-1);
     } catch (error) {
       console.log("There was an error logging in", error);
+      notifyError();
     }
   };
 
@@ -64,7 +68,7 @@ const Login = () => {
             {errors &&
               errors.map((error, index) =>
                 error.key === "email" ? (
-                  <p key={index} style={{ color: "#FF3E3E" }}>
+                  <p key={index} className="logo-green">
                     {error.message}
                   </p>
                 ) : null
@@ -81,7 +85,7 @@ const Login = () => {
             {errors &&
               errors.map((error, index) =>
                 error.key === "password" ? (
-                  <p key={index} style={{ color: "#FF3E3E" }}>
+                  <p className="logo-green" key={index}>
                     {error.message}
                   </p>
                 ) : null
@@ -89,12 +93,16 @@ const Login = () => {
 
             <div className="card-actions">
               <button
-                disabled={loading}
+                disabled={loading || !login.email || !login.password}
                 className="active-btn text-slate-100 h-[40px] w-[25%] self-start rounded-full bg-logo duration-300 ease-in-out hover:scale-110"
               >
                 {loading ? "Loading" : "Login"}
               </button>
-              {error && <p>There was an error, please try again</p>}
+              {error && (
+                <p className="logo-green">
+                  We were unable to find that user, please try again
+                </p>
+              )}
               <Link className="mt-4" to="/register">
                 <p>Don't have an account yet?</p>
               </Link>
