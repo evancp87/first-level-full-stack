@@ -20,7 +20,7 @@ const Wishlist = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   // unpacks slug from the url to dispatch the store and fetch game detail from api
-  const { id } = useParams();
+  const { id: wishlistId } = useParams();
   const { isAuth, userInfo, token } = useSelector(selectLoggedInState);
   const games = useSelector(selectGamesOnWishlist);
   const wishlist = useSelector(selectSingleWishlist);
@@ -39,7 +39,7 @@ const Wishlist = () => {
   const wishlistDetails = {
     userId,
     token,
-    id,
+    wishlistId,
   };
 
   const handleDelete = (wishlistId, token, userId, slug) => {

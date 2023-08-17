@@ -251,11 +251,14 @@ export const wishlists = async (customerId, token) => {
   }
 };
 export const singleWishlist = async (singleWishlistData) => {
-  const { token, id, userId } = singleWishlistData;
-  console.log(token, id, userId);
+  // const { token, id, userId } = singleWishlistData;
+  const { token, wishlistId, userId } = singleWishlistData;
+
+  console.log(token, wishlistId, userId);
   try {
     const { data } = await axios.get(
-      ` http://localhost:6001/wishlists/${id}?userId=${userId}`,
+      // ` http://localhost:6001/wishlists/${id}?userId=${userId}`,
+      ` http://localhost:6001/wishlists/${wishlistId}?userId=${userId}`,
 
       {
         headers: {
@@ -332,6 +335,7 @@ export const addGamesOnWishlist = async (gameToAdd) => {
         },
       }
     );
+    console.log("the game data is", data);
     return data;
   } catch (error) {
     console.log("There was an error:", error);
@@ -340,10 +344,12 @@ export const addGamesOnWishlist = async (gameToAdd) => {
 
 export const listOfGamesWishlist = async (gamesList) => {
   console.log(gamesList);
-  const { userId, token, id } = gamesList;
+  const { userId, token, wishlistId } = gamesList;
   try {
     const { data } = await axios.get(
-      `http://localhost:6001/games/wishlist?userId=${userId}&wishlistId=${id}`,
+      // `http://localhost:6001/games/wishlist?userId=${userId}&wishlistId=${id}`,
+      `http://localhost:6001/games/wishlist?userId=${userId}&wishlistId=${wishlistId}`,
+
       {
         headers: {
           Authorization: `Bearer ${token}`,

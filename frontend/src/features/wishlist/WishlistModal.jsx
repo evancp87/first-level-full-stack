@@ -7,6 +7,7 @@ import {
   addWishlist,
   addGamesToWishlist,
   selectGamesOnWishlist,
+  getGamesFromWishlist,
 } from "./wishlistSlice";
 import { useNavigate } from "react-router-dom";
 import { selectLoggedInState } from "../users/usersSlice";
@@ -24,14 +25,14 @@ const WishlistModal = ({ slug }) => {
   const [selectedWishlists, setSelectedWishlists] = useState([]);
   const { isAuth, userInfo, token } = useSelector(selectLoggedInState);
   const [wishlistName, setWishlistName] = useState("");
-  const userId = userInfo.id;
+  const userId = userInfo?.id;
   const games = useSelector(selectGamesOnWishlist);
   console.log("the user id is", userId);
 
   // sets wishlists on modal inputs
   const getWishlists = useCallback(() => {
     dispatch(setWishlists(userId));
-  }, [setWishlists]);
+  }, [setWishlists, dispatch]);
 
   // check for logged in user = disables add to wishlist button if not
   useEffect(() => {
@@ -49,6 +50,8 @@ const WishlistModal = ({ slug }) => {
     if (isChecked) {
       setSelectedWishlists((inputs) => [...inputs, wishlistId]);
       console.log(wishlistId);
+      // gets latest games on list
+      dispatch(getGamesFromWishlist({ wishlistId, userId, token }));
     } else {
       setSelectedWishlists((inputs) =>
         inputs.filter((id) => id !== wishlistId)
@@ -61,14 +64,14 @@ const WishlistModal = ({ slug }) => {
   };
 
   // loop over checked options and insert into wishlist games table
-  const handleSaveToWishlist = () => {
+  const handleSaveToWishlist = async () => {
     for (const wishlistId of selectedWishlists) {
       const gameToSave = { userId, wishlistId, slug, token };
 
       // const wishlistGames = wishlists.find(
       //   (wishlist) => wishlist.id === wishlistId
       // );
-      console.log(games);
+      console.log("checking games", games);
 
       const duplicateGame = games.some(
         (game) =>
@@ -78,11 +81,13 @@ const WishlistModal = ({ slug }) => {
       if (duplicateGame) {
         notifyFailed();
       } else {
+        notifySaved();
         dispatch(addGamesToWishlist(gameToSave));
-        setSelectedWishlists([]);
+        // updates games on list
+        dispatch(getGamesFromWishlist({ wishlistId, userId, token }));
       }
+      setSelectedWishlists([]);
     }
-    notifySaved();
     // navigate("/wishlists");
   };
 
@@ -94,12 +99,12 @@ const WishlistModal = ({ slug }) => {
     };
 
     console.log(wishlistWithGame);
-    dispatch(addWishlist({ userId, token, wishlistWithGame }));
     notify();
     setWishlistName("");
+    dispatch(addWishlist({ userId, token, wishlistWithGame }));
     console.log(wishlistName);
     // gets the new wishlist name instantly
-    getWishlists();
+    getWishlists(userId);
     // navigate("/favorites");
   };
 
