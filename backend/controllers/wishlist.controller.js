@@ -29,7 +29,6 @@ async function getWishlists(req, res) {
 
   const results = await asyncMySQL(wishlistQuery, [customerId]);
 
-  console.log(results);
   if (results.length > 0) {
     res.status(200).send(results);
     return;
@@ -40,7 +39,6 @@ async function getWishlists(req, res) {
 
 // gets individual wishlist
 async function getWishlist(req, res) {
-  console.log("getting individual wishlist route ran");
   const id = req.params.id;
   const userId = req.query.userId;
 
@@ -48,15 +46,7 @@ async function getWishlist(req, res) {
     res.status(400).send("please add a correct id");
   }
 
-  //   const wishlistQuery = `SELECT name
-  // FROM wishlists
-  //     WHERE id = ? AND customer_id = ?;`;
-
   const results = await asyncMySQL(getWishlistName(), [id, userId]);
-
-  // const results = await asyncMySQL(`SELECT name
-  // FROM wishlists
-  //     WHERE id = ${id} AND customer_id = ${userId};`);
 
   if (results.length === 1) {
     res.send({ status: 200, results });
@@ -69,7 +59,6 @@ async function getWishlist(req, res) {
 // // adds a wishlist
 async function createWishlist(req, res) {
   // note the functionality is that the user creates a wishlist first, and then adds games to it.
-  console.log("add wishlist route ran");
 
   const { name, slug } = req.body;
   const customerId = req.query.customerId;
@@ -91,17 +80,9 @@ async function createWishlist(req, res) {
 
     const gameId = await asyncMySQL(getGameId(), [slug]);
 
-    // const gameId = await asyncMySQL(`SELECT id FROM games
-    // WHERE slug = '${slug}';`);
-
     const game = gameId[0].id;
     // inserts game into wishlist
     const wishlist = await asyncMySQL(insertIntoWishlist(), [name, customerId]);
-
-    // const wishlist = await asyncMySQL(`INSERT INTO wishlists
-    // (name, customer_id, game_id)
-    //     VALUES
-    //         ('${name}', '${customerId}','${game}' )`);
 
     // receiving newly created wishlist id to use with wishlist_games table
     const wishlist_id = wishlist.insertId;
@@ -133,8 +114,6 @@ async function createWishlist(req, res) {
 
 // deleting wishlist
 async function deleteWishlist(req, res) {
-  console.log("wishlist deleted route ran");
-
   const id = req.params.id;
   const userId = req.query.userId;
 
@@ -145,23 +124,15 @@ async function deleteWishlist(req, res) {
 
   // checks user
 
-  // const userQuery = `SELECT user_id FROM users
-  // WHERE user_id = ?;`;
   const userResult = await asyncMySQL(selectUserById(), [userId]);
 
   const user = userResult[0].user_id;
 
   try {
-    // deletes games under wishlist from wishlist_games table
-    // const deleteQuery = `DELETE FROM wishlist_games
-    //                         WHERE wishlist_id = ?;`;
     await asyncMySQL(deleteFromWishlistGames(), [id]);
 
     // deletes wishlist and returns id of deleted wishlist
 
-    // const deleteGamesQuery = `DELETE
-    //                             FROM wishlists
-    //                               WHERE id = ? AND customer_id = ?;`;
     await asyncMySQL(deleteFromWishlist(), [id, user]);
 
     res.status(200).send({ id: id });
@@ -175,8 +146,6 @@ async function deleteWishlist(req, res) {
 // currently not implemented
 
 async function updateWishlist(req, res) {
-  console.log("update game route ran");
-  // TODO: add user
   const { name } = req.body;
   const wishlistId = req.params.id;
   const userId = req.params.userId;
@@ -207,12 +176,10 @@ async function updateWishlist(req, res) {
 
 // adds games to wishlist
 async function addGamesToWishlist(req, res) {
-  console.log("adding game to wishlist ran");
   const { slug } = req.body;
   const wishlistId = req.query.wishlistId;
   const userId = req.query.userId;
 
-  console.log(slug, wishlistId, userId);
   if (
     !slug ||
     typeof slug !== "string" ||
@@ -264,6 +231,7 @@ async function addGamesToWishlist(req, res) {
 
     if (newGameDetails.length === 1) {
       const addedGame = newGameDetails[0];
+
       res.status(200).send(addedGame);
     }
   } catch (error) {
@@ -273,7 +241,6 @@ async function addGamesToWishlist(req, res) {
 }
 
 const deleteGamesFromWishlist = async (req, res) => {
-  console.log("deleting game from wishlist ran");
   const slug = req.query.slug;
   const wishlistId = req.query.wishlistId;
   const userId = req.query.userId;
@@ -292,8 +259,7 @@ const deleteGamesFromWishlist = async (req, res) => {
 
   try {
     // identifies wishlist under user
-    // const wishlistQuery = `SELECT id FROM wishlists
-    //                           WHERE id = ? AND customer_id = ?;`;
+
     const wishlist = await asyncMySQL(getWishlistId(), [wishlistId, userId]);
 
     if (wishlist.length === 0) {
@@ -301,7 +267,6 @@ const deleteGamesFromWishlist = async (req, res) => {
       return;
     }
 
-    // const gameIdQuery = `SELECT id FROM games WHERE slug = ? ;`;
     const game = await asyncMySQL(getGameIdWishlist(), [slug]);
 
     if (game.length === 0) {
@@ -309,12 +274,8 @@ const deleteGamesFromWishlist = async (req, res) => {
       return;
     }
 
-    console.log(game);
     const gameToDelete = game[0].id;
 
-    // const deleteQuery = `DELETE FROM wishlist_games
-    //                         WHERE
-    //                           game_id = ? AND user_id = ? AND wishlist_id = ?;`;
     await asyncMySQL(deleteSingleGameFromWishlist(), [
       gameToDelete,
       userId,

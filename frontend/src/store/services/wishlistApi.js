@@ -1,3 +1,5 @@
+// NOT USED YET, MAYBE IN FUTURE
+
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 // The base URL

@@ -13,7 +13,7 @@ app.use(express.static("public"));
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(cors({ credentials: true, origin: "http://localhost:5173" }));
-// session middleware
+// session middleware, not used and to remove
 app.use(
   session({
     secret: process.env.SESSION_SECRET,

@@ -3,9 +3,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import BackBtn from "../../components/BackBtn";
 import GameCard from "../Game/GameCard";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { Link } from "react-router-dom";
 import {
   getWishlist,
   getGamesFromWishlist,
@@ -24,7 +23,6 @@ const Wishlist = () => {
   const { isAuth, userInfo, token } = useSelector(selectLoggedInState);
   const games = useSelector(selectGamesOnWishlist);
   const wishlist = useSelector(selectSingleWishlist);
-  console.log(wishlist);
 
   useEffect(() => {
     if (!isAuth) {
@@ -33,8 +31,6 @@ const Wishlist = () => {
   }, [isAuth]);
 
   const userId = userInfo.id;
-
-  console.log(userId);
 
   const wishlistDetails = {
     userId,
@@ -77,23 +73,17 @@ const Wishlist = () => {
                     <GameCard game={game} liked={game.liked} />
                     <button
                       onClick={() =>
-                        handleDelete(Number(id), token, userId, game.slug)
+                        handleDelete(
+                          Number(wishlistId),
+                          token,
+                          userId,
+                          game.slug
+                        )
                       }
                       className="active-btn text-slate-100 ml-6 h-[40px] rounded-full bg-logo  px-4 duration-300 ease-in-out hover:scale-110"
                     >
                       Delete {game.name}
                     </button>
-                    {/* <ToastContainer
-                      position="bottom-left"
-                      autoClose={5000}
-                      hideProgressBar={false}
-                      newestOnTop={false}
-                      closeOnClick
-                      rtl={false}
-                      draggable
-                      pauseOnHover
-                      theme="colored"
-                    /> */}
                   </li>
                 )}
               </React.Fragment>

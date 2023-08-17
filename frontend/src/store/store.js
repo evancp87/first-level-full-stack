@@ -5,7 +5,6 @@ import dashboardReducer from "../features/Dashboard/dashboardSlice";
 import searchInputsReducer from "../features/searchInputs/searchInputsSlice";
 import usersReducer from "../features/users/usersSlice";
 import wishlistReducer from "../features/wishlist/wishlistSlice";
-import logger from "redux-logger";
 import thunk from "redux-thunk";
 
 export const store = configureStore({
@@ -17,5 +16,5 @@ export const store = configureStore({
     users: usersReducer,
     wishlists: wishlistReducer,
   },
-  middleware: [thunk, logger],
+  middleware: [thunk],
 });

@@ -17,7 +17,7 @@ const Register = () => {
   const [errors, setErrors] = useState(null);
 
   const dispatch = useDispatch();
-  const { isAuth, userInfo, error, loading } = useSelector(selectLoggedInState);
+  const { isAuth, error, loading } = useSelector(selectLoggedInState);
 
   const navigate = useNavigate();
 

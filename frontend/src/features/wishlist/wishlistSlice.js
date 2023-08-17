@@ -22,12 +22,6 @@ export const setWishlists = createAsyncThunk(
   async (userId) => {
     try {
       const response = await wishlists(userId);
-      console.log(
-        "the wishlist responses are:",
-        response,
-        "and the id is",
-        userId
-      );
       return response;
     } catch (error) {
       console.log("There was an error", error);
@@ -112,8 +106,6 @@ export const deleteGame = createAsyncThunk(
   async (gameToDelete) => {
     try {
       const response = await deleteSingleGameFromWishlist(gameToDelete);
-      console.log(gameToDelete);
-      console.log("checking the respons", response);
       return response;
     } catch (error) {
       console.log("There was an error", error);
@@ -141,13 +133,10 @@ const wishlistsSlice = createSlice({
         state.wishlist = action.payload;
       })
       .addCase(addWishlist.fulfilled, (state, action) => {
-        console.log("Doing some checks", action.payload, action.payload);
-
         const { wishlist } = action.payload.data;
         state.wishlists = [...state.wishlists, wishlist];
       })
       .addCase(removeWishlist.fulfilled, (state, action) => {
-        console.log(action.payload);
         const index = state.wishlists.findIndex(
           (wishlist) => wishlist.id === action.payload.data.id
         );
@@ -171,11 +160,9 @@ const wishlistsSlice = createSlice({
       })
 
       .addCase(deleteGame.fulfilled, (state, action) => {
-        console.log(action.payload);
         const index = state.gamesOnWishlist.findIndex(
           (game) => game.id === action.payload.id
         );
-        console.log(index);
 
         const updatedList = [...state.gamesOnWishlist];
         updatedList.splice(index, 1);

@@ -12,8 +12,6 @@ const saltRounds = 10;
 require("dotenv").config();
 
 async function loginUser(req, res) {
-  console.log("login route ran");
-
   const { email, password } = req.body;
 
   if (
@@ -92,11 +90,8 @@ async function loginUser(req, res) {
 
 // registers a new user
 async function registerUser(req, res) {
-  console.log("register user route ran");
-
   const { name, email, password } = req.body;
 
-  console.log("register route ran");
   if (
     !name ||
     typeof name !== "string" ||
@@ -129,7 +124,6 @@ async function registerUser(req, res) {
 
     const userInfo = { name: user[0].name, email: user[0].email, id: userId };
 
-    console.log(userInfo);
     //  jwt token signed
     const token = jwt.sign(
       { userId },

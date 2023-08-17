@@ -54,17 +54,12 @@ const Search = () => {
     // const filteredGames = filteredSearch();
     const { totalFilteredGames } = filteredSearch();
 
-    console.log(totalFilteredGames, "a check here");
     // Calculate total pages for pagination
     const totalPages = Math.ceil(totalFilteredGames / 10);
     setTotalPages(totalPages);
     setCurrentPage(1);
     // setTotalPages(Math.ceil(filteredGames.length / 10));
-    console.log(totalFilteredGames);
-    console.log(totalFilteredGames / 10);
-    console.log(totalPages);
 
-    console.log("checking here", totalPages);
     setCurrentPage(1);
   }, [searchInput, selectedPlatform, selectedGenre, sortInput]);
 
@@ -95,7 +90,6 @@ const Search = () => {
   };
 
   const sortValue = (e) => {
-    console.log(e.target.value);
     dispatch(sort(e.target.value));
     setSelectedSort(e.target.value);
   };
@@ -105,7 +99,6 @@ const Search = () => {
 
     // defensive checks for rendering filtered list based on input
     if (searchInput) {
-      console.log("is there a searchInput:", searchInput);
       filteredList = filteredList.filter((game) => {
         const gameQuery = game.name
           .toLowerCase()

@@ -39,7 +39,6 @@ const Login = () => {
     try {
       e.preventDefault();
       dispatch(loggedInUser(login));
-      // navigate(-1);
     } catch (error) {
       console.log("There was an error logging in", error);
       notifyError();

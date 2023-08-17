@@ -27,7 +27,6 @@ const WishlistModal = ({ slug }) => {
   const [wishlistName, setWishlistName] = useState("");
   const userId = userInfo?.id;
   const games = useSelector(selectGamesOnWishlist);
-  console.log("the user id is", userId);
 
   // sets wishlists on modal inputs
   const getWishlists = useCallback(() => {
@@ -49,7 +48,6 @@ const WishlistModal = ({ slug }) => {
     // check if checked and add to array of checked options, or if not exclude
     if (isChecked) {
       setSelectedWishlists((inputs) => [...inputs, wishlistId]);
-      console.log(wishlistId);
       // gets latest games on list
       dispatch(getGamesFromWishlist({ wishlistId, userId, token }));
     } else {
@@ -67,11 +65,6 @@ const WishlistModal = ({ slug }) => {
   const handleSaveToWishlist = async () => {
     for (const wishlistId of selectedWishlists) {
       const gameToSave = { userId, wishlistId, slug, token };
-
-      // const wishlistGames = wishlists.find(
-      //   (wishlist) => wishlist.id === wishlistId
-      // );
-      console.log("checking games", games);
 
       const duplicateGame = games.some(
         (game) =>
@@ -98,11 +91,9 @@ const WishlistModal = ({ slug }) => {
       slug,
     };
 
-    console.log(wishlistWithGame);
     notify();
     setWishlistName("");
     dispatch(addWishlist({ userId, token, wishlistWithGame }));
-    console.log(wishlistName);
     // gets the new wishlist name instantly
     getWishlists(userId);
     // navigate("/favorites");

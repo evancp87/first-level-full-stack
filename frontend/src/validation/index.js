@@ -8,8 +8,8 @@ const validateWithSchema = async (payload, schema) => {
     const results = await schemaObject.validateAsync(payload, {
       abortEarly: false,
     });
+    // console.log(results);
 
-    console.log(results);
     return null;
   } catch (error) {
     console.log(error);

@@ -28,8 +28,7 @@ const WishlistList = () => {
   const { isAuth, userInfo, token } = useSelector(selectLoggedInState);
   const searchInput = useSelector(selectSearch);
   const [totalPages, setTotalPages] = useState(1);
-  const userId = userInfo.id;
-  console.log("checking in wishlist for userid", userId);
+  const userId = userInfo?.id;
 
   const searchValue = async (e) => {
     if (searchInput) {
@@ -66,20 +65,12 @@ const WishlistList = () => {
     }
   }, [isAuth]);
 
-  console.log(currentPage);
   const handleRemove = (wishlistId) => {
-    console.log(token);
-    console.log(wishlistId);
-
     // removes the wishlist and then updates the state of wishlist - to handle deleting across paginated pages
     dispatch(removeWishlist({ id: wishlistId, token, userId })).then(() => {
       dispatch(setWishlists(userId));
       notify();
     });
-    // TODO: check if ok
-    // updates new
-
-    console.log("checking number of wishlists", filteredWishlists.length);
   };
 
   const filteredSearch = () => {
@@ -129,7 +120,7 @@ const WishlistList = () => {
 
           <div className="form-control  flex w-full justify-center">
             <label className="label self-start">
-              <h2 className="label-text text-xl">{`${userInfo.name}'s wishlists`}</h2>
+              <h2 className="label-text text-xl">{`${userInfo?.name}'s wishlists`}</h2>
             </label>
             <input
               onChange={searchValue}

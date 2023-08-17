@@ -40,7 +40,6 @@ export const inputsSlice = createSlice({
       .addCase(setPlatforms.fulfilled, (state, action) => {
         // formats platforms
         const platformNames = action.payload.map((platform) => platform.name);
-        console.log(platformNames);
         const namesSlice = platformNames.slice(0, 7);
         state.platforms = namesSlice;
       });
