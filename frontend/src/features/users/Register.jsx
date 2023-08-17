@@ -46,7 +46,7 @@ const Register = () => {
 
     try {
       dispatch(setUser(register));
-      // navigate("/");
+      navigate("/login");
     } catch (error) {
       console.log("There was an error creating the user", error);
       notifyError();
