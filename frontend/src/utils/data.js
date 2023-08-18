@@ -40,14 +40,12 @@ export const getTopRated = async () => {
 };
 
 export const gamesByDate = async (startDate, endDate) => {
-  console.log("the dates are:", startDate, endDate);
   try {
     // Will take a start date and end date at point of dispatch to the store
     const { data } = await axios.get(
       `https://first-level-backend.onrender.com/games/dates?startDate=${startDate}&endDate=${endDate}`
     );
 
-    console.log("the data os", data);
     // gets games within date range that have rating of over 3.5. I found 4 and 4.5 too narrow
     // filters so the most popular new games are shown
     const filteredResults = data.results.filter((game) => {

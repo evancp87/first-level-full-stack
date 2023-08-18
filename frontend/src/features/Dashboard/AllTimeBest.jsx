@@ -15,7 +15,6 @@ const AllTimeBest = () => {
 
   // gets filtered list of highest rated games from store
   const highestRated = useSelector(selectHighestRated);
-  console.log(highestRated);
 
   return (
     <div className="my-8 px-4 text-xl">
