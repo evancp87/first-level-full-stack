@@ -63,16 +63,16 @@ async function getHighestRatedGames(req, res) {
   ;`;
 
   // converts genres and platforms into arrays of strings
-  const gameResults = query.map((result) => ({
+  const results = await asyncMySQL(query, [4.5]);
+
+  const gameResults = results.map((result) => ({
     ...result,
     platforms: result.platforms.split(", "),
     genres: result.genres.split(", "),
   }));
 
-  const results = await asyncMySQL(gameResults, [4.5]);
-
   if (results.length > 0) {
-    res.status(200).send(results);
+    res.status(200).send(gameResults);
     return;
   }
 
