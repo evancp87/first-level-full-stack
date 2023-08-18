@@ -202,7 +202,7 @@ const getGameDetail = async (req, res) => {
       id,
       price,
     } = data;
-    console.log(" the data is:", data);
+
     const results = {
       released,
       name,
