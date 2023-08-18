@@ -158,6 +158,7 @@ const getScreenshots = async (req, res) => {
         image: element.image,
       };
     });
+    res.setHeader("Content-Type", "application/json");
 
     res.status(200).send(results);
   } catch (error) {
@@ -176,6 +177,7 @@ const getGamesByDate = async (req, res) => {
       `https://api.rawg.io/api/games?dates=${startDate},${endDate}&key=${apiKey}`
     );
 
+    res.setHeader("Content-Type", "application/json");
     res.status(200).send(data);
   } catch (error) {
     console.log("error:", error);
@@ -216,6 +218,7 @@ const getGameDetail = async (req, res) => {
       price,
     };
 
+    res.setHeader("Content-Type", "application/json");
     res.status(200).send(results);
   } catch (error) {
     console.log("error:", error);
