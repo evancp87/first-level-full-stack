@@ -12,7 +12,9 @@ app.use(express.json());
 app.use(express.static("public"));
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(cors({ credentials: true, origin: "http://localhost:5173" }));
+app.use(
+  cors({ credentials: true, origin: "https://first-level.onrender.com/" })
+);
 // session middleware, not used and to remove
 app.use(
   session({
