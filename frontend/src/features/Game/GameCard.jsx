@@ -10,8 +10,7 @@ import { ToastContainer } from "react-toastify";
 const GameCard = ({ game, index }) => {
   const { released, name, background_image, slug, rating, platforms } = game;
 
-  const platformNames =
-    platforms && platforms.map((platform) => platform).join(", ");
+  const platformNames = platforms && platforms.join(", ");
 
   return (
     <>
