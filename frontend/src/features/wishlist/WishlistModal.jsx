@@ -115,7 +115,7 @@ const WishlistModal = ({ slug }) => {
   return (
     <div className="relative">
       <button
-        className="active-btn text-slate-100 mt-4 h-[40px] rounded-full  bg-logo px-4 duration-300 ease-in-out hover:scale-110"
+        className="active-btn text-sm text-slate-100 mt-4 h-[40px] rounded-full  bg-logo px-4 duration-300 ease-in-out hover:scale-110"
         onClick={showModal}
       >
         Add to wishlist
