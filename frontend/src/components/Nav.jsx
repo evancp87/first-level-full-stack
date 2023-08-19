@@ -42,7 +42,7 @@ const Nav = () => {
 
   return (
     <nav className="relative z-50 ms-[30px] flex flex-row  justify-between py-[2em]">
-      <div>
+      <div className="mr-4">
         <Link to="/">
           <p className="logo-green cursor-pointer font-press">First Level</p>
         </Link>

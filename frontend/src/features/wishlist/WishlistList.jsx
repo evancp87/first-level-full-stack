@@ -114,13 +114,13 @@ const WishlistList = () => {
 
   return (
     <div className="flex  flex-col  items-center">
-      <div className="w-80vw">
+      <div className="max-w-[90vw]">
         <div className="my-1.5 flex flex-row flex-wrap justify-center ">
           <BackBtn />
 
           <div className="form-control  flex w-full justify-center">
             <label className="label self-start">
-              <h2 className="label-text text-xl">{`${userInfo?.name}'s wishlists`}</h2>
+              <h2 className="label-text text-xl mt-12">{`${userInfo?.name}'s wishlists`}</h2>
             </label>
             <input
               onChange={searchValue}
@@ -139,7 +139,7 @@ const WishlistList = () => {
             </ul>
             <button
               value="reset"
-              className="active-btn text-slate-100 ml-[1.5em] h-[40px] w-[25%] justify-center self-start rounded-full bg-logo px-4 duration-300 ease-in-out hover:scale-110"
+              className="active-btn text-slate-100 ml-[1.5em] h-[40px] w-[40%] justify-center self-start rounded-full bg-logo px-4 duration-300 ease-in-out hover:scale-110"
               onClick={resetFilters}
             >
               Reset
@@ -155,7 +155,7 @@ const WishlistList = () => {
                   <div className="card w-96 bg-primary text-primary-content">
                     <div className="card-body">
                       <h3 className="card-title">{wishlist.name}</h3>
-                      <div className="card-actions flex items-center justify-end">
+                      <div className="card-actions flex items-center mt-4">
                         <Link to={`/wishlist/${wishlist.id}`}>
                           <button className="active-btn text-slate-100 h-[40px] self-start rounded-full bg-logo px-4 duration-300 ease-in-out hover:scale-110">
                             Wishlist
