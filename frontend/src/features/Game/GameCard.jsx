@@ -10,7 +10,13 @@ import { ToastContainer } from "react-toastify";
 const GameCard = ({ game, index }) => {
   const { released, name, background_image, slug, rating, platforms } = game;
 
-  const platformNames = platforms && Object.values(platforms).flat().join(", ");
+  let platformNames;
+  
+  if (Array.isArray(platforms)) {
+    platformNames = platforms.join(", ");
+  } else if (typeof platforms === "object") {
+    platformNames = Object.values(platforms).join(", ");
+  }
 
   return (
     <>
