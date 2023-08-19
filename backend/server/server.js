@@ -12,8 +12,13 @@ app.use(express.json());
 app.use(express.static("public"));
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(
-  cors({ credentials: true, origin: "https://first-level.onrender.com" })
+
+const corsOrigin = process.env.NODE_ENV === "production"
+  ? process.env.PRODUCTION_ORIGIN
+  : process.env.DEVELOPMENT_ORIGIN;
+
+  app.use(
+  cors({ credentials: true, origin: corsOrigin })
 );
 // session middleware, not used and to remove
 app.use(
@@ -26,6 +31,7 @@ app.use(
     httpOnly: true,
   })
 );
+
 
 app.use(function myLogger(req, res, next) {
   console.log("logged");
