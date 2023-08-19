@@ -111,7 +111,7 @@ const Register = () => {
                   </p>
                 ) : null
               )}
-            <div className="card-actions">
+            <div className="card-actions flex-col">
               <button
                 disabled={
                   loading ||
@@ -119,7 +119,7 @@ const Register = () => {
                   !register.email ||
                   !register.password
                 }
-                className="active-btn text-slate-100 mx-2 w-[100%] cursor-pointer rounded-full bg-logo p-2 duration-300 ease-in-out hover:scale-110"
+                className="active-btn text-slate-100 mx-2 w-[40%] px-4 cursor-pointer rounded-full bg-logo p-2 duration-300 ease-in-out hover:scale-110"
               >
                 {loading ? "Loading..." : "Register"}
               </button>
