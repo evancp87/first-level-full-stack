@@ -25,15 +25,27 @@ The user is able to:
 - React
 - Vite
 - Tailwind CSS
-- Redux Tool Kit
+- Redux ToolKit
 - Joi
 - GSAP
 - Daisy UI
 - React Loading Skeleton
 - React Transition Group
-- Axios
+- Axios 
+- Day JS
+- React Toastify
+- Bcrypt
+- Cors
+- JWTs
+- Helmet
+- MySQL
 
-##Installation
--To install this app, clone the repository and run `npm install` in the root directory.
 
-- To start the app, run `npm run dev`
+
+## Installation
+
+### Frontend
+- To install this app, clone the repository, navigate to the frontend directory and run `npm install` . Next, run `npm run dev` to start the app on http://localhost:5173/
+
+### Backend
+- Navigate to the backend and run `npm start` to start the server. The backend will start on port 6000
