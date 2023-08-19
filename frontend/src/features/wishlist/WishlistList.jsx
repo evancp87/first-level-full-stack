@@ -114,7 +114,7 @@ const WishlistList = () => {
 
   return (
     <div className="flex  flex-col  items-center">
-      <div className="max-w-[90vw]">
+     <div style={{ maxWidth: "90vw" }}>
         <div className="my-1.5 flex flex-row flex-wrap justify-center ">
           <BackBtn />
 
@@ -152,7 +152,7 @@ const WishlistList = () => {
             filteredWishlists.map((wishlist) => (
               <li key={`wishlist_${wishlist.id}`}>
                 <article className="mx-w-full card card-bordered card-side m-6 flex-row flex-wrap items-center bg-base-100 shadow-xl">
-                  <div className="card w-96 bg-primary text-primary-content">
+                  <div className="card w-96 text-primary-content">
                     <div className="card-body">
                       <h3 className="card-title">{wishlist.name}</h3>
                       <div className="card-actions flex items-center mt-4">
