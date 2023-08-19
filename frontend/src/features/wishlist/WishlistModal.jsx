@@ -168,7 +168,7 @@ const WishlistModal = ({ slug }) => {
               <h3 className="mt-4 text-xl">Or create a new wishlist</h3>
 
               <div className="flex flex-col ">
-                <div className="mt-4 flex flex-row justify-between">
+                <div className="mt-4 flex flex-row justify-between flex-wrap">
                   <input
                     type="text"
                     value={wishlistName}
@@ -178,7 +178,7 @@ const WishlistModal = ({ slug }) => {
                   <button
                     disabled={!wishlistName}
                     type="button"
-                    className="active-btn text-slate-100 flex h-[40px] cursor-pointer items-center rounded-full  bg-logo p-4 px-4 duration-300 ease-in-out hover:scale-110"
+                    className="active-btn text-slate-100 flex h-[40px] cursor-pointer items-center rounded-full  bg-logo p-4 px-4 duration-300 ease-in-out hover:scale-110 mt-4 sm:mt-0"
                     onClick={handleCreateWishlist}
                   >
                     Create Wishlist
