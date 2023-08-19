@@ -12,10 +12,12 @@ const GameCard = ({ game, index }) => {
 
   let platformNames;
   
-  if (Array.isArray(platforms)) {
-    platformNames = platforms.join(", ");
-  } else if (typeof platforms === "object") {
-    platformNames = Object.values(platforms).join(", ");
+  if (platforms) {
+    if (Array.isArray(platforms)) {
+      platformNames = platforms.join(", ");
+    } else if (typeof platforms === "object") {
+      platformNames = Object.values(platforms).join(", ");
+    }
   }
 
   return (
