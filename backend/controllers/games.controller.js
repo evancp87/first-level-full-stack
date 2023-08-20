@@ -1,11 +1,11 @@
-const asyncMySQL = require("../database/connection");
+// const asyncMySQL = require("../database/connection");
 
 const apiKey = process.env.API_KEY;
 const axios = require("axios");
 
 // gets games list from db- joining on genres, platforms, genres_games and platform_games tables
 async function getGamesList(req, res) {
-  const results = await asyncMySQL(
+  const results = await req.asyncMySQL(
     `SELECT game.id,
       game.name,
       game.released,
@@ -63,7 +63,7 @@ async function getHighestRatedGames(req, res) {
   ;`;
 
   // converts genres and platforms into arrays of strings
-  const results = await asyncMySQL(query, [4.5]);
+  const results = await req.asyncMySQL(query, [4.5]);
 
   const gameResults = results.map((result) => ({
     ...result,
@@ -106,7 +106,7 @@ async function getGameOnWishList(req, res) {
   `;
 
   try {
-    const results = await asyncMySQL(query, [userId, wishlistId]);
+    const results = await req.asyncMySQL(query, [userId, wishlistId]);
     if (results.length > 0) {
       res.status(200).send(results);
     } else {
@@ -121,7 +121,7 @@ async function getGameOnWishList(req, res) {
 // platform names
 const getPlatforms = async (req, res) => {
   try {
-    const results = await asyncMySQL(`SELECT name FROM platforms`);
+    const results = await req.asyncMySQL(`SELECT name FROM platforms`);
 
     if (results.length > 0) {
       return res.status(200).json(results);
@@ -137,7 +137,7 @@ const getPlatforms = async (req, res) => {
 // genres
 const getGenres = async (req, res) => {
   try {
-    const results = await asyncMySQL(`SELECT name FROM genres`);
+    const results = await req.asyncMySQL(`SELECT name FROM genres`);
 
     if (results.length > 0) {
       return res.status(200).json(results);

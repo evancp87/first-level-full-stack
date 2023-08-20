@@ -46,9 +46,9 @@ const Login = () => {
   };
 
   return (
-    <section className="mt-4 flex flex-col items-center">
-      <div className="card w-96 rounded-md border-2 bg-base-100 bg-base-100 p-4 shadow-xl">
-        <div className="card-body flex flex-col items-center text-center">
+    <section className="h-screen flex flex-col justify-center items-center">
+      <div className="card sm:w-96 rounded-md border-2 bg-base-100 bg-base-100 p-4 shadow-xl">
+        <div className="card-body flex flex-col items-center justify-center text-center">
           <h2 className="card-title">Login</h2>
           <form
             className="flex flex-col gap-4"
@@ -90,12 +90,12 @@ const Login = () => {
                 ) : null
               )}
 
-            <div className="card-actions">
+            <div className="card-actions flex-col">
               <button
                 disabled={loading || !login.email || !login.password}
-                className="active-btn text-slate-100 h-[40px] w-[25%] self-start rounded-full bg-logo duration-300 ease-in-out hover:scale-110"
+                className="active-btn text-slate-100 h-[40px] w-[40%] px-4 self-start rounded-full bg-logo duration-300 ease-in-out hover:scale-110"
               >
-                {loading ? "Loading" : "Login"}
+                {loading ? "Loading..." : "Login"}
               </button>
               {error && (
                 <p className="logo-green">

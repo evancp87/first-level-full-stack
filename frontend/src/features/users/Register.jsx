@@ -53,8 +53,8 @@ const Register = () => {
     }
   };
   return (
-    <section className="mt-4 flex flex-col items-center justify-center">
-      <div className="card w-96 rounded-md border-2 bg-base-100 bg-base-100 p-4 shadow-xl">
+    <section className="h-screen flex flex-col items-center justify-center">
+      <div className="card sm:w-96 rounded-md border-2 bg-base-100 bg-base-100 p-4 shadow-xl">
         <div className="card-body  flex flex-col items-center text-center">
           <h2 className="card-title">Register</h2>
           <form
@@ -111,7 +111,7 @@ const Register = () => {
                   </p>
                 ) : null
               )}
-            <div className="card-actions">
+            <div className="card-actions flex-col">
               <button
                 disabled={
                   loading ||
@@ -119,7 +119,7 @@ const Register = () => {
                   !register.email ||
                   !register.password
                 }
-                className="active-btn text-slate-100 mx-2 w-[100%] cursor-pointer rounded-full bg-logo p-2 duration-300 ease-in-out hover:scale-110"
+                className="active-btn text-slate-100 mx-2 w-[40%] px-4 cursor-pointer rounded-full bg-logo p-2 duration-300 ease-in-out hover:scale-110"
               >
                 {loading ? "Loading..." : "Register"}
               </button>
