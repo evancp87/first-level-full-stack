@@ -1,11 +1,13 @@
 import { getCachedGames, cacheGames } from "./helpers";
 import axios from "axios";
-
+const localApi = "http://localhost:6001"
 // imports games from db
 export const getGames = async () => {
   try {
     const { data } = await axios.get(
       "https://first-level-backend.onrender.com/games/"
+      // `${localApi}/games/`
+      
     );
     return data;
   } catch (error) {
@@ -29,6 +31,7 @@ export const getTopRated = async () => {
     } else {
       const { data } = await axios.get(
         "https://first-level-backend.onrender.com/games/highest"
+      // `${localApi}/games/highest`
       );
       // caches data if not present
       cacheGames(data);
@@ -44,6 +47,8 @@ export const gamesByDate = async (startDate, endDate) => {
     // Will take a start date and end date at point of dispatch to the store
     const { data } = await axios.get(
       `https://first-level-backend.onrender.com/games/dates?startDate=${startDate}&endDate=${endDate}`
+      // `${localApi}/games/highest//dates?startDate=${startDate}&endDate=${endDate}`
+
     );
 
     // gets games within date range that have rating of over 3.5. I found 4 and 4.5 too narrow
@@ -63,6 +68,8 @@ export const getGenres = async () => {
   try {
     const { data } = await axios.get(
       `https://first-level-backend.onrender.com/games/genres`
+      // `${localApi}/games/genres`
+      
     );
     return data;
   } catch (error) {
@@ -75,6 +82,8 @@ export const getPlatforms = async () => {
   try {
     const { data } = await axios.get(
       `https://first-level-backend.onrender.com/games/platforms`
+      // `${localApi}/games/platforms`
+
     );
     return data;
   } catch (error) {
@@ -87,6 +96,8 @@ export const getScreenshots = async (game_pk) => {
   try {
     const { data } = await axios.get(
       `https://first-level-backend.onrender.com/games/screenshots/${game_pk}`
+      // `${localApi}/games/screenshots/${game_pk}`
+
     );
     console.log("the data is:", data);
     return data;
@@ -101,6 +112,8 @@ export const getGameDetail = async (slug) => {
   try {
     const { data } = await axios.get(
       `https://first-level-backend.onrender.com/games/${slug}`
+      // `${localApi}/games/${slug}`
+
     );
 
     return data;
@@ -115,6 +128,8 @@ export const getGameTrailers = async (slug) => {
   try {
     const { data } = await axios.get(
       `https://first-level-backend.onrender.com/games/trailers/${slug}`
+      // `${localApi}/games/trailers/${slug}`
+
     );
 
     console.log();
@@ -193,6 +208,8 @@ export const loginUser = async (credentials) => {
   try {
     const { data } = await axios.post(
       "https://first-level-backend.onrender.com/users/login",
+      // `${localApi}/users/login`
+
       credentials
     );
     console.log("the data is", data);
@@ -215,6 +232,8 @@ export const register = async (credentials) => {
   try {
     const response = await axios.post(
       "https://first-level-backend.onrender.com/users/register",
+      // `${localApi}/users/register`
+
       credentials,
       {
         headers: {
@@ -236,6 +255,7 @@ export const register = async (credentials) => {
 export const logout = async () => {
   try {
     await axios.post("https://first-level-backend.onrender.com/users/logout/");
+    // await axios.post(`${localApi}/users/logout`);
   } catch (error) {
     console.log("There was an error logging out", error);
   }
@@ -247,6 +267,8 @@ export const wishlists = async (customerId, token) => {
   try {
     const data = await axios.get(
       `https://first-level-backend.onrender.com/wishlists?customerId=${customerId}`,
+  //  `${localApi}/wishlists?customerId=${customerId}`
+
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -265,7 +287,7 @@ export const singleWishlist = async (singleWishlistData) => {
   console.log(token, wishlistId, userId);
   try {
     const { data } = await axios.get(
-      // ` https://first-level-backend.onrender.com/wishlists/${id}?userId=${userId}`,
+      // ` ${localApi}/wishlists/${id}?userId=${userId}`,
       ` https://first-level-backend.onrender.com/wishlists/${wishlistId}?userId=${userId}`,
 
       {
@@ -283,7 +305,9 @@ export const createWishlist = async (credentials) => {
   console.log("the credentials id are:", credentials);
   try {
     const data = await axios.post(
-      `https://first-level-backend.onrender.com/wishlists/?customerId=${credentials.userId}`,
+      `https://first-level-backend.onrender.com/wishlists?customerId=${credentials.userId}`,
+      // `${localApi}/wishlists/?customerId=${credentials.userId}`,
+      
       {
         name: credentials.wishlistWithGame.name,
         slug: credentials.wishlistWithGame.slug,
@@ -305,6 +329,8 @@ export const deleteWishlist = async (wishlist) => {
   try {
     const data = await axios.delete(
       `https://first-level-backend.onrender.com/wishlists/${id}?userId=${userId}`,
+      // `${localApi}/wishlists/wishlists/${id}?userId=${userId}`,
+      
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -323,6 +349,8 @@ export const updateWishlist = async () => {
   try {
     const { data } = await axios.patch(
       "https://first-level-backend.onrender.com/games/wishlist"
+      // `${localApi}/games/wishlist`
+
     );
     return data;
   } catch (error) {
@@ -335,7 +363,7 @@ export const addGamesOnWishlist = async (gameToAdd) => {
   try {
     const { data } = await axios.post(
       `https://first-level-backend.onrender.com/wishlists/add?userId=${gameToAdd.userId}&wishlistId=${gameToAdd.wishlistId}`,
-
+      // `${localApi}/wishlists/add?userId=${gameToAdd.userId}&wishlistId=${gameToAdd.wishlistId}`
       {
         slug: gameToAdd.slug,
       },
@@ -357,7 +385,7 @@ export const listOfGamesWishlist = async (gamesList) => {
   const { userId, token, wishlistId } = gamesList;
   try {
     const { data } = await axios.get(
-      // `https://first-level-backend.onrender.com/games/wishlist?userId=${userId}&wishlistId=${id}`,
+      // `${localApi}/games/wishlist?userId=${userId}&wishlistId=${id}`,
       `https://first-level-backend.onrender.com/games/wishlist?userId=${userId}&wishlistId=${wishlistId}`,
 
       {
@@ -378,6 +406,8 @@ export const deleteSingleGameFromWishlist = async (gameDetails) => {
   try {
     const { data } = await axios.delete(
       `https://first-level-backend.onrender.com/wishlists/remove?userId=${userId}&wishlistId=${wishlistId}&slug=${slug}`,
+      // `${localApi}/wishlists/remove?userId=${userId}&wishlistId=${wishlistId}&slug=${slug}`,
+
       {
         headers: {
           Authorization: `Bearer ${token}`,
