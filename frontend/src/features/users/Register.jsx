@@ -68,8 +68,10 @@ const Register = () => {
               name="name"
               value={register.name}
               onChange={handleInputs}
-              className="rounded-md p-2"
+              className="rounded-md p-2 focus-input"
             />
+            <div style={{maxWidth: "200px",minHeight: "2rem"}}>
+
             {errors &&
               errors.map((error, index) =>
                 error.key === "name" ? (
@@ -78,15 +80,17 @@ const Register = () => {
                   </p>
                 ) : null
               )}
-
+</div>
             <input
               placeholder="email"
               type="text"
               name="email"
               value={register.email}
               onChange={handleInputs}
-              className="rounded-md p-2"
+              className="rounded-md p-2 focus-input"
             />
+            <div style={{maxWidth: "200px",minHeight: "2rem"}}>
+
             {errors &&
               errors.map((error, index) =>
                 error.key === "email" ? (
@@ -95,14 +99,17 @@ const Register = () => {
                   </p>
                 ) : null
               )}
+              </div>
             <input
               placeholder="password"
               type="text"
               name="password"
               value={register.password}
               onChange={handleInputs}
-              className="rounded-md p-2"
+              className="rounded-md p-2 focus-input"
             />
+            <div style={{maxWidth: "200px",minHeight: "2rem"}}>
+
             {errors &&
               errors.map((error, index) =>
                 error.key === "password" ? (
@@ -111,6 +118,7 @@ const Register = () => {
                   </p>
                 ) : null
               )}
+              </div>
             <div className="card-actions flex-col">
               <button
                 disabled={

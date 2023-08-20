@@ -61,9 +61,10 @@ const Login = () => {
               type="text"
               name="email"
               value={login.email}
-              className="rounded-md p-2"
+              className="rounded-md p-2 focus-input"
               onChange={handleInputs}
             />
+            <div style={{maxWidth: "200px",minHeight: "2rem"}}>
             {errors &&
               errors.map((error, index) =>
                 error.key === "email" ? (
@@ -72,15 +73,18 @@ const Login = () => {
                   </p>
                 ) : null
               )}
+              </div>
             <label htmlFor="password"></label>
             <input
               placeholder="password"
               type="password"
               name="password"
-              className="rounded-md p-2"
+              className="rounded-md p-2 focus-input"
               value={login.password}
               onChange={handleInputs}
             />
+            <div style={{maxWidth: "200px",minHeight: "2rem"}}>
+
             {errors &&
               errors.map((error, index) =>
                 error.key === "password" ? (
@@ -89,6 +93,7 @@ const Login = () => {
                   </p>
                 ) : null
               )}
+              </div>
 
             <div className="card-actions flex-col">
               <button
