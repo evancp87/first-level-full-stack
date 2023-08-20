@@ -64,7 +64,7 @@ const Wishlist = () => {
           </h2>
         </div>
 
-        <ul>
+        <ul className="mb-8"> 
           {games && games.length > 0 ? (
             games.map((game) => (
               <React.Fragment key={game.id}>
