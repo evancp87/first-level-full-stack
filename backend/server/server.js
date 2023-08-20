@@ -6,6 +6,7 @@ const session = require("express-session");
 const checkToken = require("../middleware/authentication/token");
 const limiter = require("../middleware/rate-limiter");
 const cors = require("cors");
+const asyncMySQL = require("../database/connection");
 require("dotenv").config();
 app.use(helmet());
 app.use(express.json());
@@ -13,8 +14,14 @@ app.use(express.static("public"));
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
+
+app.use((req, res, next) => {
+  req.asyncMySQL = asyncMySQL;
+  next();
+});
+
 const corsOrigin = process.env.NODE_ENV === "production"
-  ? process.env.PRODUCTION_ORIGIN
+  ? process.env.PRODUCTION_ORIGIN || "https://first-level-staging.onrender.com"
   : process.env.DEVELOPMENT_ORIGIN;
 
   app.use(

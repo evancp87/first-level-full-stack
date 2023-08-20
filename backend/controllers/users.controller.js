@@ -1,4 +1,4 @@
-const asyncMySQL = require("../database/connection");
+// const asyncMySQL = require("../database/connection");
 const {
   getUserId,
   checkUser,
@@ -29,10 +29,10 @@ async function loginUser(req, res) {
     return;
   }
 
-  const userId = await asyncMySQL(getUserId(), [email]);
+  const userId = await req.asyncMySQL(getUserId(), [email]);
 
   try {
-    const results = await asyncMySQL(checkUser(), [email]);
+    const results = await req.asyncMySQL(checkUser(), [email]);
 
     if (results.length === 0) {
       // res.status(401).send({
@@ -114,9 +114,9 @@ async function registerUser(req, res) {
   const encryptedPassword = await bcrypt.hash(password, saltRounds);
 
   try {
-    await asyncMySQL(addUser(), [name, email, encryptedPassword]);
+    await req.asyncMySQL(addUser(), [name, email, encryptedPassword]);
 
-    const user = await asyncMySQL(registerUserId(), [email]);
+    const user = await req.asyncMySQL(registerUserId(), [email]);
 
     //  gets user info to send back in response
 
