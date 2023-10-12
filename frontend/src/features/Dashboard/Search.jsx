@@ -195,14 +195,14 @@ const Search = () => {
           <button
             onClick={() => setCurrentPage(currentPage - 1)}
             disabled={currentPage === 1 || filteredGames.length === 0}
-            className="btn btn-outline join-item"
+            className="btn btn-outline join-item text-white"
           >
             Previous page
           </button>
           <button
             onClick={() => setCurrentPage(currentPage + 1)}
             disabled={currentPage === totalPages || filteredGames.length === 0}
-            className="btn btn-outline join-item"
+            className="btn btn-outline join-item text-white"
           >
             Next
           </button>

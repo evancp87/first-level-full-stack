@@ -111,7 +111,7 @@ const Nav = () => {
             </label>
             <div
               tabIndex={0}
-              className="menu dropdown-content rounded-box z-[1] w-[200px] max-w-[300px] bg-base-100 p-2 shadow md:w-[300px]"
+              className="menu dropdown-content rounded-box z-[1] w-[200px] max-w-[300px] bg-card p-2 shadow md:w-[300px]"
             >
               <Cart />
             </div>

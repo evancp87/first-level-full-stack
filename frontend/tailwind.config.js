@@ -20,6 +20,7 @@ export default {
     },
     colors: {
       logo: "#2AA146",
+      card: "#4F5A67",
       blue: "#1fb6ff",
       pink: "#ff49db",
       orange: "#ff7849",
@@ -44,6 +45,8 @@ export default {
   safelist: [
     {
       pattern: /(bg|text|border)-logo/,
+      pattern: /(bg|text|border)-card/,
+
     },
     {
       pattern: /(mt|mb|mr|ml|my|mx|px|py|pt|pb|pl|pr|h)-[0-9]+/,

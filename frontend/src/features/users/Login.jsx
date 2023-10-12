@@ -47,7 +47,7 @@ const Login = () => {
 
   return (
     <section className="h-screen flex flex-col justify-center items-center">
-      <div className="card sm:w-96 rounded-md border-2 bg-base-100 bg-base-100 p-4 shadow-xl">
+      <div className="card sm:w-96 rounded-md border-2 bg-card p-4 shadow-xl">
         <div className="card-body flex flex-col items-center justify-center text-center">
           <h2 className="card-title">Login</h2>
           <form
