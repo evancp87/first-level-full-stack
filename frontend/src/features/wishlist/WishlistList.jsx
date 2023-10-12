@@ -127,7 +127,7 @@ const WishlistList = () => {
               value={searchText}
               type="text"
               placeholder="Search wishlists"
-              className="focus-input max-w-xs input input-bordered my-[1.5em] w-full"
+              className="focus-input max-w-xs input input-bordered my-[1.5em] w-full bg-card"
             />
             <ul>
               {searchError &&
@@ -151,10 +151,10 @@ const WishlistList = () => {
           {filteredWishlists && filteredWishlists.length > 0 && isAuth ? (
             filteredWishlists.map((wishlist) => (
               <li key={`wishlist_${wishlist.id}`}>
-                <article className="mx-w-full card card-bordered card-side m-6 flex-row flex-wrap items-center bg-base-100 shadow-xl">
+                <article className="mx-w-full card card-bordered card-side m-6 flex-row flex-wrap items-center bg-card text-white shadow-xl">
                   <div className="card w-96 text-primary-content">
                     <div className="card-body">
-                      <h3 className="card-title">{wishlist.name}</h3>
+                      <h3 className="card-title text-white">{wishlist.name}</h3>
                       <div className="card-actions flex items-center mt-4">
                         <Link to={`/wishlist/${wishlist.id}`}>
                           <button className="active-btn text-slate-100 h-[40px] self-start rounded-full bg-logo px-4 duration-300 ease-in-out hover:scale-110">
@@ -165,7 +165,7 @@ const WishlistList = () => {
                           onClick={() =>
                             handleRemove(wishlist.id, token, userId)
                           }
-                          className="active-btn btn h-[40px] rounded-full duration-300 ease-in-out hover:scale-110 "
+                          className="text-black active-btn btn h-[40px] rounded-full duration-300 ease-in-out hover:scale-110 "
                         >
                           delete
                         </button>
