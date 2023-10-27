@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 const helmet = require("helmet");
 const cookieParser = require("cookie-parser");
-const session = require("express-session");
+// const session = require("express-session");
 const checkToken = require("../middleware/authentication/token");
 const limiter = require("../middleware/rate-limiter");
 const cors = require("cors");
@@ -20,24 +20,24 @@ app.use((req, res, next) => {
   next();
 });
 
-const corsOrigin = process.env.NODE_ENV === "production"
-  ? process.env.PRODUCTION_ORIGIN || "https://first-level-staging.onrender.com"
-  : process.env.DEVELOPMENT_ORIGIN;
+// const corsOrigin = process.env.NODE_ENV === "production"
+//   ? process.env.PRODUCTION_ORIGIN || "https://first-level-staging.onrender.com"
+//   : process.env.DEVELOPMENT_ORIGIN;
 
   app.use(
-  cors({ credentials: true, origin: corsOrigin })
+  cors({ credentials: true, origin: "*" })
 );
 // session middleware, not used and to remove
-app.use(
-  session({
-    secret: process.env.SESSION_SECRET,
-    cookie: { maxAge: 1000 * 60 * 60 * 24 },
-    saveUninitialized: false,
-    resave: false,
-    secure: true,
-    httpOnly: true,
-  })
-);
+// app.use(
+//   session({
+//     secret: process.env.SESSION_SECRET,
+//     cookie: { maxAge: 1000 * 60 * 60 * 24 },
+//     saveUninitialized: false,
+//     resave: false,
+//     secure: true,
+//     httpOnly: true,
+//   })
+// );
 
 
 app.use(function myLogger(req, res, next) {

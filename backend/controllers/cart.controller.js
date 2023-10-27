@@ -1,185 +1,270 @@
 const asyncMySQL = require("../database/connection");
 
-// gets cart list
+const axios = require("axios");
 
-async function getCartItems(req, res) {
-  console.log("cart route ran");
+// gets games list from db- joining on genres, platforms, genres_games and platform_games tables
+async function getGamesList(req, res) {
+  const results = await asyncMySQL(
+    `SELECT game.id,
+      game.name,
+      game.released,
+      game.slug,
+      game.released,
+      game.background_image,
+      game.rating,
+      game.price,
+      GROUP_CONCAT(DISTINCT p.name SEPARATOR ', ') AS platforms,
+      GROUP_CONCAT(DISTINCT g.name SEPARATOR ', ') AS genres
 
-  const customerId = req.query.customerId;
+      FROM games game
+      INNER JOIN platform_games pg ON game.id = pg.game_id
+      INNER JOIN platforms p ON pg.platform_id = p.id
+      INNER JOIN genre_games gg ON game.id = gg.game_id
+      INNER JOIN genres g ON gg.genre_id = g.id
+      GROUP BY game.name;`
+  );
 
-  if (!customerId || isNaN(customerId)) {
-    res.status(404).send("Couldn't find that customer");
+  // converts genres and platforms into arrays of strings
+  const games = results.map((result) => ({
+    ...result,
+    platforms: result.platforms.split(", "),
+    genres: result.genres.split(", "),
+  }));
+
+  if (games.length > 0) {
+    res.status(200).send(games);
     return;
   }
 
-  //  Selects game in cart using customer id
-  const results = await asyncMySQL(`
-  SELECT games.name
-  FROM games
-  INNER JOIN cart_games ON cart_games.game_id = games.id
-    WHERE cart_games.cart_id IN (
-    SELECT id FROM cart WHERE user_id = ${customerId}
-  );
-`);
+  res.send({ status: 404, reason: "No games found" });
+}
+
+// filters games list and gets top 10 highest rated games
+async function getHighestRatedGames(req, res) {
+  const query = `SELECT game.id,
+                    game.name,
+                    game.released,
+                    game.slug,
+                    game.released,
+                    game.background_image,
+                    game.rating,
+                    game.price,
+                    GROUP_CONCAT(DISTINCT p.name SEPARATOR ', ') AS platforms,
+                    GROUP_CONCAT(DISTINCT g.name SEPARATOR ', ') AS genres
+                    FROM games game
+                    INNER JOIN platform_games pg ON game.id = pg.game_id
+                    INNER JOIN platforms p ON pg.platform_id = p.id
+                    INNER JOIN genre_games gg ON game.id = gg.game_id
+                    INNER JOIN genres g ON gg.genre_id = g.id
+                    GROUP BY game.name
+                    HAVING game.rating >= ? 
+                    LIMIT 10; 
+  ;`;
+
+  // converts genres and platforms into arrays of strings
+  const results = await asyncMySQL(query, [4.5]);
+
+  const gameResults = results.map((result) => ({
+    ...result,
+    platforms: result.platforms.split(", "),
+    genres: result.genres.split(", "),
+  }));
 
   if (results.length > 0) {
-    res.status(200).send(results);
+    res.status(200).send(gameResults);
     return;
   }
 
-  res.status(404).send("No cart items found");
+  res.send({ status: 404, reason: "No games found" });
 }
 
-// handles adding to cart
-async function addToCart(req, res) {
-  console.log("add to cart route ran");
+// gets single game on a wishlist
+async function getGameOnWishList(req, res) {
+  const wishlistId = req.query.wishlistId;
+  const userId = req.query.userId;
 
-  const customerId = req.query.customerId;
-  const gameId = req.query.gameId;
-  const total = req.query.total;
-
-  if (
-    !customerId ||
-    isNaN(customerId) ||
-    !gameId ||
-    isNaN(gameId) ||
-    !total ||
-    isNaN(total)
-  ) {
-    res.status(404).send("Game was not added to the cart successfully");
-    return;
+  if (!userId || isNaN(userId) || !wishlistId || isNaN(wishlistId)) {
+    res.status(400).send("Incorrect credentials");
   }
 
-  // finds existing instance of a cart
+  // finds game on wishlist by joining user and wishlist tables
+  const query = `
+                SELECT
+                  games.released,
+                  games.Name AS name,
+                  games.background_image,
+                  games.slug,
+                  games.id,
+                  games.rating,
+                  users.name AS user_name,
+                  wishlist_games.wishlist_id as wishlist_id
+                  FROM games
+                  JOIN wishlist_games ON wishlist_games.game_id = games.id
+                  JOIN users ON users.user_id = wishlist_games.user_id
+                  WHERE wishlist_games.user_id = ? AND wishlist_games.wishlist_id = ?;
+  `;
+
   try {
-    const existingCart = await asyncMySQL(
-      `SELECT id FROM cart WHERE user_id = ${customerId};`
-    );
-
-    if (existingCart.length > 0) {
-      const cartId = existingCart[0].id;
-      console.log(cartId);
-
-      // inserts games added to cart
-      await asyncMySQL(`INSERT INTO cart_games (game_id, cart_id)
-        VALUES
-        ('${gameId}', '${cartId}');`);
-      res.status(200).send("success!");
+    const results = await asyncMySQL(query, [userId, wishlistId]);
+    if (results.length > 0) {
+      res.status(200).send(results);
     } else {
-      const newCart = await asyncMySQL(`INSERT INTO cart( user_id, total) 
-                                             VALUES (${customerId}, ${total});`);
-
-      //  gets newly inserted cart id
-      const cartId = newCart.insertId;
-
-      // inserts games into that cart
-      await asyncMySQL(`INSERT INTO cart_games (game_id, cart_id)
-                            VALUES
-                               ('${gameId}', '${cartId}');`);
-
-      res.status(200).send("success!");
+      res.status(200).send([]);
     }
   } catch (error) {
-    console.log("There was an error:", error);
+    console.error("Error:", error);
+    res.status(500).send("There was an internal server error");
+  }
+}
+
+// platform names
+const getPlatforms = async (req, res) => {
+  try {
+    const results = await asyncMySQL(`SELECT name FROM platforms`);
+
+    if (results.length > 0) {
+      return res.status(200).json(results);
+    }
+
+    return res.status(404).json("no results found");
+  } catch (error) {
+    console.log("error:", error);
+    res.status(500).json("internal server error");
+  }
+};
+
+// genres
+const getGenres = async (req, res) => {
+  try {
+    const results = await asyncMySQL(`SELECT name FROM genres`);
+
+    if (results.length > 0) {
+      return res.status(200).json(results);
+    }
+    return res.status(404).json("no results found");
+  } catch (error) {
+    console.log("error:", error);
+    res.status(500).json("internal server error");
+  }
+};
+
+// screenshots from external api
+const getScreenshots = async (req, res) => {
+  try {
+    const game_pk = req.params.game_pk;
+
+    if (!game_pk || typeof game_pk !== "string") {
+      res.status(404).send("game slug not provided");
+    }
+    const { data } = await axios.get(
+      `https://api.rawg.io/api/games/${game_pk}/screenshots?key=${apiKey}`
+    );
+
+    const results = data.results.map((element, index) => {
+      return {
+        image: element.image,
+      };
+    });
+
+    res.status(200).send(results);
+  } catch (error) {
+    console.log("error:", error);
     res.status(500).send("internal server error");
   }
-}
+};
 
-/// adds a game
-
-async function clearCart(req, res) {
-  console.log("clear cart route ran");
-  const customerId = req.query.customerId;
-
-  // sanitisation
-  if (!customerId || isNaN(customerId)) {
-    res.status(400).send("Game was not added to the cart successfully");
-    return;
-  }
-  // get cart under user
-  const cart = await asyncMySQL(
-    `SELECT id FROM cart WHERE user_id = ${customerId};`
-  );
-
-  const cartId = cart[0].id;
-  console.log(cartId);
-  // deletes games from cart and then cart
+// gets newly released games from external api, filtered on the frontend
+const getGamesByDate = async (req, res) => {
   try {
-    await asyncMySQL(`DELETE FROM cart_games 
-                        WHERE cart_id = '${cartId}'`);
+    const startDate = req.query.startDate;
+    const endDate = req.query.endDate;
 
-    await asyncMySQL(`DELETE FROM cart
-                        WHERE user_id = ${customerId}`);
-    res.status(200).send("Game deleted successfully");
+    const { data } = await axios.get(
+      `https://api.rawg.io/api/games?dates=${startDate},${endDate}&key=${apiKey}`
+    );
+
+    res.status(200).send(data);
   } catch (error) {
     console.log("error:", error);
-    res.status(500).send("Internal server error. Couldn't clear the cart");
+    res.status(500).send("internal server error");
   }
-}
+};
 
-// deleting
-async function removeFromCart(req, res) {
-  console.log("game deleted route ran");
-
-  const gameId = req.query.gameId;
-  const customerId = req.query.customerId;
-
-  console.log(customerId);
-  if (!customerId || isNaN(customerId || !gameId || isNaN(gameId))) {
-    res.status(404).send("Game was not added to the cart successfully");
-    return;
-  }
-  // get cart under user
-  const cart = await asyncMySQL(
-    `SELECT id FROM cart WHERE user_id = ${customerId};`
-  );
-
-  console.log(cart);
-
-  const cartId = cart[0].id;
-
-  console.log(cartId);
-
-  // deletes game from cart
-  await asyncMySQL(`DELETE FROM cart_games 
-                                  WHERE game_id = ${gameId} AND cart_id = ${cartId};`);
-
-  // TODO: add functionality to delete cart when cart_games.length === 0;
-  res.status(200).send("successfully deleted game from cart");
-}
-
-async function createCart(req, res) {
-  //   await asyncMySQL(`CREATE)
-  return;
-}
-
-// // // updati
-// TODO: finish off
-async function incrementItemQuantity(req, res) {
-  console.log("update game route ran");
-
-  const { price } = req.body;
-  if (!price && typeof Number(price) != "number") {
-    res.send("couldn't update the price");
-  }
+// gets the details of a single game
+const getGameDetail = async (req, res) => {
   try {
-    await asyncMySQL(`UPDATE games SET slug = "${gameSlug}"
-                        WHERE
-                          slug LIKE "${slug}";`);
+    const slug = req.params.slug;
+    const { data } = await axios.get(
+      `https://api.rawg.io/api/games/${slug}?key=${apiKey}`
+    );
+    const {
+      released,
+      name,
+      background_image,
+      rating,
+      platforms,
+      genres,
+      developers,
+      description,
+      id,
+      price,
+    } = data;
+
+    const results = {
+      released,
+      name,
+      background_image,
+      rating,
+      platforms,
+      genres,
+      developers,
+      description,
+      id,
+      price,
+    };
+
+    res.status(200).send(results);
   } catch (error) {
     console.log("error:", error);
-    res.send({ status: 400, reason: error.sqlMessage });
+    res.status(500).send("internal server error");
   }
-  res.sendStatus(200);
-}
+};
 
-async function calculateTotal(req, res) {}
+// gets game trailers
+const getGameTrailers = async (req, res) => {
+  try {
+    const slug = req.params.slug;
+
+    if (!slug || typeof slug !== "string") {
+      res.status(404).send("game slug not provided");
+    }
+
+    const { data } = await axios.get(
+      `https://api.rawg.io/api/games/${slug}/movies?key=${apiKey}`
+    );
+    const results = data.results;
+
+    if (results.length > 0) {
+      res.status(200).send(results);
+    } else {
+      res.status(204).send("No game trailers available for the given slug.");
+    }
+
+    // return data;
+  } catch (error) {
+    console.log("error:", error);
+    res.status(500).send("internal server error");
+  }
+};
 
 module.exports = {
-  getCartItems,
-  addToCart,
-  clearCart,
-  removeFromCart,
-  incrementItemQuantity,
-  createCart,
+  getGamesList,
+  getGameOnWishList,
+  getPlatforms,
+  getGenres,
+  getScreenshots,
+  getGameDetail,
+  getGameTrailers,
+  getGamesByDate,
+  getHighestRatedGames,
 };

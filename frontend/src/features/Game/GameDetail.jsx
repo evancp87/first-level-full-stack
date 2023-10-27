@@ -24,7 +24,8 @@ const GameDetail = () => {
   const game = useSelector(selectGameDetail);
   const screenshots = useSelector(selectScreenshots);
   const navigate = useNavigate();
-  const { isAuth } = useSelector(selectLoggedInState);
+  const { isAuth, userInfo } = useSelector(selectLoggedInState);
+  const customerId = userInfo ? userInfo.id : null;
 
   // unpacks slug from the url to dispatch the store and fetch game detail from api
   const { slug } = useParams();
@@ -78,14 +79,14 @@ const GameDetail = () => {
   };
 
   // Object of game detail sent to the shopping cart
-
+  const gameId = game.id;
   const gameDetails = {
-    name,
-    background_image,
-    id,
+    // name,
+    customerId,
+    gameId,
     price,
   };
-
+  console.log("the game details are", gameDetails);
   // regex handles issue with the description property being html in json format, by adding a class to the p tag so the text can be styled
   const tidyHtml = /<p>/gi;
   const tidiedDescription = description
@@ -172,7 +173,7 @@ const GameDetail = () => {
         {/* carousel of screenshots */}
         <div className="w-full overflow-x-auto">
           <ul
-            className="carousel carousel-center rounded-box  space-x-2 overflow-y-hidden p-4"
+            className="carousel-center carousel rounded-box  space-x-2 overflow-y-hidden p-4"
             style={{ height: 300 }}
           >
             {screenshots &&

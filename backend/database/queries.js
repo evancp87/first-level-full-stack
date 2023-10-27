@@ -80,4 +80,16 @@ module.exports = {
   WHERE wishlist_games.user_id = ? AND wishlist_games.wishlist_id = ? AND games.id = ?;
 `;
   },
+  gamePrice: () => {
+    return `SELECT games.price
+                      FROM games
+                        INNER JOIN cart_games ON games.id = cart_games.game_id
+                          WHERE cart_games.game_id = ?;`;
+  },
+  updateTotalQuery: () => {
+    return `UPDATE cart SET total = ? WHERE id = ? AND user_id = ?;`;
+  },
+  existingTotal: () => {
+    return `   SELECT total FROM cart WHERE id = ? AND user_id = ?`;
+  },
 };
