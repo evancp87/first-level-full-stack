@@ -54,7 +54,7 @@ const Register = () => {
   };
   return (
     <section className="h-screen flex flex-col items-center justify-center">
-      <div className="card sm:w-96 rounded-md border-2 bg-card p-4 shadow-xl">
+      <div className="card sm:w-96 rounded-md border-2 card-bg p-4 shadow-xl">
         <div className="card-body  flex flex-col items-center text-center">
           <h2 className="card-title">Register</h2>
           <form
