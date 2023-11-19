@@ -698,36 +698,6 @@ html {
   --tw-backdrop-sepia:  ;
 }
 
-.alert {
-  display: grid;
-  width: 100%;
-  grid-auto-flow: row;
-  align-content: flex-start;
-  align-items: center;
-  justify-items: center;
-  gap: 1rem;
-  text-align: center;
-  border-width: 1px;
-  --tw-border-opacity: 1;
-  border-color: hsl(var(--b2) / var(--tw-border-opacity));
-  padding: 1rem;
-  --tw-text-opacity: 1;
-  color: hsl(var(--bc) / var(--tw-text-opacity));
-  border-radius: var(--rounded-box, 1rem);
-  --alert-bg: hsl(var(--b2));
-  --alert-bg-mix: hsl(var(--b1));
-  background-color: var(--alert-bg);
-}
-
-@media (min-width: 640px) {
-  .alert {
-    grid-auto-flow: column;
-    grid-template-columns: auto minmax(auto,1fr);
-    justify-items: start;
-    text-align: left;
-  }
-}
-
 .avatar.placeholder > div {
   display: flex;
   align-items: center;
@@ -4981,6 +4951,10 @@ html {
   width: 30%;
 }
 
+.w-\[40\%\] {
+  width: 40%;
+}
+
 .w-\[90\%\] {
   width: 90%;
 }
@@ -7946,69 +7920,69 @@ html {
   border-style: dashed;
 }
 
-.border-logo {
+.border-card {
   --tw-border-opacity: 1;
-  border-color: rgb(42 161 70 / var(--tw-border-opacity));
+  border-color: rgb(79 90 103 / var(--tw-border-opacity));
 }
 
-.border-logo\/0 {
-  border-color: rgb(42 161 70 / 0);
+.border-card\/0 {
+  border-color: rgb(79 90 103 / 0);
 }
 
-.border-logo\/10 {
-  border-color: rgb(42 161 70 / 0.1);
+.border-card\/10 {
+  border-color: rgb(79 90 103 / 0.1);
 }
 
-.border-logo\/100 {
-  border-color: rgb(42 161 70 / 1);
+.border-card\/100 {
+  border-color: rgb(79 90 103 / 1);
 }
 
-.border-logo\/20 {
-  border-color: rgb(42 161 70 / 0.2);
+.border-card\/20 {
+  border-color: rgb(79 90 103 / 0.2);
 }
 
-.border-logo\/25 {
-  border-color: rgb(42 161 70 / 0.25);
+.border-card\/25 {
+  border-color: rgb(79 90 103 / 0.25);
 }
 
-.border-logo\/30 {
-  border-color: rgb(42 161 70 / 0.3);
+.border-card\/30 {
+  border-color: rgb(79 90 103 / 0.3);
 }
 
-.border-logo\/40 {
-  border-color: rgb(42 161 70 / 0.4);
+.border-card\/40 {
+  border-color: rgb(79 90 103 / 0.4);
 }
 
-.border-logo\/5 {
-  border-color: rgb(42 161 70 / 0.05);
+.border-card\/5 {
+  border-color: rgb(79 90 103 / 0.05);
 }
 
-.border-logo\/50 {
-  border-color: rgb(42 161 70 / 0.5);
+.border-card\/50 {
+  border-color: rgb(79 90 103 / 0.5);
 }
 
-.border-logo\/60 {
-  border-color: rgb(42 161 70 / 0.6);
+.border-card\/60 {
+  border-color: rgb(79 90 103 / 0.6);
 }
 
-.border-logo\/70 {
-  border-color: rgb(42 161 70 / 0.7);
+.border-card\/70 {
+  border-color: rgb(79 90 103 / 0.7);
 }
 
-.border-logo\/75 {
-  border-color: rgb(42 161 70 / 0.75);
+.border-card\/75 {
+  border-color: rgb(79 90 103 / 0.75);
 }
 
-.border-logo\/80 {
-  border-color: rgb(42 161 70 / 0.8);
+.border-card\/80 {
+  border-color: rgb(79 90 103 / 0.8);
 }
 
-.border-logo\/90 {
-  border-color: rgb(42 161 70 / 0.9);
+.border-card\/90 {
+  border-color: rgb(79 90 103 / 0.9);
 }
 
-.border-logo\/95 {
-  border-color: rgb(42 161 70 / 0.95);
+.border-card\/95 {
+  border-color: rgb(79 90 103 / 0.95);
 }
 
 .bg-base-100 {
@@ -8016,74 +7990,74 @@ html {
   background-color: hsl(var(--b1) / var(--tw-bg-opacity));
 }
 
+.bg-card {
+  --tw-bg-opacity: 1;
+  background-color: rgb(79 90 103 / var(--tw-bg-opacity));
+}
+
+.bg-card\/0 {
+  background-color: rgb(79 90 103 / 0);
+}
+
+.bg-card\/10 {
+  background-color: rgb(79 90 103 / 0.1);
+}
+
+.bg-card\/100 {
+  background-color: rgb(79 90 103 / 1);
+}
+
+.bg-card\/20 {
+  background-color: rgb(79 90 103 / 0.2);
+}
+
+.bg-card\/25 {
+  background-color: rgb(79 90 103 / 0.25);
+}
+
+.bg-card\/30 {
+  background-color: rgb(79 90 103 / 0.3);
+}
+
+.bg-card\/40 {
+  background-color: rgb(79 90 103 / 0.4);
+}
+
+.bg-card\/5 {
+  background-color: rgb(79 90 103 / 0.05);
+}
+
+.bg-card\/50 {
+  background-color: rgb(79 90 103 / 0.5);
+}
+
+.bg-card\/60 {
+  background-color: rgb(79 90 103 / 0.6);
+}
+
+.bg-card\/70 {
+  background-color: rgb(79 90 103 / 0.7);
+}
+
+.bg-card\/75 {
+  background-color: rgb(79 90 103 / 0.75);
+}
+
+.bg-card\/80 {
+  background-color: rgb(79 90 103 / 0.8);
+}
+
+.bg-card\/90 {
+  background-color: rgb(79 90 103 / 0.9);
+}
+
+.bg-card\/95 {
+  background-color: rgb(79 90 103 / 0.95);
+}
+
 .bg-logo {
   --tw-bg-opacity: 1;
   background-color: rgb(42 161 70 / var(--tw-bg-opacity));
-}
-
-.bg-logo\/0 {
-  background-color: rgb(42 161 70 / 0);
-}
-
-.bg-logo\/10 {
-  background-color: rgb(42 161 70 / 0.1);
-}
-
-.bg-logo\/100 {
-  background-color: rgb(42 161 70 / 1);
-}
-
-.bg-logo\/20 {
-  background-color: rgb(42 161 70 / 0.2);
-}
-
-.bg-logo\/25 {
-  background-color: rgb(42 161 70 / 0.25);
-}
-
-.bg-logo\/30 {
-  background-color: rgb(42 161 70 / 0.3);
-}
-
-.bg-logo\/40 {
-  background-color: rgb(42 161 70 / 0.4);
-}
-
-.bg-logo\/5 {
-  background-color: rgb(42 161 70 / 0.05);
-}
-
-.bg-logo\/50 {
-  background-color: rgb(42 161 70 / 0.5);
-}
-
-.bg-logo\/60 {
-  background-color: rgb(42 161 70 / 0.6);
-}
-
-.bg-logo\/70 {
-  background-color: rgb(42 161 70 / 0.7);
-}
-
-.bg-logo\/75 {
-  background-color: rgb(42 161 70 / 0.75);
-}
-
-.bg-logo\/80 {
-  background-color: rgb(42 161 70 / 0.8);
-}
-
-.bg-logo\/90 {
-  background-color: rgb(42 161 70 / 0.9);
-}
-
-.bg-logo\/95 {
-  background-color: rgb(42 161 70 / 0.95);
-}
-
-.bg-primary {
-  --tw-bg-opacity: 1;
-  background-color: hsl(var(--p) / var(--tw-bg-opacity));
 }
 
 .bg-transparent {
@@ -9099,69 +9073,74 @@ html {
   line-height: 1.75rem;
 }
 
+.text-card {
+  --tw-text-opacity: 1;
+  color: rgb(79 90 103 / var(--tw-text-opacity));
+}
+
+.text-card\/0 {
+  color: rgb(79 90 103 / 0);
+}
+
+.text-card\/10 {
+  color: rgb(79 90 103 / 0.1);
+}
+
+.text-card\/100 {
+  color: rgb(79 90 103 / 1);
+}
+
+.text-card\/20 {
+  color: rgb(79 90 103 / 0.2);
+}
+
+.text-card\/25 {
+  color: rgb(79 90 103 / 0.25);
+}
+
+.text-card\/30 {
+  color: rgb(79 90 103 / 0.3);
+}
+
+.text-card\/40 {
+  color: rgb(79 90 103 / 0.4);
+}
+
+.text-card\/5 {
+  color: rgb(79 90 103 / 0.05);
+}
+
+.text-card\/50 {
+  color: rgb(79 90 103 / 0.5);
+}
+
+.text-card\/60 {
+  color: rgb(79 90 103 / 0.6);
+}
+
+.text-card\/70 {
+  color: rgb(79 90 103 / 0.7);
+}
+
+.text-card\/75 {
+  color: rgb(79 90 103 / 0.75);
+}
+
+.text-card\/80 {
+  color: rgb(79 90 103 / 0.8);
+}
+
+.text-card\/90 {
+  color: rgb(79 90 103 / 0.9);
+}
+
+.text-card\/95 {
+  color: rgb(79 90 103 / 0.95);
+}
+
 .text-logo {
   --tw-text-opacity: 1;
   color: rgb(42 161 70 / var(--tw-text-opacity));
-}
-
-.text-logo\/0 {
-  color: rgb(42 161 70 / 0);
-}
-
-.text-logo\/10 {
-  color: rgb(42 161 70 / 0.1);
-}
-
-.text-logo\/100 {
-  color: rgb(42 161 70 / 1);
-}
-
-.text-logo\/20 {
-  color: rgb(42 161 70 / 0.2);
-}
-
-.text-logo\/25 {
-  color: rgb(42 161 70 / 0.25);
-}
-
-.text-logo\/30 {
-  color: rgb(42 161 70 / 0.3);
-}
-
-.text-logo\/40 {
-  color: rgb(42 161 70 / 0.4);
-}
-
-.text-logo\/5 {
-  color: rgb(42 161 70 / 0.05);
-}
-
-.text-logo\/50 {
-  color: rgb(42 161 70 / 0.5);
-}
-
-.text-logo\/60 {
-  color: rgb(42 161 70 / 0.6);
-}
-
-.text-logo\/70 {
-  color: rgb(42 161 70 / 0.7);
-}
-
-.text-logo\/75 {
-  color: rgb(42 161 70 / 0.75);
-}
-
-.text-logo\/80 {
-  color: rgb(42 161 70 / 0.8);
-}
-
-.text-logo\/90 {
-  color: rgb(42 161 70 / 0.9);
-}
-
-.text-logo\/95 {
-  color: rgb(42 161 70 / 0.95);
 }
 
 .text-primary-content {
@@ -9230,6 +9209,10 @@ body {
   color: #2AA146;
 }
 
+.card-bg {
+  background-color: "#4F5A67",
+}
+
 .active-btn:active, .focus-input:focus {
   outline-style: dashed;
   outline-width: 3px;
@@ -9263,6 +9246,14 @@ body {
 }
 
 @media (min-width: 480px) {
+  .sm\:mt-0 {
+    margin-top: 0px;
+  }
+
+  .sm\:w-96 {
+    width: 24rem;
+  }
+
   .sm\:max-w-\[100\%\] {
     max-width: 100%;
   }
