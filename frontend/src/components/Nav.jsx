@@ -34,10 +34,6 @@ const Nav = () => {
     }, 1500);
   };
 
-
-  // useEffect(() => {
-  //   dispatch()
-  // })
   return (
     <nav className="relative z-50 ms-[30px] flex flex-row  justify-between py-[2em]">
       <div>

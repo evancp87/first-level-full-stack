@@ -127,6 +127,7 @@ export const getCartItems = async (customerId, token) => {
         },
       }
     );
+    console.log("checking the data", data);
     return data;
   } catch (error) {
     console.log("error:", error);
@@ -137,7 +138,7 @@ export const addGameToCart = async ({ customerId, gameId, price }, token) => {
   try {
     const { data } = await axios.post(
       `${endpoint}/cart/add?customerId=${customerId}&gameId=${gameId}&price=${price}`,
-      null, // There should be no data object here
+      null,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -146,7 +147,11 @@ export const addGameToCart = async ({ customerId, gameId, price }, token) => {
     );
     return data;
   } catch (error) {
-    console.log("error:", error);
+    if (error.response) {
+      throw error.response.data;
+    } else {
+      throw error;
+    }
   }
 };
 
@@ -172,10 +177,11 @@ export const removeItem = async ({
   price,
   cartId,
   token,
+  quantity,
 }) => {
   try {
     const { data } = await axios.delete(
-      `${endpoint}/cart/remove?gameId=${gameId}&cartId=${cartId}&customerId=${customerId}&price=${price}`,
+      `${endpoint}/cart/remove?gameId=${gameId}&cartId=${cartId}&customerId=${customerId}&price=${price}&quantity=${quantity}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -188,6 +194,7 @@ export const removeItem = async ({
   }
 };
 
+// increment and decrement are currently not used, but could be in future for a checkout page
 export const incrementItemQuantity = async ({
   cartId,
   customerId,

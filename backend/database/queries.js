@@ -92,4 +92,75 @@ module.exports = {
   existingTotal: () => {
     return `   SELECT total FROM cart WHERE id = ? AND user_id = ?`;
   },
+  cartItems: () => {
+    return `
+    SELECT
+    games.name AS gameName,
+    games.price as gamePrice,
+    games.background_image, 
+    games.id AS gameId,
+    cart_games.quantity,
+    cart.total,
+    cart.id AS cartId
+  
+  FROM games
+  INNER JOIN cart_games ON cart_games.game_id = games.id
+  INNER JOIN cart ON cart.id = cart_games.cart_id
+  WHERE cart_games.cart_id IN (SELECT id FROM cart WHERE user_id = ?);
+    `;
+  },
+  selectTotal: () => {
+    return `select total FROM cart WHERE user_id = ?`;
+  },
+  selectCartId: () => {
+    return `SELECT id FROM cart WHERE user_id = ?;`;
+  },
+  selectGameId: () => {
+    return `SELECT id FROM games WHERE id = ?;`;
+  },
+  selectTotalByCartAndCustomer: () => {
+    return `SELECT total FROM cart WHERE id = ? AND user_id = ? `;
+  },
+  selectExistingGame: () => {
+    return `SELECT quantity from cart_games WHERE game_id = ? AND cart_id = ?;`;
+  },
+  setTotal: () => {
+    return `UPDATE cart SET total = ? WHERE id = ? AND user_id = ?;`;
+  },
+  setQuantity: () => {
+    return `UPDATE cart_games SET quantity = ? WHERE game_id = ? AND cart_id = ?`;
+  },
+  getGameDetails: () => {
+    return `SELECT games.name AS gameName, games.price AS gamePrice, games.background_image, games.id AS gameId, cart_games.cart_id AS cartId FROM games LEFT JOIN cart_games ON games.id = cart_games.game_id WHERE games.id = ?`;
+  },
+  addGame: () => {
+    return `INSERT INTO cart_games (game_id, cart_id)
+                            VALUES (? , ?);`;
+  },
+  newCartQuery: () => {
+    return `INSERT INTO cart( user_id) 
+              VALUES (?);`;
+  },
+  insertGames: () => {
+    return `INSERT INTO cart_games (game_id, cart_id)
+    VALUES (?, ?);`;
+  },
+  deleteAllGamesFromCart: () => {
+    return `DELETE FROM cart_games 
+          WHERE cart_id = ?`;
+  },
+  clearCarts: () => {
+    return `DELETE FROM cart
+              WHERE user_id = ?`;
+  },
+  getAllGamesFromCart: () => {
+    return `SELECT * FROM cart_games WHERE cart_id = ?`;
+  },
+  deleteSingleGame: () => {
+    return `DELETE FROM cart_games 
+    WHERE game_id = ? AND cart_id = ?;`;
+  },
+  deleteCart: () => {
+    return `DELETE FROM cart where id = ?`;
+  },
 };

@@ -27,18 +27,6 @@ app.use((req, res, next) => {
   app.use(
   cors({ credentials: true, origin: "*" })
 );
-// session middleware, not used and to remove
-// app.use(
-//   session({
-//     secret: process.env.SESSION_SECRET,
-//     cookie: { maxAge: 1000 * 60 * 60 * 24 },
-//     saveUninitialized: false,
-//     resave: false,
-//     secure: true,
-//     httpOnly: true,
-//   })
-// );
-
 
 app.use(function myLogger(req, res, next) {
   console.log("logged");

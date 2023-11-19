@@ -12,5 +12,4 @@ Router.post("/add", addToCart);
 Router.delete("/", clearCart);
 Router.delete("/remove", removeFromCart);
 
-
 module.exports = Router;

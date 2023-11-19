@@ -2,6 +2,8 @@ import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import BackBtn from "../../components/BackBtn";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import {
   getGame,
   getGameScreenshots,
@@ -29,7 +31,7 @@ const GameDetail = () => {
 
   // unpacks slug from the url to dispatch the store and fetch game detail from api
   const { slug } = useParams();
-
+  const notify = () => toast(`Your game was added to the basket`);
   const fetchGame = useCallback(() => {
     dispatch(getGame(slug));
     dispatch(getGameScreenshots(slug));
@@ -62,17 +64,25 @@ const GameDetail = () => {
     genres,
     developers,
     description,
-    id,
     price,
   } = game;
 
-  // handles both adding to the cart and scroll to top
-  const handleAddToCart = (game) => {
+
+  const handleAddToCart = async (game) => {
     if (isAuth) {
-      dispatch(addToCart(game));
-      gameDetailRef.current.scrollIntoView({
-        behavior: "smooth",
-      });
+      const action = await dispatch(addToCart(game));
+      if (action.type === addToCart.fulfilled.type) {
+        notify();
+        gameDetailRef.current.scrollIntoView({
+          behavior: "smooth",
+        });
+      } else if (action.type === addToCart.rejected.type) {
+        const errorNotify = () => toast(action.error.message);
+        errorNotify();
+        gameDetailRef.current.scrollIntoView({
+          behavior: "smooth",
+        });
+      }
     } else {
       navigate("/login");
     }
@@ -122,6 +132,7 @@ const GameDetail = () => {
         }
       >
         <BackBtn />
+        <ToastContainer />
       </header>
 
       <section className="flex flex-col items-center px-[3em]">
@@ -173,7 +184,7 @@ const GameDetail = () => {
         {/* carousel of screenshots */}
         <div className="w-full overflow-x-auto">
           <ul
-            className="carousel-center carousel rounded-box  space-x-2 overflow-y-hidden p-4"
+            className="carousel carousel-center rounded-box  space-x-2 overflow-y-hidden p-4"
             style={{ height: 300 }}
           >
             {screenshots &&

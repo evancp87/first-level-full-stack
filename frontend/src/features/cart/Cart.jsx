@@ -2,25 +2,18 @@ import React, { useEffect, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrashCan } from "@fortawesome/free-solid-svg-icons";
-import {
-  selectItems,
-  getItems,
-  selectCount,
-  removeFromCart,
-  clear,
-} from "./cartSlice";
-// import { selectGameDetail } from "./GameSlice";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { selectItems, getItems, removeFromCart, clear } from "./cartSlice";
 import { selectLoggedInState } from "../users/usersSlice";
 
 const Cart = () => {
   const dispatch = useDispatch();
   const items = useSelector(selectItems);
-  console.log("checking the items", items);
-  // const totalAmount = useSelector(selectCount);
+  const _items = [...items.results];
   const { isAuth, userInfo } = useSelector(selectLoggedInState);
-  // const game = useSelector(selectGameDetail);
-  // const { gameId, price, id } = game;
   const customerId = userInfo ? userInfo.id : null;
+  const notify = () => toast("Thanks for purchasing!");
   const memoisedItems = useCallback(() => {
     if (isAuth) {
       dispatch(getItems(customerId));
@@ -36,17 +29,15 @@ const Cart = () => {
     gameId,
     customerId,
     price,
-    cartId
-    // id
-    // token,
+    cartId,
+    quantity
   ) => {
     const gameToDelete = {
       gameId,
       customerId,
       price,
       cartId,
-      // id,
-      // token,
+      quantity,
     };
     dispatch(removeFromCart(gameToDelete));
   };
@@ -56,20 +47,20 @@ const Cart = () => {
   };
 
   const handleCheckout = () => {
-    alert("Thanks for purchasing!");
-    dispatch(clear());
+    notify();
+    dispatch(clear(customerId));
   };
 
   return (
     // if there are items loop over and show details, including price and total
     <div className="max-h-96 overflow-scroll">
-      {items?.results?.length === 0 ? (
+      {_items?.length === 0 ? (
         <p className="flex justify-center" style={{ padding: "3em" }}>
           Your cart is empty
         </p>
       ) : (
         <div className="p-2">
-          {items?.results?.map((item) => (
+          {_items?.map((item) => (
             <div key={item.id} className="my-4">
               <div>
                 <div className="p-2">
@@ -97,7 +88,8 @@ const Cart = () => {
                               item.gameId,
                               customerId,
                               item.gamePrice,
-                              item.cartId
+                              item.cartId,
+                              item.quantity
                             )
                           }
                         />
@@ -109,6 +101,7 @@ const Cart = () => {
             </div>
           ))}
           {/* total amount in basket */}
+
           <p className="my-2 p-2">Total: £{items?.finalTotal?.total}</p>
           <div className="mt-2">
             <button
@@ -124,6 +117,7 @@ const Cart = () => {
               Checkout
             </button>
           </div>
+          <ToastContainer />
         </div>
       )}
     </div>
