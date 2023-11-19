@@ -1,14 +1,11 @@
 import { getCachedGames, cacheGames } from "./helpers";
 import axios from "axios";
-const localApi = "http://localhost:6001"
+
+const endpoint = import.meta.env.VITE_BASE_URL;
 // imports games from db
 export const getGames = async () => {
   try {
-    const { data } = await axios.get(
-      "https://first-level-backend.onrender.com/games/"
-      // `${localApi}/games/`
-      
-    );
+    const { data } = await axios.get(`${endpoint}/games/`);
     return data;
   } catch (error) {
     console.log("There was an error", error);
@@ -29,10 +26,7 @@ export const getTopRated = async () => {
       console.log("Fetching games from cache...");
       return cachedGames;
     } else {
-      const { data } = await axios.get(
-        "https://first-level-backend.onrender.com/games/highest"
-      // `${localApi}/games/highest`
-      );
+      const { data } = await axios.get(`${endpoint}/games/highest`);
       // caches data if not present
       cacheGames(data);
       return data;
@@ -46,9 +40,7 @@ export const gamesByDate = async (startDate, endDate) => {
   try {
     // Will take a start date and end date at point of dispatch to the store
     const { data } = await axios.get(
-      `https://first-level-backend.onrender.com/games/dates?startDate=${startDate}&endDate=${endDate}`
-      // `${localApi}/games/highest//dates?startDate=${startDate}&endDate=${endDate}`
-
+      `${endpoint}/games/dates?startDate=${startDate}&endDate=${endDate}`
     );
 
     // gets games within date range that have rating of over 3.5. I found 4 and 4.5 too narrow
@@ -66,11 +58,7 @@ export const gamesByDate = async (startDate, endDate) => {
 // genres
 export const getGenres = async () => {
   try {
-    const { data } = await axios.get(
-      `https://first-level-backend.onrender.com/games/genres`
-      // `${localApi}/games/genres`
-      
-    );
+    const { data } = await axios.get(`${endpoint}/games/genres`);
     return data;
   } catch (error) {
     console.log("error:", error);
@@ -80,11 +68,7 @@ export const getGenres = async () => {
 // platform names
 export const getPlatforms = async () => {
   try {
-    const { data } = await axios.get(
-      `https://first-level-backend.onrender.com/games/platforms`
-      // `${localApi}/games/platforms`
-
-    );
+    const { data } = await axios.get(`${endpoint}/games/platforms`);
     return data;
   } catch (error) {
     console.log("error:", error);
@@ -95,9 +79,7 @@ export const getPlatforms = async () => {
 export const getScreenshots = async (game_pk) => {
   try {
     const { data } = await axios.get(
-      `https://first-level-backend.onrender.com/games/screenshots/${game_pk}`
-      // `${localApi}/games/screenshots/${game_pk}`
-
+      `${endpoint}/games/screenshots/${game_pk}`
     );
     console.log("the data is:", data);
     return data;
@@ -110,11 +92,7 @@ export const getScreenshots = async (game_pk) => {
 
 export const getGameDetail = async (slug) => {
   try {
-    const { data } = await axios.get(
-      `https://first-level-backend.onrender.com/games/${slug}`
-      // `${localApi}/games/${slug}`
-
-    );
+    const { data } = await axios.get(`${endpoint}/games/${slug}`);
 
     return data;
   } catch (error) {
@@ -126,11 +104,7 @@ export const getGameDetail = async (slug) => {
 
 export const getGameTrailers = async (slug) => {
   try {
-    const { data } = await axios.get(
-      `https://first-level-backend.onrender.com/games/trailers/${slug}`
-      // `${localApi}/games/trailers/${slug}`
-
-    );
+    const { data } = await axios.get(`${endpoint}/games/trailers/${slug}`);
 
     console.log();
     return data;
@@ -143,48 +117,124 @@ export const getGameTrailers = async (slug) => {
 
 // cart api calls
 
-export const getCartItems = async () => {
+export const getCartItems = async (customerId, token) => {
   try {
-    const { data } = await axios.get(`http://localhost:6001/cart/`);
-    return data.results;
+    const { data } = await axios.get(
+      `${endpoint}/cart?customerId=${customerId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    console.log("checking the data", data);
+    return data;
   } catch (error) {
     console.log("error:", error);
   }
 };
 
-export const addToCart = async () => {
+export const addGameToCart = async ({ customerId, gameId, price }, token) => {
   try {
-    const { data } = await axios.post(`http://localhost:6001/cart/`);
-    return data.results;
+    const { data } = await axios.post(
+      `${endpoint}/cart/add?customerId=${customerId}&gameId=${gameId}&price=${price}`,
+      null,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return data;
   } catch (error) {
-    console.log("error:", error);
+    if (error.response) {
+      throw error.response.data;
+    } else {
+      throw error;
+    }
   }
 };
 
-export const clearCart = async (cartId) => {
-  try {
-    const { data } = await axios.delete(`http://localhost:6001/cart/${cartId}`);
-    return data.results;
-  } catch (error) {
-    console.log("error:", error);
-  }
-};
-
-export const removeFromCart = async (cartId, gameId) => {
+export const clearCart = async (customerId, token) => {
   try {
     const { data } = await axios.delete(
-      `http://localhost:6001/cart/${gameId}/${cartId}`
+      `${endpoint}/cart/?customerId=${customerId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
     );
-    return data.results;
+    return data;
   } catch (error) {
     console.log("error:", error);
   }
 };
 
-export const incrementItemQuantity = async (gameId) => {
+export const removeItem = async ({
+  gameId,
+  customerId,
+  price,
+  cartId,
+  token,
+  quantity,
+}) => {
   try {
-    const { data } = await axios.patch(`http://localhost:6001/cart/${gameId}`);
-    return data.results;
+    const { data } = await axios.delete(
+      `${endpoint}/cart/remove?gameId=${gameId}&cartId=${cartId}&customerId=${customerId}&price=${price}&quantity=${quantity}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return data;
+  } catch (error) {
+    console.log("error:", error);
+  }
+};
+
+// increment and decrement are currently not used, but could be in future for a checkout page
+export const incrementItemQuantity = async ({
+  cartId,
+  customerId,
+  gameId,
+  price,
+  token,
+}) => {
+  try {
+    const { data } = await axios.patch(
+      `${endpoint}/cart?gamedId=${gameId}&cartId=${cartId}&customerId=${customerId}&price=${price}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    return data;
+  } catch (error) {
+    console.log("error:", error);
+  }
+};
+
+export const decrementItemQuantity = async ({
+  cartId,
+  customerId,
+  gameId,
+  price,
+  token,
+}) => {
+  try {
+    const { data } = await axios.patch(
+      `${endpoint}/cart?gamedId=${gameId}&cartId=${cartId}&customerId=${customerId}&price=${price}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return data;
   } catch (error) {
     console.log("error:", error);
   }
@@ -206,12 +256,7 @@ const transformResponse = (apiResponse) => {
 
 export const loginUser = async (credentials) => {
   try {
-    const { data } = await axios.post(
-      "https://first-level-backend.onrender.com/users/login",
-      // `${localApi}/users/login`
-
-      credentials
-    );
+    const { data } = await axios.post(`${endpoint}/users/login`, credentials);
     console.log("the data is", data);
     // saves user session in localstorage on login
 
@@ -231,9 +276,7 @@ export const loginUser = async (credentials) => {
 export const register = async (credentials) => {
   try {
     const response = await axios.post(
-      "https://first-level-backend.onrender.com/users/register",
-      // `${localApi}/users/register`
-
+      `${endpoint}/users/register`,
       credentials,
       {
         headers: {
@@ -254,8 +297,7 @@ export const register = async (credentials) => {
 
 export const logout = async () => {
   try {
-    await axios.post("https://first-level-backend.onrender.com/users/logout/");
-    // await axios.post(`${localApi}/users/logout`);
+    await axios.post(`${endpoint}/users/logout/`);
   } catch (error) {
     console.log("There was an error logging out", error);
   }
@@ -266,9 +308,7 @@ export const logout = async () => {
 export const wishlists = async (customerId, token) => {
   try {
     const data = await axios.get(
-      `https://first-level-backend.onrender.com/wishlists?customerId=${customerId}`,
-  //  `${localApi}/wishlists?customerId=${customerId}`
-
+      `${endpoint}/wishlists?customerId=${customerId}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -287,8 +327,8 @@ export const singleWishlist = async (singleWishlistData) => {
   console.log(token, wishlistId, userId);
   try {
     const { data } = await axios.get(
-      // ` ${localApi}/wishlists/${id}?userId=${userId}`,
-      ` https://first-level-backend.onrender.com/wishlists/${wishlistId}?userId=${userId}`,
+      // ` https://first-level-backend.onrender.com/wishlists/${id}?userId=${userId}`,
+      ` ${endpoint}/wishlists/${wishlistId}?userId=${userId}`,
 
       {
         headers: {
@@ -305,9 +345,7 @@ export const createWishlist = async (credentials) => {
   console.log("the credentials id are:", credentials);
   try {
     const data = await axios.post(
-      `https://first-level-backend.onrender.com/wishlists?customerId=${credentials.userId}`,
-      // `${localApi}/wishlists/?customerId=${credentials.userId}`,
-      
+      `${endpoint}/wishlists/?customerId=${credentials.userId}`,
       {
         name: credentials.wishlistWithGame.name,
         slug: credentials.wishlistWithGame.slug,
@@ -328,9 +366,7 @@ export const deleteWishlist = async (wishlist) => {
   const { id, token, userId } = wishlist;
   try {
     const data = await axios.delete(
-      `https://first-level-backend.onrender.com/wishlists/${id}?userId=${userId}`,
-      // `${localApi}/wishlists/wishlists/${id}?userId=${userId}`,
-      
+      `${endpoint}/wishlists/${id}?userId=${userId}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -347,11 +383,7 @@ export const deleteWishlist = async (wishlist) => {
 // Not implemented
 export const updateWishlist = async () => {
   try {
-    const { data } = await axios.patch(
-      "https://first-level-backend.onrender.com/games/wishlist"
-      // `${localApi}/games/wishlist`
-
-    );
+    const { data } = await axios.patch(`${endpoint}/games/wishlist`);
     return data;
   } catch (error) {
     console.log("There was an error:", error);
@@ -362,8 +394,8 @@ export const addGamesOnWishlist = async (gameToAdd) => {
   console.log(gameToAdd);
   try {
     const { data } = await axios.post(
-      `https://first-level-backend.onrender.com/wishlists/add?userId=${gameToAdd.userId}&wishlistId=${gameToAdd.wishlistId}`,
-      // `${localApi}/wishlists/add?userId=${gameToAdd.userId}&wishlistId=${gameToAdd.wishlistId}`
+      `${endpoint}/wishlists/add?userId=${gameToAdd.userId}&wishlistId=${gameToAdd.wishlistId}`,
+
       {
         slug: gameToAdd.slug,
       },
@@ -385,8 +417,8 @@ export const listOfGamesWishlist = async (gamesList) => {
   const { userId, token, wishlistId } = gamesList;
   try {
     const { data } = await axios.get(
-      // `${localApi}/games/wishlist?userId=${userId}&wishlistId=${id}`,
-      `https://first-level-backend.onrender.com/games/wishlist?userId=${userId}&wishlistId=${wishlistId}`,
+      // `https://first-level-backend.onrender.com/games/wishlist?userId=${userId}&wishlistId=${id}`,
+      `${endpoint}/games/wishlist?userId=${userId}&wishlistId=${wishlistId}`,
 
       {
         headers: {
@@ -405,9 +437,7 @@ export const deleteSingleGameFromWishlist = async (gameDetails) => {
   const { userId, token, wishlistId, slug } = gameDetails;
   try {
     const { data } = await axios.delete(
-      `https://first-level-backend.onrender.com/wishlists/remove?userId=${userId}&wishlistId=${wishlistId}&slug=${slug}`,
-      // `${localApi}/wishlists/remove?userId=${userId}&wishlistId=${wishlistId}&slug=${slug}`,
-
+      `${endpoint}/wishlists/remove?userId=${userId}&wishlistId=${wishlistId}&slug=${slug}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,

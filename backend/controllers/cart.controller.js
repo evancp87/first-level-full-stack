@@ -1,50 +1,63 @@
 const asyncMySQL = require("../database/connection");
+const {
+  cartItems,
+  selectTotal,
+  selectCartId,
+  selectGameId,
+  selectTotalByCartAndCustomer,
+  selectExistingGame,
+  setTotal,
+  setQuantity,
+  getGameDetails,
+  addGame,
+  newCartQuery,
+  insertGames,
+  deleteAllGamesFromCart,
+  clearCarts,
+  getAllGamesFromCart,
+  deleteSingleGame,
+  deleteCart,
+} = require("../database/queries");
 
 // gets cart list
 
 async function getCartItems(req, res) {
-  console.log("cart route ran");
+  const { customerId } = req.query;
 
-  const customerId = req.query.customerId;
-
+  // sanitisation
   if (!customerId || isNaN(customerId)) {
     res.status(404).send("Couldn't find that customer");
     return;
   }
 
-  //  Selects game in cart using customer id
-  const results = await asyncMySQL(`
-  SELECT games.name
-  FROM games
-  INNER JOIN cart_games ON cart_games.game_id = games.id
-    WHERE cart_games.cart_id IN (
-    SELECT id FROM cart WHERE user_id = ${customerId}
-  );
-`);
-
-  if (results.length > 0) {
-    res.status(200).send(results);
-    return;
+  try {
+    // get's current total for cart if items present
+    const total = await asyncMySQL(selectTotal(), [customerId]);
+    const finalTotal = total[0];
+    // gets cart items from db
+    const results = await asyncMySQL(cartItems(), [customerId]);
+    if (results.length > 0) {
+      res.status(200).send({ results, finalTotal });
+    } else {
+      res.status(200).send({ message: "No cart items found", results: [] });
+    }
+  } catch (error) {
+    console.error("There was an error", error);
+    res.status(500).send("Couldn't get the cart");
   }
-
-  res.status(404).send("No cart items found");
 }
 
 // handles adding to cart
 async function addToCart(req, res) {
-  console.log("add to cart route ran");
-
-  const customerId = req.query.customerId;
-  const gameId = req.query.gameId;
-  const total = req.query.total;
-
+  const { customerId, gameId, price } = req.query;
+  // sanitisation
   if (
     !customerId ||
     isNaN(customerId) ||
     !gameId ||
     isNaN(gameId) ||
-    !total ||
-    isNaN(total)
+    !price ||
+    isNaN(price)
   ) {
     res.status(404).send("Game was not added to the cart successfully");
     return;
@@ -52,43 +65,96 @@ async function addToCart(req, res) {
 
   // finds existing instance of a cart
   try {
-    const existingCart = await asyncMySQL(
-      `SELECT id FROM cart WHERE user_id = ${customerId};`
-    );
+    //  checks for existing cart
+    const existingCart = await asyncMySQL(selectCartId(), [customerId]);
+    const gameExists = await asyncMySQL(selectGameId(), [gameId]);
 
+    // If the game doesn't exist, respond with an error
+    if (gameExists.length === 0) {
+      res.status(404).send("This game is not yet available for purchase");
+      return;
+    }
+
+    // adds to cart if existing cart
     if (existingCart.length > 0) {
-      const cartId = existingCart[0].id;
-      console.log(cartId);
+      const checkCart = existingCart[0]?.id;
 
-      // inserts games added to cart
-      await asyncMySQL(`INSERT INTO cart_games (game_id, cart_id)
-        VALUES
-        ('${gameId}', '${cartId}');`);
-      res.status(200).send("success!");
+      // gets total for updating with new game
+      let newTotal = await asyncMySQL(selectTotalByCartAndCustomer(), [
+        checkCart,
+        customerId,
+      ]);
+
+      let anotherTotal = newTotal[0]?.total;
+
+      const cartId = existingCart[0].id;
+
+      // checks if game is in basket already and increments item if added to basket and already exists
+      const existingItem = await asyncMySQL(selectExistingGame(), [
+        gameId,
+        cartId,
+      ]);
+      if (existingItem && existingItem.length > 0) {
+        const total = anotherTotal + Number(price);
+
+        // updates total
+        await asyncMySQL(setTotal(), [total, cartId, customerId]);
+        const newQuantity = (existingItem[0].quantity += 1);
+
+        const gameDetails = await asyncMySQL(getGameDetails(), [gameId]);
+
+        await asyncMySQL(setQuantity(), [newQuantity, gameId, cartId]);
+        res
+          .status(200)
+          .send({ message: "item quantity incremented", gameDetails, total });
+      } else {
+        // if game isn't in cart, adds to cart
+
+        const newGame = await asyncMySQL(addGame(), [gameId, cartId]);
+        // calculates new total
+        const total = anotherTotal + Number(price);
+
+        await asyncMySQL(setTotal(), [total, cartId, customerId]);
+
+        const gameDetails = await asyncMySQL(getGameDetails(), [gameId]);
+
+        res.status(200).send({ message: "success!", gameDetails, total });
+      }
     } else {
-      const newCart = await asyncMySQL(`INSERT INTO cart( user_id, total) 
-                                             VALUES (${customerId}, ${total});`);
+      // creates new cart and inserts game into cart if cart is empty/doesn't exist
+      const newCart = await asyncMySQL(newCartQuery(), [customerId]);
 
       //  gets newly inserted cart id
       const cartId = newCart.insertId;
 
       // inserts games into that cart
-      await asyncMySQL(`INSERT INTO cart_games (game_id, cart_id)
-                            VALUES
-                               ('${gameId}', '${cartId}');`);
 
-      res.status(200).send("success!");
+      await asyncMySQL(insertGames(), [gameId, cartId]);
+
+      // calculates total and sets
+      let newTotal = await asyncMySQL(selectTotalByCartAndCustomer(), [
+        cartId,
+        customerId,
+      ]);
+
+      let anotherTotal = newTotal[0]?.total;
+
+      const total = anotherTotal + Number(price);
+
+      await asyncMySQL(setTotal(), [total, cartId, customerId]);
+
+      const gameDetails = await asyncMySQL(getGameDetails(), [gameId]);
+
+      res.status(200).send({ message: "success!", gameDetails, total });
     }
   } catch (error) {
     console.log("There was an error:", error);
-    res.status(500).send("internal server error");
+    res.status(500).send("There was a problem adding that game to the cart");
   }
 }
 
-/// adds a game
-
+/// clears cart
 async function clearCart(req, res) {
-  console.log("clear cart route ran");
   const customerId = req.query.customerId;
 
   // sanitisation
@@ -97,20 +163,18 @@ async function clearCart(req, res) {
     return;
   }
   // get cart under user
-  const cart = await asyncMySQL(
-    `SELECT id FROM cart WHERE user_id = ${customerId};`
-  );
+
+  const cart = await asyncMySQL(selectCartId(), [customerId]);
 
   const cartId = cart[0].id;
-  console.log(cartId);
+
   // deletes games from cart and then cart
   try {
-    await asyncMySQL(`DELETE FROM cart_games 
-                        WHERE cart_id = '${cartId}'`);
+    await asyncMySQL(deleteAllGamesFromCart(), [cartId]);
 
-    await asyncMySQL(`DELETE FROM cart
-                        WHERE user_id = ${customerId}`);
-    res.status(200).send("Game deleted successfully");
+    await asyncMySQL(clearCarts(), [customerId]);
+
+    res.status(200).send("cart cleared successfully");
   } catch (error) {
     console.log("error:", error);
     res.status(500).send("Internal server error. Couldn't clear the cart");
@@ -119,67 +183,63 @@ async function clearCart(req, res) {
 
 // deleting
 async function removeFromCart(req, res) {
-  console.log("game deleted route ran");
+  const { gameId, customerId, price, cartId, quantity } = req.query;
 
-  const gameId = req.query.gameId;
-  const customerId = req.query.customerId;
-
-  console.log(customerId);
-  if (!customerId || isNaN(customerId || !gameId || isNaN(gameId))) {
+  //  sanitisation
+  if (
+    !customerId ||
+    isNaN(
+      customerId ||
+        !gameId ||
+        isNaN(gameId) ||
+        !price ||
+        isNaN(price) ||
+        !cartId ||
+        isNaN(cartId)
+    )
+  ) {
     res.status(404).send("Game was not added to the cart successfully");
     return;
   }
   // get cart under user
-  const cart = await asyncMySQL(
-    `SELECT id FROM cart WHERE user_id = ${customerId};`
-  );
-
-  console.log(cart);
-
-  const cartId = cart[0].id;
-
-  console.log(cartId);
+  const cart = await asyncMySQL(selectCartId(), [customerId]);
+  const cartGames = await asyncMySQL(getAllGamesFromCart(), [cartId]);
 
   // deletes game from cart
-  await asyncMySQL(`DELETE FROM cart_games 
-                                  WHERE game_id = ${gameId} AND cart_id = ${cartId};`);
 
-  // TODO: add functionality to delete cart when cart_games.length === 0;
-  res.status(200).send("successfully deleted game from cart");
-}
+  await asyncMySQL(deleteSingleGame(), [gameId, Number(cartId)]);
 
-async function createCart(req, res) {
-  //   await asyncMySQL(`CREATE)
-  return;
-}
+  // calculates total and sets
+  let newTotal = await asyncMySQL(selectTotalByCartAndCustomer(), [
+    cartId,
+    customerId,
+  ]);
 
-// // // updati
-// TODO: finish off
-async function incrementItemQuantity(req, res) {
-  console.log("update game route ran");
+  let anotherTotal = newTotal[0]?.total;
+  let total = Number(anotherTotal) - Number(price);
 
-  const { price } = req.body;
-  if (!price && typeof Number(price) != "number") {
-    res.send("couldn't update the price");
+  await asyncMySQL(setTotal(), [total, cartId, customerId]);
+
+  // if cart is empty of games, delete cart
+  if (cartGames.length === 1) {
+    await asyncMySQL(deleteCart(), [cartId]);
   }
-  try {
-    await asyncMySQL(`UPDATE games SET slug = "${gameSlug}"
-                        WHERE
-                          slug LIKE "${slug}";`);
-  } catch (error) {
-    console.log("error:", error);
-    res.send({ status: 400, reason: error.sqlMessage });
-  }
-  res.sendStatus(200);
-}
 
-async function calculateTotal(req, res) {}
+  // if more than one of a game, delete by quantity x price
+  if (quantity > 1) {
+    let deduction = quantity * Number(price);
+    total = Number(anotherTotal) - Number(deduction);
+    await asyncMySQL(setTotal(), [total, cartId, customerId]);
+  }
+
+  res
+    .status(200)
+    .send({ message: "successfully deleted game from cart", total });
+}
 
 module.exports = {
   getCartItems,
   addToCart,
   clearCart,
   removeFromCart,
-  incrementItemQuantity,
-  createCart,
 };

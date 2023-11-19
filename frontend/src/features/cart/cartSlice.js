@@ -1,95 +1,138 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk, current } from "@reduxjs/toolkit";
 import { sumItems } from "../../utils/helpers";
-import // getCartItems,
-// addToCart,
-// clearCart,
-// removeFromCart,
-"../../utils/data";
+import {
+  getCartItems,
+  addGameToCart,
+  clearCart,
+  removeItem,
+} from "../../utils/data";
 const initialState = {
-  items: [],
+  items: {
+    results: [],
+    finalTotal: {
+      total: 0,
+    },
+  },
   count: 1,
   ...sumItems([]),
   total: 0,
 };
 
-// To be implemented at a later date
+// async thunks for cart actions
+export const getItems = createAsyncThunk(
+  "cart/getItems",
+  async (customerId) => {
+    try {
+      const response = await getCartItems(customerId);
+      return response;
+    } catch (error) {
+      console.log("There was an error:", error);
+      throw error;
+    }
+  }
+);
 
-// export const getItems = createAsyncThunk("cart/getItems", async () => {
-//   try {
-//     const response = await getCartItems();
-//     return response;
-//   } catch (error) {
-//     console.log("There was an error:", error);
-//   }
-// });
+export const addToCart = createAsyncThunk(
+  "cart/addToCart",
+  async ({ customerId, gameId, price }) => {
+    try {
+      const response = await addGameToCart({ customerId, gameId, price });
+      if (response.message === "This game is not yet available for purchase") {
+        throw new Error(response.message);
+      }
+      return response;
+    } catch (error) {
+      console.log("There was an error:", error);
+      throw new Error("Game not yet available for purchase");
+    }
+  }
+);
 
-// export const add = createAsyncThunk("cart/addToCart", async () => {
-//   try {
-//     const response = await addToCart();
-//     return response;
-//   } catch (error) {
-//     console.log("There was an error:", error);
-//   }
-// });
-
-// export const remove = createAsyncThunk("cart/remove", async () => {
-//   try {
-//     const response = await removeFromCart();
-//     return response;
-//   } catch (error) {
-//     console.log("There was an error:", error);
-//   }
-// });
-// export const clear = createAsyncThunk("cart/clear", async () => {
-//   try {
-//     const response = await clearCart();
-//     return response;
-//   } catch (error) {
-//     console.log("There was an error:", error);
-//   }
-// });
+export const removeFromCart = createAsyncThunk(
+  "cart/remove",
+  async ({ gameId, customerId, price, cartId, quantity }) => {
+    try {
+      const response = await removeItem({
+        gameId,
+        customerId,
+        price,
+        cartId,
+        quantity,
+      });
+      return response;
+    } catch (error) {
+      console.log("There was an error:", error);
+      throw error;
+    }
+  }
+);
+export const clear = createAsyncThunk("cart/clear", async (customerId) => {
+  try {
+    const response = await clearCart(customerId);
+    return response;
+  } catch (error) {
+    console.log("There was an error:", error);
+    throw error;
+  }
+});
 
 export const cartSlice = createSlice({
   name: "cart",
   initialState,
-  reducers: {
-    addToCart: (state, action) => {
-      const { id } = action.payload;
-      // if existing item in basket and added again, increment the item quantity
-      const existingItem = state.items.find((item) => item.id === id);
+  reducers: {},
+  extraReducers: (builder) => {
+    builder
+      .addCase(getItems.fulfilled, (state, action) => {
+        state.items.results = action.payload.results;
+        state.items.finalTotal.total = action.payload.finalTotal.total;
+      })
+      .addCase(addToCart.fulfilled, (state, action) => {
+        const { gameId } = action.payload.gameDetails[0];
 
-      if (existingItem) {
-        existingItem.quantity += 1;
-      } else {
-        state.items.push({
-          ...action.payload,
-          quantity: 1,
-        });
-      }
+        // if existing item in basket and added again, increment the item quantity
 
-      state.total = state.items.reduce(
-        (total, item) => total + item.quantity,
-        0
-      );
+        const itemsArray = current(state.items.results);
 
-      state.count = state.items.reduce((total, item) => total + item.price, 0);
-    },
+        const existingItem = Array.from(itemsArray).findIndex(
+          (item) => item.gameId === gameId
+        );
 
-    removeFromCart: (state, action) => {
-      const indexOf = state.items.findIndex(
-        (item) => item.id === action.payload
-      );
-      state.items.splice(indexOf, 1);
-      state.count -= 1;
-    },
+        if (existingItem >= 0) {
+          // Create a new array with the updated item
+          state.items.results = itemsArray.map((item, index) => {
+            if (index !== existingItem) {
+              return item;
+            }
 
-    clear: () => {
-      return { ...initialState };
-    },
+            return {
+              ...item,
+              quantity: item.quantity + 1,
+            };
+          });
+        } else {
+          const { gameDetails } = action.payload;
+
+          state.items?.results?.push({
+            ...gameDetails[0],
+            quantity: 1,
+          });
+        }
+        state.items.finalTotal.total = action.payload.total;
+        state.count = action.payload;
+      })
+      .addCase(removeFromCart.fulfilled, (state, action) => {
+        const indexOf = state.items.results.findIndex(
+          (item) => item.id === action.payload
+        );
+        state.items.results.splice(indexOf, 1);
+        state.count -= 1;
+        state.items.finalTotal.total = action.payload.total;
+      })
+      .addCase(clear.fulfilled, () => {
+        return { ...initialState };
+      });
   },
 });
-
-export const { removeFromCart, addToCart, clear } = cartSlice.actions;
 
 export const selectEmpty = (state) => state.cart.empty;
 export const selectItems = (state) => state.cart.items;

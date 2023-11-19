@@ -12,7 +12,7 @@ const FilteredGameCard = ({ game }) => {
         {/* links to game detail */}
         <Link to={`/game/${slug}`}>
           <div
-            className="carousel-item image-full relative h-[300px] w-[200px] gap-[1em] rounded-3xl bg-card shadow-xl md:w-96  "
+            className="carousel-item image-full relative h-[300px] w-[200px] gap-[1em] rounded-3xl card-bg shadow-xl md:w-96  "
             style={{
               backgroundImage: background_image ? (
                 `url(${background_image})`

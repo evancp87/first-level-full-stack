@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -11,29 +11,23 @@ import { selectLoggedInState } from "../features/users/usersSlice";
 import { logoutUser } from "../features/users/usersSlice";
 import Cart from "../features/cart/Cart";
 import PacmanLoader from "react-spinners/PacmanLoader";
-import { clear } from "../features/cart/cartSlice";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const Nav = () => {
   const notify = () => toast("You are now logged out");
+  // const success = () => toast(`${}`)
   const items = useSelector(selectItems);
-  const count = useSelector(selectTotal);
+  // const count = useSelector(selectTotal);
   const { isAuth, userInfo, error, loading } = useSelector(selectLoggedInState);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [loadingLogout, setLoadingLogout] = useState(false);
-
   const handleLogout = () => {
     notify();
     setLoadingLogout(true);
     setTimeout(async () => {
       setLoadingLogout(false);
-
-      // clears cart of any items
-      if (items && items.length > 0) {
-        dispatch(clear());
-      }
 
       dispatch(logoutUser());
       navigate("/");
@@ -42,7 +36,7 @@ const Nav = () => {
 
   return (
     <nav className="relative z-50 ms-[30px] flex flex-row  justify-between py-[2em]">
-      <div className="mr-4">
+      <div>
         <Link to="/">
           <p className="logo-green cursor-pointer font-press">First Level</p>
         </Link>
@@ -86,7 +80,7 @@ const Nav = () => {
         <li>
           <div className="dropdown dropdown-end relative">
             {/* shopping cart - includes number of items in basket- conditional */}
-            {items.length > 0 && (
+            {items && items?.results?.length > 0 && (
               <p
                 className="text-slate-100 absolute flex items-center justify-center"
                 style={{
@@ -100,7 +94,7 @@ const Nav = () => {
                   height: "20px",
                 }}
               >
-                {count}
+                {items.results.length}
               </p>
             )}
             <label tabIndex={0} className=" m-1">
@@ -111,7 +105,7 @@ const Nav = () => {
             </label>
             <div
               tabIndex={0}
-              className="menu dropdown-content rounded-box z-[1] w-[200px] max-w-[300px] bg-card p-2 shadow md:w-[300px]"
+              className="menu dropdown-content rounded-box z-[1] w-[200px] max-w-[300px] bg-base-100 p-2 shadow md:w-[300px]"
             >
               <Cart />
             </div>

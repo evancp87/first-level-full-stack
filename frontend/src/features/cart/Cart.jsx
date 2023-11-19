@@ -1,37 +1,66 @@
-import React from "react";
+import React, { useEffect, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrashCan } from "@fortawesome/free-solid-svg-icons";
-import { selectItems, selectCount, removeFromCart, clear } from "./cartSlice";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { selectItems, getItems, removeFromCart, clear } from "./cartSlice";
+import { selectLoggedInState } from "../users/usersSlice";
 
 const Cart = () => {
   const dispatch = useDispatch();
   const items = useSelector(selectItems);
-  const totalAmount = useSelector(selectCount);
+  const _items = [...items.results];
+  const { isAuth, userInfo } = useSelector(selectLoggedInState);
+  const customerId = userInfo ? userInfo.id : null;
+  const notify = () => toast("Thanks for purchasing!");
+  const memoisedItems = useCallback(() => {
+    if (isAuth) {
+      dispatch(getItems(customerId));
+    }
+  }, [dispatch, getItems]);
+
+  useEffect(() => {
+    memoisedItems();
+  }, [memoisedItems]);
+
   // handles interactions in cart with items
-  const handleRemoveItem = (payload) => {
-    dispatch(removeFromCart(payload));
+  const handleRemoveItem = (
+    gameId,
+    customerId,
+    price,
+    cartId,
+    quantity
+  ) => {
+    const gameToDelete = {
+      gameId,
+      customerId,
+      price,
+      cartId,
+      quantity,
+    };
+    dispatch(removeFromCart(gameToDelete));
   };
 
-  const handleClearCart = () => {
-    dispatch(clear());
+  const handleClearCart = (customerId) => {
+    dispatch(clear(customerId));
   };
 
   const handleCheckout = () => {
-    alert("Thanks for purchasing!");
-    dispatch(clear());
+    notify();
+    dispatch(clear(customerId));
   };
 
   return (
     // if there are items loop over and show details, including price and total
-    <div className="">
-      {items.length === 0 ? (
+    <div className="max-h-96 overflow-scroll">
+      {_items?.length === 0 ? (
         <p className="flex justify-center" style={{ padding: "3em" }}>
           Your cart is empty
         </p>
       ) : (
         <div className="p-2">
-          {items.map((item) => (
+          {_items?.map((item) => (
             <div key={item.id} className="my-4">
               <div>
                 <div className="p-2">
@@ -41,11 +70,11 @@ const Cart = () => {
                     className="rounded-md"
                   />
                   <div>
-                    <h3 className="my-2 text-lg">{item.name}</h3>
+                    <h3 className="my-2 text-lg">{item.gameName}</h3>
                     <div className="flex flex-row justify-between">
                       {/* if you keep adding the item to the basket the quantity goes up */}
                       <p>
-                        £{item.price} x {item.quantity}
+                        £{item.gamePrice} x {item.quantity}
                       </p>
                       <div
                         className="flex self-end"
@@ -54,7 +83,15 @@ const Cart = () => {
                         <FontAwesomeIcon
                           className="cursor-pointer"
                           icon={faTrashCan}
-                          onClick={handleRemoveItem}
+                          onClick={() =>
+                            handleRemoveItem(
+                              item.gameId,
+                              customerId,
+                              item.gamePrice,
+                              item.cartId,
+                              item.quantity
+                            )
+                          }
                         />
                       </div>
                     </div>
@@ -64,11 +101,12 @@ const Cart = () => {
             </div>
           ))}
           {/* total amount in basket */}
-          <p className="my-2 p-2">Total: £{totalAmount}</p>
+
+          <p className="my-2 p-2">Total: £{items?.finalTotal?.total}</p>
           <div className="mt-2">
             <button
               className="active-btn text-slate-100 mx-2 w-[30%] rounded-full bg-logo p-2 duration-300 ease-in-out hover:scale-110"
-              onClick={handleClearCart}
+              onClick={() => handleClearCart(customerId)}
             >
               Clear
             </button>
@@ -79,6 +117,7 @@ const Cart = () => {
               Checkout
             </button>
           </div>
+          <ToastContainer />
         </div>
       )}
     </div>

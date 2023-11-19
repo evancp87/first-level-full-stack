@@ -121,7 +121,7 @@ const WishlistModal = ({ slug }) => {
         Add to wishlist
       </button>
       <dialog ref={modalRef} className="modal">
-        <form method="dialog" className="modal-box text-white bg-card">
+        <form method="dialog" className="modal-box text-white card-bg">
           <button className="btn btn-circle btn-ghost btn-sm absolute right-2 top-2">
             ✕
           </button>

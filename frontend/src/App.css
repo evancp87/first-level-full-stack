@@ -26,6 +26,11 @@ body {
   color: #2AA146;
 }
 
+.card-bg {
+  background-color: "#4F5A67",
+}
+
+
 .active-btn:active, .focus-input:focus {
 outline-style: dashed;
 outline-width: 3px;

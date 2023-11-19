@@ -80,8 +80,7 @@ async function loginUser(req, res) {
       }
     );
 
-    // Creating session for user
-    req.session.user_id = results[0].user_id;
+    
   } catch (error) {
     console.log("The error is:", error);
     res.status(500).send("There was an error");
@@ -144,6 +143,7 @@ async function registerUser(req, res) {
   }
 }
 
+// TODO: check
 async function logout(req, res) {
   try {
     // closes express session

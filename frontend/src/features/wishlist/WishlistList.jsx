@@ -127,7 +127,7 @@ const WishlistList = () => {
               value={searchText}
               type="text"
               placeholder="Search wishlists"
-              className="focus-input max-w-xs input input-bordered my-[1.5em] w-full bg-card"
+              className="focus-input max-w-xs input input-bordered my-[1.5em] w-full card-bg"
             />
             <ul>
               {searchError &&
@@ -151,7 +151,7 @@ const WishlistList = () => {
           {filteredWishlists && filteredWishlists.length > 0 && isAuth ? (
             filteredWishlists.map((wishlist) => (
               <li key={`wishlist_${wishlist.id}`}>
-                <article className="mx-w-full card card-bordered card-side m-6 flex-row flex-wrap items-center bg-card text-white shadow-xl">
+                <article className="mx-w-full card card-bordered card-side m-6 flex-row flex-wrap items-center card-bg text-white shadow-xl">
                   <div className="card w-96 text-primary-content">
                     <div className="card-body">
                       <h3 className="card-title text-white">{wishlist.name}</h3>

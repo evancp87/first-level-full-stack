@@ -2,6 +2,8 @@ import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import BackBtn from "../../components/BackBtn";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import {
   getGame,
   getGameScreenshots,
@@ -24,11 +26,12 @@ const GameDetail = () => {
   const game = useSelector(selectGameDetail);
   const screenshots = useSelector(selectScreenshots);
   const navigate = useNavigate();
-  const { isAuth } = useSelector(selectLoggedInState);
+  const { isAuth, userInfo } = useSelector(selectLoggedInState);
+  const customerId = userInfo ? userInfo.id : null;
 
   // unpacks slug from the url to dispatch the store and fetch game detail from api
   const { slug } = useParams();
-
+  const notify = () => toast(`Your game was added to the basket`);
   const fetchGame = useCallback(() => {
     dispatch(getGame(slug));
     dispatch(getGameScreenshots(slug));
@@ -61,31 +64,39 @@ const GameDetail = () => {
     genres,
     developers,
     description,
-    id,
     price,
   } = game;
 
-  // handles both adding to the cart and scroll to top
-  const handleAddToCart = (game) => {
+
+  const handleAddToCart = async (game) => {
     if (isAuth) {
-      dispatch(addToCart(game));
-      gameDetailRef.current.scrollIntoView({
-        behavior: "smooth",
-      });
+      const action = await dispatch(addToCart(game));
+      if (action.type === addToCart.fulfilled.type) {
+        notify();
+        gameDetailRef.current.scrollIntoView({
+          behavior: "smooth",
+        });
+      } else if (action.type === addToCart.rejected.type) {
+        const errorNotify = () => toast(action.error.message);
+        errorNotify();
+        gameDetailRef.current.scrollIntoView({
+          behavior: "smooth",
+        });
+      }
     } else {
       navigate("/login");
     }
   };
 
   // Object of game detail sent to the shopping cart
-
+  const gameId = game.id;
   const gameDetails = {
-    name,
-    background_image,
-    id,
+    // name,
+    customerId,
+    gameId,
     price,
   };
-
+  console.log("the game details are", gameDetails);
   // regex handles issue with the description property being html in json format, by adding a class to the p tag so the text can be styled
   const tidyHtml = /<p>/gi;
   const tidiedDescription = description
@@ -121,6 +132,7 @@ const GameDetail = () => {
         }
       >
         <BackBtn />
+        <ToastContainer />
       </header>
 
       <section className="flex flex-col items-center px-[3em]">
