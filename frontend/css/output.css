@@ -9210,7 +9210,11 @@ body {
 }
 
 .card-bg {
-  background-color: "#4F5A67",
+  background-color: #4F5A67,
+}
+
+.break {
+  word-break: break-all;
 }
 
 .active-btn:active, .focus-input:focus {
