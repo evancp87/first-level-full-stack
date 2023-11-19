@@ -41,13 +41,13 @@ const Nav = () => {
           <p className="logo-green cursor-pointer font-press">First Level</p>
         </Link>
       </div>
-      <ul className="me-[30px] flex flex-row flex-wrap gap-x-[30px]">
+      <ul className="me-[30px] ml-2 flex flex-row flex-wrap gap-x-[30px]">
         {loadingLogout && (
           <PacmanLoader color="#36d7b7" loading={loadingLogout} />
         )}
         {isAuth ? (
           <>
-            <li>Welcome, {userInfo.name}</li>
+            <li class="break">Welcome, {userInfo.name}</li>
             <li>
               <p to="/login" className="cursor-pointer" onClick={handleLogout}>
                 Logout

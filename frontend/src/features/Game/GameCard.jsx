@@ -51,7 +51,7 @@ const GameCard = ({ game, index }) => {
             <div className="flex items-center">
               {/*opens wishlist modal for creating and adding to wishlists */}
               <WishlistModal name={name} slug={slug} />
-              <p className="card-actions justify-end">
+              <p className="card-actions justify-end text-lg ml-2">
                 {game ? `Rating: ${rating}` : <Skeleton count={1} />}{" "}
               </p>
               <ToastContainer
