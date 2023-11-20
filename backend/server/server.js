@@ -25,7 +25,7 @@ app.use((req, res, next) => {
 //   : process.env.DEVELOPMENT_ORIGIN;
 
   app.use(
-  cors({ credentials: true, origin: "*" })
+  cors({ origin: "*" })
 );
 
 app.use(function myLogger(req, res, next) {
