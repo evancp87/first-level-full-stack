@@ -1,8 +1,7 @@
 import React, { useEffect } from "react";
 import GameCard from "../Game/GameCard";
 import { useSelector, useDispatch } from "react-redux";
-import PacmanLoader from "react-spinners/PacmanLoader";
-
+import SkeletonCards from "../../components/SkeletonCards";
 import { selectHighestRated, setTopRated } from "./dashboardSlice";
 
 const AllTimeBest = () => {
@@ -21,7 +20,7 @@ const AllTimeBest = () => {
       <h2 className="my-4">All Time Highest Rated</h2>
       <ul>
         {!highestRated ? (
-          <PacmanLoader color="#36d7b7" />
+          <p className="text-logo">Highest Rated Games not Available</p>
         ) : highestRated && highestRated.length > 0 ? (
           highestRated.map((game, index) => (
             <li key={game.id}>
@@ -29,7 +28,7 @@ const AllTimeBest = () => {
             </li>
           ))
         ) : (
-          <p>Highest Rated Games not Available</p>
+          <SkeletonCards />
         )}
       </ul>
     </div>

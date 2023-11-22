@@ -3,7 +3,7 @@ import { validate } from "../../validation/index.js";
 import GameCard from "../Game/GameCard";
 import { useDispatch, useSelector } from "react-redux";
 import Controls from "./Controls.jsx";
-
+import SkeletonCards from "../../components/SkeletonCards.jsx";
 import {
   selectSort,
   selectSearch,
@@ -181,28 +181,34 @@ const Search = () => {
       <div className="w-full">
         <ul>
           {filteredGames.length === 0 && (
-            <div className=" flex h-96 items-center justify-center">
-              <p className="text-4xl">No results found</p>
-            </div>
+            <>
+              <div className=" flex h-36 items-start justify-center">
+                <p className="text-4xl">No results found</p>
+              </div>
+              <SkeletonCards />
+            </>
           )}
 
-          {filteredGames &&
+          {filteredGames ? (
             filteredGames.map((game) => (
               <GameCard key={game.id} game={game} liked={game.liked} />
-            ))}
+            ))
+          ) : (
+            <SkeletonCards />
+          )}
         </ul>
         <div className="join my-[3em] grid grid-cols-2  pe-[1em] ps-[1em]">
           <button
             onClick={() => setCurrentPage(currentPage - 1)}
             disabled={currentPage === 1 || filteredGames.length === 0}
-            className="btn btn-outline join-item text-white"
+            className="btn btn-outline join-item"
           >
             Previous page
           </button>
           <button
             onClick={() => setCurrentPage(currentPage + 1)}
             disabled={currentPage === totalPages || filteredGames.length === 0}
-            className="btn btn-outline join-item text-white"
+            className="btn btn-outline join-item"
           >
             Next
           </button>
